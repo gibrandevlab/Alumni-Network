@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Comfy Feeling';
+    src: url('/fonts/Comfy Feeling.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.hero-fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.hero-fade-in-active {
+    opacity: 1;
+}
+

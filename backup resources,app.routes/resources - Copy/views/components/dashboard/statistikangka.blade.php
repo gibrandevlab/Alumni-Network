@@ -1,0 +1,82 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-4">
+    <div
+        class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+        <div
+            class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
+            <svg width="30" height="30" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="stroke-current text-blue-800 dark:text-gray-800 transform transition-transform duration-500 ease-in-out">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                </path>
+            </svg>
+        </div>
+        <div class="text-right">
+            <p class="text-2xl">{{ $jumlahPenggunaDisetujui }}</p>
+            <p>Users</p>
+        </div>
+    </div>
+    <div
+        class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+        <div
+            class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 493.474 493.474" xml:space="preserve" style="width: 30px; height: 30px;">
+                <g>
+                    <g>
+                        <path style="fill:#010002;" d="M314.284,314.029c-30.563,23.814-55.479,53.227-80.686,82.352 c-10.786-11.428-20.596-23.559-26.917-38.184c-7.154-16.676-34.342,7.584-27.895,22.598c8.817,20.387,24.519,36.965,39.977,52.584 c6.305,6.416,17.138-0.832,21.491-5.793c27.652-31.398,53.448-64.443,86.638-90.305 C342.816,324.894,333.261,299.242,314.284,314.029z"/>
+                        <path style="fill:#010002;" d="M402.266,35.399h-76.354c-5.358-5.895-13.04-9.679-21.632-9.679h-29.412v-4.984 C274.867,9.946,260.415,0,246.738,0c-13.678,0-28.13,9.946-28.13,20.736v4.984h-29.413c-8.592,0-16.273,3.784-21.632,9.679H91.176 c-8.099,0-14.594,6.554-14.594,14.619v428.829c0,8.049,6.479,14.627,14.594,14.627h311.091c8.081,0,14.626-6.527,14.626-14.627 V50.018C416.891,41.953,410.346,35.399,402.266,35.399z M387.607,464.238H105.787V64.636h42.285v0.003h13.47 c3.971,11.538,14.772,19.892,27.668,19.892h57.528h57.528c12.896,0,23.697-8.354,27.668-19.892h13.47v-0.003h42.204 L387.607,464.238L387.607,464.238z"/>
+                        <rect x="133.1" y="114.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="164.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="214.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="264.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div class="text-right">
+            <p class="text-2xl">{{ number_format($persentaseRespondenKeseluruhan, 2) }}%</p>
+            <p>Response rate</p>
+        </div>
+
+    </div>
+    <div
+        class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+        <div
+            class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 493.474 493.474" xml:space="preserve" style="width: 30px; height: 30px;">
+                <g>
+                    <g>
+                        <path style="fill:#010002;" d="M314.284,314.029c-30.563,23.814-55.479,53.227-80.686,82.352 c-10.786-11.428-20.596-23.559-26.917-38.184c-7.154-16.676-34.342,7.584-27.895,22.598c8.817,20.387,24.519,36.965,39.977,52.584 c6.305,6.416,17.138-0.832,21.491-5.793c27.652-31.398,53.448-64.443,86.638-90.305 C342.816,324.894,333.261,299.242,314.284,314.029z"/>
+                        <path style="fill:#010002;" d="M402.266,35.399h-76.354c-5.358-5.895-13.04-9.679-21.632-9.679h-29.412v-4.984 C274.867,9.946,260.415,0,246.738,0c-13.678,0-28.13,9.946-28.13,20.736v4.984h-29.413c-8.592,0-16.273,3.784-21.632,9.679H91.176 c-8.099,0-14.594,6.554-14.594,14.619v428.829c0,8.049,6.479,14.627,14.594,14.627h311.091c8.081,0,14.626-6.527,14.626-14.627 V50.018C416.891,41.953,410.346,35.399,402.266,35.399z M387.607,464.238H105.787V64.636h42.285v0.003h13.47 c3.971,11.538,14.772,19.892,27.668,19.892h57.528h57.528c12.896,0,23.697-8.354,27.668-19.892h13.47v-0.003h42.204 L387.607,464.238L387.607,464.238z"/>
+                        <rect x="133.1" y="114.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="164.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="214.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                        <rect x="133.1" y="264.818" style="fill:#010002;" width="227.273" height="22.729"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div class="text-right">
+            <p class="text-2xl">{{ $totalResponden }}</p>
+            <p>total Response</p>
+        </div>
+
+    </div>
+    <div
+        class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+        <div
+            class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
+            <svg width="30" height="30" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="stroke-current text-blue-800 dark:text-gray-800 transform transition-transform duration-500 ease-in-out">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                </path>
+            </svg>
+        </div>
+        <div class="text-right">
+            <p class="text-2xl">$75,257</p>
+            <p>Balances</p>
+        </div>
+    </div>
+</div>
