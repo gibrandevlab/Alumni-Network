@@ -3,7 +3,7 @@
 /node_modules
 /public/storage
 /public/videos
-/public/images/
+/public/images/g
 /storage/*.key
 /.env
 /.env.*.local
