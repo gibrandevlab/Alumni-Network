@@ -54,7 +54,7 @@
                             <a href="{{ $event->link == 'dashboard/event/mendaftar?event=' . $event->id ? $event->link : 'dashboard/event/mendaftar?event=' . $event->id }}"
                                class="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-200 animate-fade-in-up"
                                style="animation-delay: 0.6s;">
-                                Lihat Detail
+Daftar Event
                             </a>
                         </div>
 

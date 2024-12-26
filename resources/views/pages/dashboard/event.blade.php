@@ -15,6 +15,8 @@
                 </div>
             </div>
         </div>
+    @include('components.dashboard.Event Setting.edit-event')
+
     @endif
     @include('components.dashboard.Event Setting.create-event')
 @endsection

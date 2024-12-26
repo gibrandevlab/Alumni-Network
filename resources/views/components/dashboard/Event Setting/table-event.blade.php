@@ -4,21 +4,6 @@
 </div>
 <h2 class="text-2xl font-semibold mb-4 dark:bg-gray-800 dark:text-white">Data Events</h2>
 
-<!-- Search Form -->
-<form id="searchForm" method="GET" action="{{ route('dashboard.events.index') }}" class="flex items-center mb-4">
-    <div class="bg-white rounded flex items-center w-full max-w-xl mr-4 p-2 shadow-sm border border-gray-200">
-        <button type="button" class="outline-none focus:outline-none" id="searchButton">
-            <svg class="w-5 text-white h-5 cursor-pointer" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-        </button>
-        <input type="search" name="search" id="searchInput" placeholder="Search"
-            class="w-full pl-3 text-sm text-white outline-none focus:outline-none bg-transparent"
-            value="{{ request()->input('search') }}">
-    </div>
-</form>
-
 <!-- Event Table -->
 <table class="min-w-full leading-normal">
     <thead>
@@ -31,7 +16,10 @@
                 Judul</th>
             <th scope="col"
                 class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-white text-left text-sm uppercase font-semibold">
-                Sisa Waktu</th>
+                Tanggal Awal</th>
+            <th scope="col"
+                class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-white text-left text-sm uppercase font-semibold">
+                Tanggal Akhir</th>
             <th scope="col"
                 class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-white text-left text-sm uppercase font-semibold">
                 Dilaksanakan Oleh</th>
@@ -53,8 +41,8 @@
                 <td class="px-5 py-4 border-b border-gray-200 text-white">
                     {{ ($event->currentPage() - 1) * $event->perPage() + $loop->iteration }}</td>
                 <td class="px-5 py-4 border-b border-gray-200 text-white">{{ $item->judul_event }}</td>
-                <td class="px-5 py-4 border-b border-gray-200 text-white"><span
-                        id="countdown-{{ $item->id }}"></span></td>
+                <td class="px-5 py-4 border-b border-gray-200 text-white">{{ $item->tanggal_mulai }}</td>
+                <td class="px-5 py-4 border-b border-gray-200 text-white">{{ $item->tanggal_akhir }}</td>
                 <td class="px-5 py-4 border-b border-gray-200 text-white">{{ $item->dilaksanakan_oleh }}</td>
                 <td class="px-5 py-4 border-b border-gray-200 text-white">
                     <button onclick="toggleImage('foto-{{ $item->id }}')" class="text-blue-500 hover:text-blue-700">
@@ -92,8 +80,7 @@
                         </svg>
                     </button>
                     <button onclick="showEditModal({{ $item->id }})" class="text-yellow-500 hover:text-yellow-700">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                             </path>

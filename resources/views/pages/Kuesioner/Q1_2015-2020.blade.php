@@ -324,36 +324,182 @@
                             </select>
                         </div>
                     </div>
+
+                    <!-- Pertanyaan 8 -->
+                    <div class="flex gap-3 items-start">
+                        <span
+                            class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">8</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Mohon berikan feedback, komentar, saran, dan kritik selama Anda menjadi mahasiswa dan
+                                menjalani pendidikan.
+                            </label>
+                            <textarea name="feedback" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
+                                rows="4" required></textarea>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Textarea untuk Melanjutkan Pendidikan -->
+
                 <div id="dynamic-textarea-education" class="dynamic-option hidden">
-                    <label class="text-gray-700">Jurusan atau program studi yang sedang ditempuh:</label>
-                    <textarea name="info_tambahan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
-                        rows="3"></textarea>
-                </div>
+                    <!-- Pertanyaan 1 -->
+                    <div class="flex gap-3 items-start">
+                        <span
+                            class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">1</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Apakah Anda melanjutkan pendidikan setelah lulus?
+                            </label>
+                            <select name="melanjutkan_pendidikan" id="melanjutkan_pendidikan"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
+                                required>
+                                <option value="ya">Ya</option>
+                                <option value="tidak">Tidak</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <!-- Checkbox untuk Tidak Bekerja -->
-                <div id="dynamic-checkbox-not-working" class="dynamic-option hidden">
+                    <!-- Pertanyaan 2 -->
+                    <div class="flex gap-3 items-start">
+                        <span
+                            class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">2</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Tingkat pendidikan apa yang Anda pilih untuk melanjutkan studi?
+                            </label>
+                            <select name="tingkat_pendidikan" id="tingkat_pendidikan"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
+                                required>
+                                <option value="sarjana">Sarjana (S1)</option>
+                                <option value="magister">Magister (S2)</option>
+                                <option value="doktor">Doktor (S3)</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pertanyaan 3 -->
+                    <div class="flex gap-3 items-start">
+                        <span
+                            class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">3</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Di bidang studi apa Anda melanjutkan pendidikan?
+                            </label>
+                            <input type="text" name="bidang_studi" id="bidang_studi"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
+                                required />
+                        </div>
+                    </div>
+
+                    <!-- Pertanyaan 4 -->
+                    <div class="flex gap-3 items-start">
+                        <span
+                            class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">4</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Apa alasan utama Anda melanjutkan pendidikan?
+                            </label>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan[]" value="meningkatkan_keterampilan"
+                                    id="meningkatkan_keterampilan" />
+                                <label for="meningkatkan_keterampilan" class="text-gray-700">Meningkatkan keterampilan
+                                    dan pengetahuan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan[]" value="karier_masa_depan"
+                                    id="karier_masa_depan" />
+                                <label for="karier_masa_depan" class="text-gray-700">Persiapan untuk karier masa
+                                    depan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan[]" value="didorong_perusahaan"
+                                    id="didorong_perusahaan" />
+                                <label for="didorong_perusahaan" class="text-gray-700">Didorong oleh atasan atau
+                                    perusahaan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan[]" value="keinginan_pribadi"
+                                    id="keinginan_pribadi" />
+                                <label for="keinginan_pribadi" class="text-gray-700">Keinginan pribadi</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan[]" value="lainnya" id="alasan_lainnya" />
+                                <label for="alasan_lainnya" class="text-gray-700">Lainnya: <input type="text"
+                                        name="alasan_lain" id="alasan_lain"
+                                        class="border border-gray-300 rounded-lg p-2 w-full mt-2" /></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pertanyaan 5 -->
                     <div class="flex gap-3 items-start">
                         <span
                             class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">5</span>
-                        <div class="flex flex-col gap-4 container w-full">
-                            <label for="alasan" class="text-gray-700">
-                                Alasan tidak bekerja:
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Dimana Anda melanjutkan pendidikan?
                             </label>
-                            <select name="alasan" id="alasan-5"
+                            <select name="lokasi_pendidikan" id="lokasi_pendidikan"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
                                 required>
-                                <option value="menikah">Menikah</option>
-                                <option value="keluarga">Mengurus Keluarga</option>
-                                <option value="lainnya">Lainnya</option>
+                                <option value="dalam_negeri">Dalam negeri</option>
+                                <option value="luar_negeri">Luar negeri</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
+                <!-- Checkbox untuk Tidak Bekerja -->
+                <div id="dynamic-checkbox-not-working" class="dynamic-option hidden">
+                    <!-- Alasan tidak bekerja -->
+                    <div class="flex gap-3 items-start">
+                        <span class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">1</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Jika tidak bekerja, apa alasan utama Anda tidak bekerja?
+                            </label>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan_tidak_bekerja[]" value="mencari_pekerjaan" id="mencari_pekerjaan" />
+                                <label for="mencari_pekerjaan" class="text-gray-700">Sedang mencari pekerjaan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan_tidak_bekerja[]" value="melanjutkan_pendidikan" id="melanjutkan_pendidikan" />
+                                <label for="melanjutkan_pendidikan" class="text-gray-700">Melanjutkan pendidikan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan_tidak_bekerja[]" value="masalah_kesehatan" id="masalah_kesehatan" />
+                                <label for="masalah_kesehatan" class="text-gray-700">Masalah kesehatan</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan_tidak_bekerja[]" value="tanggung_jawab_keluarga" id="tanggung_jawab_keluarga" />
+                                <label for="tanggung_jawab_keluarga" class="text-gray-700">Tanggung jawab keluarga</label>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <input type="checkbox" name="alasan_tidak_bekerja[]" value="lainnya" id="alasan_tidak_bekerja_lainnya" />
+                                <label for="alasan_tidak_bekerja_lainnya" class="text-gray-700">Lainnya: <input type="text" name="alasan_tidak_bekerja_lain" id="alasan_tidak_bekerja_lain" class="border border-gray-300 rounded-lg p-2 w-full mt-2" /></label>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Rencana bekerja dalam waktu dekat -->
+                    <div class="flex gap-3 items-start">
+                        <span class="text-white bg-purple-400 rounded-full w-8 h-8 flex items-center justify-center">2</span>
+                        <div class="flex flex-col gap-4 container">
+                            <label class="text-gray-700">
+                                Apakah Anda berencana untuk bekerja dalam waktu dekat?
+                            </label>
+                            <select name="rencana_pekerjaan" id="rencana_pekerjaan"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"
+                                required>
+                                <option value="ya">Ya</option>
+                                <option value="tidak">Tidak</option>
+                                <option value="belum_tahu">Belum tahu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="flex justify-between items-center mt-6">
                     <button type="button" onclick="previousStep()"

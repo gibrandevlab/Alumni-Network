@@ -81,20 +81,27 @@ class EventController extends Controller
 
         // Update Foto jika diunggah ulang
         if ($request->hasFile('foto')) {
-            $this->deleteFile($event->foto);  // Hapus foto lama
+            if ($event->foto) {
+                $this->deleteFile($event->foto); // Hapus foto lama
+            }
             $mediaPath = $request->file('foto')->store('images/events', 'public');
             $validatedData['foto'] = $mediaPath;
         }
 
-        // Generate QR Code baru untuk Link
-        $this->deleteFile($event->link);  // Hapus QR Code lama
-        $validatedData['link'] = $this->generateQrCode($validatedData['link']);
+        // Update QR Code jika link berubah
+        if ($request->link !== $event->link) {
+            if ($event->link) {
+                $this->deleteFile($event->link); // Hapus QR Code lama
+            }
+            $validatedData['link'] = $this->generateQrCode($validatedData['link']);
+        }
 
         // Update ke Database
         $event->update($validatedData);
 
         return redirect()->route('dashboard.events.index')->with('success', 'Event berhasil diperbarui.');
     }
+
 
     public function destroy($id)
     {

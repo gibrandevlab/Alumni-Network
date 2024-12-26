@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ResponKuesioner;
 use App\Models\ProfilAlumni;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class FormQ1Controllers extends Controller
 {
@@ -78,5 +81,33 @@ class FormQ1Controllers extends Controller
             return redirect('/')->with('error', 'Anda tidak memiliki akses.')->send();
         }
     }
+    public function exportExcel()
+    {
+        $data = ResponKuesioner::all();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Event Kuesioner ID');
+        $sheet->setCellValue('B1', 'User ID');
+        $sheet->setCellValue('C1', 'Jawaban');
+        $sheet->setCellValue('D1', 'Status');
 
+        $row = 2;
+        foreach ($data as $item) {
+            $jawaban = json_decode($item->jawaban, true);
+            foreach ($jawaban as $status => $value) {
+                $sheet->setCellValue('A' . $row, $item->event_kuesioner_id);
+                $sheet->setCellValue('B' . $row, $item->user_id);
+                $sheet->setCellValue('C' . $row, $value);
+                $sheet->setCellValue('D' . $row, $status);
+                $row++;
+            }
+        }
+
+        $fileName = 'Respon_Kuesioner.xlsx';
+        $filePath = storage_path($fileName);
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
 }

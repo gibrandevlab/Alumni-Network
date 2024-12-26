@@ -11,7 +11,6 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    // Tampilkan halaman login
     public function showLoginForm()
     {
         if (Auth::check()) {
@@ -25,7 +24,6 @@ class AuthController extends Controller
         return view('pages.auth.login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         $request->validate([
@@ -42,34 +40,31 @@ class AuthController extends Controller
         return $this->handleFailedLogin($request, 'Email atau password salah.');
     }
 
-    // Cek kredensial login
     private function attemptLogin(?User $user, string $password): bool
     {
         return $user && Hash::check($password, $user->password);
     }
 
-    // Penanganan login gagal
     private function handleFailedLogin(Request $request, string $message)
     {
         return redirect()->back()->withInput()->with('notif_login', $message);
     }
 
-    // Penanganan status user setelah login
     private function handleUserStatus(Request $request, User $user)
     {
         if ($user->status === 'pending') {
-            return $this->handleFailedLogin($request, 'Akun Anda sedang dalam proses persetujuan.');
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect('/profile/create');
         }
 
         if ($user->status === 'rejected') {
             return $this->handleFailedLogin($request, 'Akun Anda telah ditolak.');
         }
 
-        // Login pengguna
         Auth::login($user);
         $request->session()->regenerate();
 
-        // Arahkan berdasarkan role
         return match ($user->role) {
             'admin' => redirect()->intended('/dashboard'),
             'alumni' => redirect()->intended('/'),
@@ -77,31 +72,25 @@ class AuthController extends Controller
         };
     }
 
-    // Redirect ke Google untuk login
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
-    // Callback setelah login dengan Google
     public function handleGoogleCallback($request)
     {
         try {
             $googleUser = Socialite::driver('google')->user();
 
-            // Cek apakah user sudah terdaftar
             $user = User::where('google_id', $googleUser->getId())->first();
 
             if (!$user) {
-                // Jika user belum terdaftar
                 return redirect()->route('login')->with('error', 'Akun Google Anda belum terdaftar.');
             }
 
-            // Login pengguna
             Auth::login($user);
             $request->session()->regenerate();
 
-            // Arahkan berdasarkan role
             return match ($user->role) {
                 'admin' => redirect()->intended('/dashboard'),
                 'alumni' => redirect()->intended('/'),
@@ -112,7 +101,6 @@ class AuthController extends Controller
         }
     }
 
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();

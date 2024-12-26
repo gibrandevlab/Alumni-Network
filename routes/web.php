@@ -10,7 +10,7 @@ use App\Http\Controllers\Dashboard\UserSettingController;
 use App\Http\Controllers\FormQ1Controllers;
 use App\Http\Controllers\Dashboard\EventController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomepageController::class, 'index']);
 Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'));
@@ -74,5 +74,13 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/event/mendaftar', [EventController::class, 'mendaftar'])->name('dashboard.events.mendaftar');
 });
 
+Route::get('/export-excel', [FormQ1Controllers::class, 'exportExcel'])->name('export.excel');
 Route::get('/group-chat', [GroupChatController::class, 'index'])->name('group-chat.index');
 Route::post('/group-chat', [GroupChatController::class, 'store'])->name('group-chat.store');
+
+
+
+Route::controller(ProfileController::class)->group(function () {
+    Route::get('/profile/create', 'create')->name('profile.create');
+    Route::post('/profile/store', 'store')->name('profile.store');
+});
