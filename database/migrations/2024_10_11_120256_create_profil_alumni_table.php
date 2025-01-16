@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('profil_alumni', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->notNullable();
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->onDelete('cascade'); // Tambahkan opsi cascade delete
             $table->string('nim')->nullable();
             $table->string('nama')->nullable();
             $table->string('jurusan')->nullable();
