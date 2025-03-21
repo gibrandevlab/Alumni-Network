@@ -57,7 +57,7 @@
             </svg>
         </div>
         <div class="text-right">
-            <p class="text-2xl">{{ $totalResponden }}</p>
+            <p class="text-2xl">{{ $jumlahResponden }}</p>
             <p>total Response</p>
         </div>
 

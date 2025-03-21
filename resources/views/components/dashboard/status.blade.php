@@ -2,13 +2,24 @@
     <div class="rounded-t mb-0 px-0 border-0">
         <div class="flex flex-wrap items-center px-4 py-2">
             <div class="relative w-full max-w-full flex-grow flex-1">
-                <h3 class="font-semibold text-base text-black">Status Karir Alumni</h3>
+                <h3 class="font-semibold text-base text-black">Status Karir Alumni (5 Tahun Terakhir)</h3>
             </div>
             <div class="relative w-full max-w-full flex-grow flex-1 text-right">
                 <div class="flex items-center space-x-4">
                     <select name="jurusan1" class="bg-gray-700 text-white rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                         <option value="" {{ request('jurusan1') == '' ? 'selected' : '' }}>Semua Jurusan</option>
-                        @foreach(['Ilmu Komunikasi (S1)', 'Sastra Inggris (S1)', 'Public Relations (D3)', 'Broadcasting (D3)', 'Advertising (D3)', 'Bahasa Inggris (D3)', 'Sistem Informasi (S1)', 'Teknologi Informasi (S1)', 'Software Engineering (S1)', 'Informatika (S1)', 'Teknik Industri (S1)', 'Teknik Elektro (S1)', 'Sistem Informasi (D3)', 'Sistem Informasi Akuntansi (D3)', 'Teknologi Komputer (D3)', 'Manajemen (S1)', 'Akuntansi (S1)', 'Pariwisata (S1)', 'Hukum Bisnis (S1)', 'Administrasi Perkantoran (D3)', 'Akuntansi (D3)', 'Administrasi Bisnis (D3)', 'Manajemen Pajak (D3)', 'Perhotelan (D3)', 'Hukum Bisnis (S1)', 'Ilmu Hukum (S1)', 'Hukum Internasional (S1)', 'Ilmu Keperawatan (S1)', 'Psikologi (S1)', 'Ilmu Keperawatan (D3)', 'Profesi NERS'] as $option)
+                        @foreach([
+                            'Ilmu Komunikasi (S1)', 'Sastra Inggris (S1)', 'Public Relations (D3)',
+                            'Broadcasting (D3)', 'Advertising (D3)', 'Bahasa Inggris (D3)',
+                            'Sistem Informasi (S1)', 'Teknologi Informasi (S1)', 'Software Engineering (S1)',
+                            'Informatika (S1)', 'Teknik Industri (S1)', 'Teknik Elektro (S1)',
+                            'Sistem Informasi (D3)', 'Sistem Informasi Akuntansi (D3)', 'Teknologi Komputer (D3)',
+                            'Manajemen (S1)', 'Akuntansi (S1)', 'Pariwisata (S1)', 'Hukum Bisnis (S1)',
+                            'Administrasi Perkantoran (D3)', 'Akuntansi (D3)', 'Administrasi Bisnis (D3)',
+                            'Manajemen Pajak (D3)', 'Perhotelan (D3)', 'Hukum Bisnis (S1)', 'Ilmu Hukum (S1)',
+                            'Hukum Internasional (S1)', 'Ilmu Keperawatan (S1)', 'Psikologi (S1)',
+                            'Ilmu Keperawatan (D3)', 'Profesi NERS'
+                        ] as $option)
                             <option value="{{ $option }}" {{ request('jurusan1') == $option ? 'selected' : '' }}>{{ $option }}</option>
                         @endforeach
                     </select>
@@ -25,19 +36,25 @@
 </div>
 
 <script>
+    // Ambil data dari controller (pastikan $jawabanKuesioner1 sudah terdefinisi)
     var dataAlumni = @json($jawabanKuesioner1);
+    var currentYear = new Date().getFullYear();
+    var years = [];
+    // Buat array untuk 5 tahun terakhir (misalnya: 2025, 2024, ... 2021)
+    for (var y = currentYear; y > currentYear - 5; y--) {
+        years.push(y.toString());
+    }
 
     var bekerjaData = 0;
     var melanjutkanPendidikanData = 0;
     var tidakBekerjaData = 0;
 
-    var currentYear = new Date().getFullYear();
-    var years = Array.from({length: 4}, (_, i) => (currentYear - 3 + i).toString());
-
     years.forEach(function(year) {
-        bekerjaData += dataAlumni[year].status_1 || 0;
-        melanjutkanPendidikanData += dataAlumni[year].status_2 || 0;
-        tidakBekerjaData += dataAlumni[year].status_3 || 0;
+        // Jika data untuk tahun tersebut tidak ada, gunakan nilai default
+        var yearData = dataAlumni[year] || { status_1: 0, status_2: 0, status_3: 0 };
+        bekerjaData += yearData.status_1;
+        melanjutkanPendidikanData += yearData.status_2;
+        tidakBekerjaData += yearData.status_3;
     });
 
     var options = {
@@ -48,7 +65,7 @@
             background: '#e5e5e5',
         },
         title: {
-            text: 'Alumni Career Status (Last 4 Years)',
+            text: 'Alumni Career Status (Last 5 Years)',
             align: 'center',
             style: {
                 fontSize: '18px',
@@ -63,16 +80,16 @@
                 colors: ['#000']
             },
             dropShadow: {
-                enabled: false, // Menonaktifkan bayangan
+                enabled: false,
             },
         },
         tooltip: {
             shared: true,
             intersect: false,
-            theme: 'light',  // Mengubah tema tooltip menjadi lebih terang
+            theme: 'light',
             style: {
                 fontSize: '14px',
-                color: '#000' // Warna teks pada tooltip menjadi hitam
+                color: '#000'
             }
         },
         legend: {
@@ -89,7 +106,7 @@
         colors: ['#9694FF', '#78B3CE', '#AA5486'],
         stroke: {
             width: 2,
-            colors: ['#fff'] // Border putih untuk kontras dengan pie chart
+            colors: ['#fff']
         },
     };
 

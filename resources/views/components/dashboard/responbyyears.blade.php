@@ -8,7 +8,18 @@
                 <div class="flex items-center space-x-4">
                     <select name="jurusandefault" class="bg-gray-700 text-white rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                         <option value="" {{ request('jurusandefault') == '' ? 'selected' : '' }}>Semua Jurusan</option>
-                        @foreach(['Ilmu Komunikasi (S1)', 'Sastra Inggris (S1)', 'Public Relations (D3)', 'Broadcasting (D3)', 'Advertising (D3)', 'Bahasa Inggris (D3)', 'Sistem Informasi (S1)', 'Teknologi Informasi (S1)', 'Software Engineering (S1)', 'Informatika (S1)', 'Teknik Industri (S1)', 'Teknik Elektro (S1)', 'Sistem Informasi (D3)', 'Sistem Informasi Akuntansi (D3)', 'Teknologi Komputer (D3)', 'Manajemen (S1)', 'Akuntansi (S1)', 'Pariwisata (S1)', 'Hukum Bisnis (S1)', 'Administrasi Perkantoran (D3)', 'Akuntansi (D3)', 'Administrasi Bisnis (D3)', 'Manajemen Pajak (D3)', 'Perhotelan (D3)', 'Hukum Bisnis (S1)', 'Ilmu Hukum (S1)', 'Hukum Internasional (S1)', 'Ilmu Keperawatan (S1)', 'Psikologi (S1)', 'Ilmu Keperawatan (D3)', 'Profesi NERS'] as $option)
+                        @foreach([
+                            'Ilmu Komunikasi (S1)', 'Sastra Inggris (S1)', 'Public Relations (D3)',
+                            'Broadcasting (D3)', 'Advertising (D3)', 'Bahasa Inggris (D3)',
+                            'Sistem Informasi (S1)', 'Teknologi Informasi (S1)', 'Software Engineering (S1)',
+                            'Informatika (S1)', 'Teknik Industri (S1)', 'Teknik Elektro (S1)',
+                            'Sistem Informasi (D3)', 'Sistem Informasi Akuntansi (D3)', 'Teknologi Komputer (D3)',
+                            'Manajemen (S1)', 'Akuntansi (S1)', 'Pariwisata (S1)', 'Hukum Bisnis (S1)',
+                            'Administrasi Perkantoran (D3)', 'Akuntansi (D3)', 'Administrasi Bisnis (D3)',
+                            'Manajemen Pajak (D3)', 'Perhotelan (D3)', 'Hukum Bisnis (S1)', 'Ilmu Hukum (S1)',
+                            'Hukum Internasional (S1)', 'Ilmu Keperawatan (S1)', 'Psikologi (S1)',
+                            'Ilmu Keperawatan (D3)', 'Profesi NERS'
+                        ] as $option)
                             <option value="{{ $option }}" {{ request('jurusandefault') == $option ? 'selected' : '' }}>{{ $option }}</option>
                         @endforeach
                     </select>
@@ -19,7 +30,8 @@
             </div>
         </div>
         <div class="block w-full overflow-x-auto px-4">
-            <div id="barchart1" class="w-full font-sans" ></div>
+            <!-- Pastikan id container sesuai -->
+            <div id="barchart1" class="w-full font-sans"></div>
         </div>
     </div>
 </div>
@@ -52,7 +64,8 @@
             dataLabels: {
                 enabled: true,
                 formatter: function (val) {
-                    return parseFloat(val).toFixed(0) + "%";
+                    // Dua angka di belakang koma
+                    return parseFloat(val).toFixed(2) + "%";
                 },
                 style: {
                     fontSize: '10px',
@@ -75,7 +88,7 @@
                 labels: {
                     style: { color: '#333' },
                     formatter: function (val) {
-                        return parseFloat(val).toFixed(1) + "%";
+                        return parseFloat(val).toFixed(2) + "%";
                     }
                 }
             },
@@ -84,7 +97,7 @@
                 align: 'center',
                 style: { fontSize: '18px', color: '#333' }
             },
-            colors: ['#1E90FF80'], // Warna Bar yang digunakan, agak redup seperti efek kaca
+            colors: ['#1E90FF80'],
             stroke: {
                 colors: ['#1E90FF'],
                 width: 2,
@@ -98,16 +111,20 @@
             }]
         };
 
-        var chart = new ApexCharts(document.querySelector("#barChart1"), options);
+        // Perhatikan penggunaan id "barchart1" sesuai dengan HTML
+        var chart = new ApexCharts(document.querySelector("#barchart1"), options);
         chart.render();
 
+        // Jika ada elemen dataColumns, tampilkan data tambahan dengan dua angka desimal
         var dataColumns = document.getElementById('dataColumns');
-        dataPartisipasi.forEach(function(item) {
-            dataColumns.innerHTML += `<div class="flex justify-between py-2">
-                                            <div>${item.tahun_lulus}</div>
-                                            <div>${item.persentase.toFixed(2)}%</div>
-                                        </div>`;
-        });
+        if(dataColumns){
+            dataPartisipasi.forEach(function(item) {
+                dataColumns.innerHTML += `<div class="flex justify-between py-2">
+                                                <div>${item.tahun_lulus}</div>
+                                                <div>${item.persentase.toFixed(2)}%</div>
+                                            </div>`;
+            });
+        }
 
         const chartContainer = document.getElementById('chartContainer');
         const textColor = window.getComputedStyle(chartContainer).backgroundColor === 'rgb(225, 225, 225)' ? 'text-black' : 'text-white';

@@ -15,125 +15,91 @@ class DashboardController extends Controller
 {
     public function dashboard(Request $request)
     {
-        if ($error = $this->subMainProcess()) {
-            return redirect()->route('login')->with('error', $error);
-        }
+        // Pastikan user terautentikasi dan memiliki hak akses
+        $this->authorizeDashboard();
 
-        $dataPengguna = $this->dekripsiDataPengguna();
-        $profil = $this->ambilProfil($dataPengguna['id'], $dataPengguna['role']);
-        $jumlahPenggunaDisetujui = User::where('status', 'approved')->where('role', 'alumni')->count();
-        $jumlahPenggunaPending = User::where('status', 'pending')->where('role', 'alumni')->count();
+        $userData = $this->getUserData();
+        $profil = $this->getUserProfile($userData['id'], $userData['role']);
 
-        $alumniDanResponden = $this->ambilAlumniDanResponden($request->query('jurusandefault')); // Pass the 'jurusandefault' parameter
-        $persentasePerTahun = $this->hitungPersentasePerTahun($alumniDanResponden);
+        $jumlahPenggunaDisetujui = User::where('status', 'approved')
+            ->where('role', 'alumni')
+            ->count();
+
+        $jumlahPenggunaPending = User::where('status', 'pending')
+            ->where('role', 'alumni')
+            ->count();
+
+        $jurusanDefault = $request->query('jurusandefault');
+
+        $alumniDanResponden = $this->getAlumniAndRespondents($jurusanDefault);
+        $persentasePerTahun = $this->calculatePercentagePerYear($alumniDanResponden);
+
         $totalAlumni = $alumniDanResponden->sum('total_alumni');
         $totalResponden = $alumniDanResponden->sum('total_responden');
-        $persentaseRespondenKeseluruhan = $this->hitungPersentaseKeseluruhan($totalAlumni, $totalResponden);
+        $persentaseRespondenKeseluruhan = $this->calculateOverallPercentage($totalAlumni, $totalResponden);
 
-        [$jurusandefault, $jurusan1, $jurusan2] = $this->ambilParameterJurusan($request);
-
-        $jumlahRespondenJurusan0 = DB::table('profil_alumni')
-            ->select('jurusan', DB::raw('COUNT(*) as jumlah_responden'))
-            ->when($jurusandefault, function ($query) use ($jurusandefault) {
-                return $query->where('jurusan', $jurusandefault); // Filter by jurusan if jurusandefault is provided
-            })
-            ->groupBy('jurusan')
-            ->get();
-
-        $jawabanKuesioner1 = $this->jawabanKuesioner($jurusan1, $jurusandefault);
-        $jawabanKuesioner2 = ($jurusan1 == $jurusan2) ? $jawabanKuesioner1 : $this->jawabanKuesioner($jurusan2, $jurusandefault);
-
-
-        return view('pages.dashboard.index', [
-            'profil' => $profil,
-            'jumlahPenggunaDisetujui' => $jumlahPenggunaDisetujui,
-            'jumlahPenggunaPending' => $jumlahPenggunaPending,
-            'peranPengguna' => $dataPengguna['role'],
-            'persentasePerTahun' => $persentasePerTahun,
-            'persentaseRespondenKeseluruhan' => $persentaseRespondenKeseluruhan,
-            'totalResponden' => $totalResponden,
-            'jawabanKuesioner1' => $jawabanKuesioner1,
-            'jawabanKuesioner2' => $jawabanKuesioner2,
-            'jumlahRespondenJurusan0' => $jumlahRespondenJurusan0,
-            'jurusandefault' => $jurusandefault,
-            'jurusan1' => $jurusan1,
-            'jurusan2' => $jurusan2,
-        ]);
-    }
-
-
-    private function ambilParameterJurusan(Request $request): array
-    {
-        $jurusandefault = $request->query('jurusandefault');
+        // Ambil parameter filter jurusan dari request
         $jurusan1 = $request->query('jurusan1');
         $jurusan2 = $request->query('jurusan2');
 
-        return [$jurusandefault, $jurusan1, $jurusan2];
-    }
-
-    private function jawabanKuesioner($jurusan = null)
-    {
-        // Mengambil respon kuesioner dengan join dan filter jurusan jika ada
-        $responKuesioner = ResponKuesioner::with('user.profilAlumni')
-            ->join('profil_alumni', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
-            ->whereNotNull('profil_alumni.jurusan')
-            ->when($jurusan, function ($query) use ($jurusan) {
-                $query->where('profil_alumni.jurusan', $jurusan);
-            })
+        $jumlahRespondenJurusan0 = DB::table('profil_alumni')
+            ->select('jurusan', DB::raw('COUNT(*) as jumlah_responden'))
+            ->when($jurusanDefault, fn($query) => $query->where('jurusan', $jurusanDefault))
+            ->groupBy('jurusan')
             ->get();
 
-        // Inisialisasi data alumni
-        $dataAlumni = [];
+        $jawabanKuesioner1 = $this->getQuestionnaireResponses($jurusan1, $jurusanDefault);
+        $jawabanKuesioner2 = ($jurusan1 === $jurusan2)
+            ? $jawabanKuesioner1
+            : $this->getQuestionnaireResponses($jurusan2, $jurusanDefault);
 
-        // Proses data respon kuesioner dan grup berdasarkan tahun lulus dan status
-        foreach ($responKuesioner as $respon) {
-            $profilAlumni = $respon->user->profilAlumni;
-
-            if ($profilAlumni && $profilAlumni->tahun_lulus) {
-                $tahunLulus = $profilAlumni->tahun_lulus;
-                $jawaban = json_decode($respon->jawaban, true);
-
-                // Pastikan jawaban 'status' ada sebelum memproses
-                if (isset($jawaban['status'])) {
-                    // Inisialisasi jika tahun lulus belum ada
-                    if (!isset($dataAlumni[$tahunLulus])) {
-                        $dataAlumni[$tahunLulus] = ['status_1' => 0, 'status_2' => 0, 'status_3' => 0];
-                    }
-
-                    // Perbarui hitungan status
-                    $statusKey = 'status_' . $jawaban['status'];
-                    if (array_key_exists($statusKey, $dataAlumni[$tahunLulus])) {
-                        $dataAlumni[$tahunLulus][$statusKey]++;
-                    }
-                }
-            }
-        }
-
-        return $dataAlumni;
+        return view('pages.dashboard.index', [
+            'profil'                         => $profil,
+            'jumlahPenggunaDisetujui'         => $jumlahPenggunaDisetujui,
+            'jumlahPenggunaPending'           => $jumlahPenggunaPending,
+            'peranPengguna'                   => $userData['role'],
+            'persentasePerTahun'              => $persentasePerTahun,
+            'persentaseRespondenKeseluruhan'   => $persentaseRespondenKeseluruhan,
+            'totalResponden'                  => $totalResponden,
+            'jawabanKuesioner1'               => $jawabanKuesioner1,
+            'jawabanKuesioner2'               => $jawabanKuesioner2,
+            'jumlahRespondenJurusan0'         => $jumlahRespondenJurusan0,
+            'jurusandefault'                  => $jurusanDefault,
+            'jurusan1'                      => $jurusan1,
+            'jurusan2'                      => $jurusan2,
+        ]);
     }
 
-
-    private function subMainProcess()
+    private function authorizeDashboard(): void
     {
-        if (!Auth::check() || ($dataPengguna = $this->dekripsiDataPengguna())['status'] !== 'approved' || $dataPengguna['role'] !== 'admin') {
+        // Cek apakah user sudah login dan mempunyai peran admin yang disetujui
+        if (!Auth::check() || ($this->getUserData()['status'] !== 'approved') || $this->getUserData()['role'] !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
-
-        return null;
     }
 
-    private function ambilProfil($idPengguna, $peranPengguna)
+    private function getUserData(): array
     {
-        $profilClass = ($peranPengguna === 'admin') ? ProfilAdmin::class : ProfilAlumni::class;
-        $kolom = ($peranPengguna === 'admin')
+        $user = Auth::user();
+        return [
+            'id'     => Auth::id(),
+            'role'   => $user->role,
+            'status' => $user->status,
+        ];
+    }
+
+    private function getUserProfile($userId, $userRole)
+    {
+        $profilClass = ($userRole === 'admin') ? ProfilAdmin::class : ProfilAlumni::class;
+        $columns = ($userRole === 'admin')
             ? ['nama', 'email', 'no_telepon', 'jabatan']
             : ['nama', 'tahun_lulus', 'linkedin', 'instagram', 'email', 'no_telepon'];
 
-        return $profilClass::where('user_id', $idPengguna)
-            ->firstOrFail($kolom);
+        return $profilClass::where('user_id', $userId)
+            ->firstOrFail($columns);
     }
 
-    private function ambilAlumniDanResponden($jurusandefault = null)
+    private function getAlumniAndRespondents($jurusanDefault = null)
     {
         $query = ProfilAlumni::select(
             'profil_alumni.tahun_lulus',
@@ -143,32 +109,58 @@ class DashboardController extends Controller
             ->leftJoin('respon_kuesioner', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
             ->groupBy('profil_alumni.tahun_lulus');
 
-        if ($jurusandefault) {
-            $query->where('profil_alumni.jurusan', $jurusandefault);
+        if ($jurusanDefault) {
+            $query->where('profil_alumni.jurusan', $jurusanDefault);
         }
 
         return $query->get();
     }
 
-    private function hitungPersentasePerTahun($alumniDanResponden)
+    private function calculatePercentagePerYear($alumniAndRespondents)
     {
-        return $alumniDanResponden->transform(function ($data) {
-            $data->persentase = $data->total_alumni ? ($data->total_responden / $data->total_alumni) * 100 : 0;
+        return $alumniAndRespondents->transform(function ($data) {
+            $data->persentase = $data->total_alumni > 0
+                ? ($data->total_responden / $data->total_alumni) * 100
+                : 0;
             return $data;
         });
     }
 
-    private function hitungPersentaseKeseluruhan($totalAlumni, $totalResponden)
+    private function calculateOverallPercentage($totalAlumni, $totalResponden)
     {
-        return $totalAlumni ? ($totalResponden / $totalAlumni) * 100 : 0;
+        return $totalAlumni > 0 ? ($totalResponden / $totalAlumni) * 100 : 0;
     }
 
-    private function dekripsiDataPengguna()
+    private function getQuestionnaireResponses($jurusan = null, $jurusanDefault = null): array
     {
-        return [
-            'id' => Auth::id(),
-            'role' => Auth::user()->role,
-            'status' => Auth::user()->status,
-        ];
+        $responses = ResponKuesioner::with('user.profilAlumni')
+            ->join('profil_alumni', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
+            ->whereNotNull('profil_alumni.jurusan')
+            ->when($jurusan, fn($query) => $query->where('profil_alumni.jurusan', $jurusan))
+            ->when($jurusanDefault, fn($query) => $query->where('profil_alumni.jurusan', $jurusanDefault))
+            ->get();
+
+        $dataAlumni = [];
+
+        foreach ($responses as $response) {
+            $profilAlumni = $response->user->profilAlumni;
+            if ($profilAlumni && $profilAlumni->tahun_lulus) {
+                $tahunLulus = $profilAlumni->tahun_lulus;
+                $jawaban = json_decode($response->jawaban, true);
+
+                if (isset($jawaban['status'])) {
+                    if (!isset($dataAlumni[$tahunLulus])) {
+                        $dataAlumni[$tahunLulus] = ['status_1' => 0, 'status_2' => 0, 'status_3' => 0];
+                    }
+
+                    $statusKey = 'status_' . $jawaban['status'];
+                    if (array_key_exists($statusKey, $dataAlumni[$tahunLulus])) {
+                        $dataAlumni[$tahunLulus][$statusKey]++;
+                    }
+                }
+            }
+        }
+
+        return $dataAlumni;
     }
 }

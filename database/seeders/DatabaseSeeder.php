@@ -733,49 +733,65 @@ class DatabaseSeeder extends Seeder
         $jumlahResponden = (int)($users->count() * 0.7);
         $responden = $users->shuffle()->take($jumlahResponden)->values();
 
-        // Tentukan distribusi status
-        $jumlahStatus1 = (int)(0.5 * $jumlahResponden); // 50% bekerja
-        $jumlahStatus2 = (int)(0.3 * $jumlahResponden); // 30% melanjutkan pendidikan
-        $jumlahStatus3 = $jumlahResponden - $jumlahStatus1 - $jumlahStatus2; // sisanya tidak bekerja
+        // Definisikan 3 jawaban respon kuesioner yang diinginkan
+        $jawaban1 = [
+            "status" => "1",
+            "kerja_awal" => "ya",
+            "durasi_kerja" => "4",
+            "nama_perusahaan" => "PT. Shoppe Food",
+            "jabatan" => "Staff",
+            "bidang_industri" => "Programming",
+            "pendapatan_bulanan" => "5000000",
+            "hubungan_studi_pekerjaan" => "sangat_erat",
+            "relevansi_pendidikan" => "5",
+            "dukungan_institusi" => "saya mendapatkan dukungan",
+            "saran_perbaikan_kerja" => "lebih baik perbaiki fasilitas eskalatornya",
+            "penilaian_pendidikan" => "3",
+            "aspek_pendidikan" => "kerapihan kelaas",
+            "saran_umum" => "lebih baik dosennya jangna telat",
+            "kontak_terbaru" => "AFWANGIBRAN19@GMAIL.COM"
+        ];
 
-        $statusDistribusi = array_merge(
-            array_fill(0, $jumlahStatus1, 1),
-            array_fill(0, $jumlahStatus2, 2),
-            array_fill(0, $jumlahStatus3, 3)
-        );
-        shuffle($statusDistribusi); // Acak distribusi status
+        $jawaban2 = [
+            "status" => "3",
+            "status_tidak_bekerja" => "mempertimbangkan",
+            "alasan_tidak_bekerja" => "susahnya mencari lapangakn pekerjaan",
+            "pendidikan_memadai" => "tidak",
+            "saran_pelatihan" => "pelajaran tidak terlalu relevan dengan yang dibutuhkan oleh industri saat ini",
+            "dukungan_tidak_bekerja" => "tidak",
+            "saran_perbaikan_tidak_bekerja" => null,
+            "penilaian_pendidikan" => "2",
+            "aspek_pendidikan" => "sw",
+            "saran_umum" => "w",
+            "kontak_terbaru" => "AFWANGIBRAN19@GMAIL.COM"
+        ];
 
-        foreach ($responden as $index => $userId) {
-            $status = $statusDistribusi[$index];
+        $jawaban3 = [
+            "status" => "2",
+            "institusi_pendidikan" => "Universitas Indonesia, Sistem Informasi",
+            "jenjang_pendidikan" => "S2",
+            "motivasi_pendidikan" => "memenuhi syarat kenaikan jabatan",
+            "persiapan_studi" => "5",
+            "kekurangan_pendidikan" => "ya banyak materi yang berkaitan dengan jurusan saya saat ini",
+            "dukungan_pendidikan" => "masih kurang dalam hal informasi beasiswa",
+            "saran_perbaikan_pendidikan" => "sebaiknya institusi memperbaiki koneksi dengan universitas lain",
+            "penilaian_pendidikan" => "5",
+            "aspek_pendidikan" => "suasan kelas",
+            "saran_umum" => "tidak ada",
+            "kontak_terbaru" => "AFWd9@GMAIL.CoM"
+        ];
 
-            // Tentukan jawaban sesuai dengan status yang dipilih
-            $jawaban = match ($status) {
-                1 => [
-                    'status' => '1',
-                    'status_kerja' => 'ya',
-                    'durasi_kerja' => rand(1, 5), // Durasi kerja acak (1-5 tahun)
-                    'nama_perusahaan' => 'Perusahaan ' . chr(rand(65, 90)) . chr(rand(65, 90)),
-                    'pendapatan_bulanan' => rand(4000000, 10000000), // Rentang gaji acak
-                    'hubungan_studi_pekerjaan' => ['sangat_erat', 'erat', 'cukup'][rand(0, 2)],
-                    'syarat_pendidikan' => 'ya',
-                    'jenis_perusahaan' => ['pemerintah', 'swasta', 'startup'][rand(0, 2)],
-                ],
-                2 => [
-                    'status' => '2',
-                    'info_tambahan' => 'Melanjutkan pendidikan di bidang ' . ['Komputer', 'Manajemen', 'Teknik'][rand(0, 2)],
-                ],
-                3 => [
-                    'status' => '3',
-                    'alasan' => ['menikah', 'sedang mencari pekerjaan', 'melanjutkan usaha keluarga'][rand(0, 2)],
-                ],
-                default => [],
-            };
+        // Gabungkan ketiga jawaban ke dalam array
+        $jawabanResponses = [$jawaban1, $jawaban2, $jawaban3];
 
-            // Insert jawaban ke tabel respon_kuesioner
+        // Insert jawaban ke tabel respon_kuesioner dengan memilih salah satu jawaban secara acak
+        foreach ($responden as $userId) {
+            $selectedJawaban = $jawabanResponses[array_rand($jawabanResponses)];
+
             DB::table('respon_kuesioner')->insert([
                 'event_kuesioner_id' => $eventKuesionerId,
                 'user_id' => $userId,
-                'jawaban' => json_encode($jawaban, JSON_PRETTY_PRINT), // Format lebih rapi
+                'jawaban' => json_encode($selectedJawaban, JSON_PRETTY_PRINT),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
