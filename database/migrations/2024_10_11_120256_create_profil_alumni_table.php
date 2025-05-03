@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')
                   ->constrained('users')
-                  ->onDelete('cascade'); // Tambahkan opsi cascade delete
+                  ->onDelete('cascade')
+                  ->name('custom_user_id_foreign');  // Memberikan nama unik untuk foreign key
             $table->string('nim')->nullable();
             $table->string('nama')->nullable();
             $table->string('jurusan')->nullable();

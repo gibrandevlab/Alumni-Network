@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('event_kuesioner', function (Blueprint $table) {
             $table->id();
-            $table->string('judul_event', 255); // Panjang maksimum judul_event
+            $table->string('judul_event', 255);
             $table->text('deskripsi_event');
-            $table->string('foto')->nullable(); // Tambahkan nullable jika foto tidak harus diisi
-            $table->timestamp('tanggal_mulai')->useCurrent(); // Hapus useCurrent jika ingin mengisi manual
-            $table->timestamp('tanggal_akhir')->useCurrent(); // Hapus useCurrent jika ingin mengisi manual
-            $table->integer('tahun_lulusan')->unsigned(); // Tambahkan unsigned jika tahun lulusan hanya bernilai positif
+            $table->string('foto')->nullable(); // Foto optional
+            $table->year('tahun_mulai'); // Mengganti tanggal_mulai menjadi tahun_mulai
+            $table->year('tahun_akhir'); // Mengganti tanggal_akhir menjadi tahun_akhir
+            $table->integer('tahun_lulusan')->unsigned()->nullable(); // Nullable jika tidak ada
             $table->timestamps();
-        });
+        });    
     }
 
     /**

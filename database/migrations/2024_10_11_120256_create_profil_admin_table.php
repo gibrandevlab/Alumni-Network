@@ -12,16 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('profil_admin', function (Blueprint $table) {
-            $table->id()->primary()->autoIncrement()->notNullable();
-            $table->foreignId('user_id')
-                  ->constrained('users')
-                  ->onDelete('cascade'); // Tambahkan opsi cascade delete
-            $table->string('nama')->nullable();
-            $table->string('email')->nullable();
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->index();
             $table->string('no_telepon')->nullable();
             $table->string('jabatan')->nullable();
             $table->timestamps();
-        });
+            $table->softDeletes();
+        });        
     }
 
     /**

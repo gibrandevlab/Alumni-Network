@@ -13,16 +13,15 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Relasi ke tabel users
-            $table->text('message')->nullable(); // Isi pesan, bisa null jika hanya mengirim media
-            $table->string('media_path')->nullable(); // Path file media (gambar/video)
-            $table->string('media_type')->nullable(); // Jenis media (image/video)
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')
+                  ->name('fk_messages_user'); // Berikan nama unik pada foreign key constraint
+            $table->text('message');
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrati`ons.
      */
     public function down(): void
     {
