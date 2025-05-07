@@ -16,10 +16,24 @@ class ResponKuesioner extends Model
         'jawaban', // Menyimpan jawaban dalam format JSON
     ];
 
-    // In ResponKuesioner model
+    /**
+     * Relasi ke model User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke model EventKuesioner
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function eventKuesioner()
+    {
+        return $this->belongsTo(EventKuesioner::class, 'event_kuesioner_id');
     }
 }
 

@@ -18,12 +18,10 @@ return new class extends Migration
                   ->onDelete('cascade')
                   ->index('custom_user_id_index');  // Memberikan nama unik untuk index
             $table->string('nim')->nullable();
-            $table->string('nama')->nullable();
             $table->string('jurusan')->nullable();
             $table->integer('tahun_masuk')->nullable();
             $table->integer('tahun_lulus')->nullable();
             $table->string('no_telepon')->nullable();
-            $table->string('email')->nullable();
             $table->string('alamat_rumah')->nullable();
             $table->float('ipk')->nullable();
             $table->string('linkedin')->nullable();

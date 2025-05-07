@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')
-                  ->name('fk_messages_user'); // Berikan nama unik pada foreign key constraint
+                  ->index('idx_messages_user'); // Berikan nama unik pada indeks
             $table->text('message');
             $table->timestamps();
         });
