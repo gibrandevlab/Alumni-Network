@@ -8,28 +8,25 @@ class CreateResponKuesionerTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('respon_kuesioner', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_kuesioner_id')->constrained('event_kuesioner')->onDelete('cascade')
-                  ->name('fk_respon_event_kuesioner'); // Berikan nama unik untuk foreign key constraint
-            $table->text('jawaban'); // Kolom jawaban
+            $table->foreignId('event_kuesioner_id')
+                ->constrained('event_kuesioner')
+                ->onDelete('cascade')
+                ->index('idx_respon_event_kuesioner'); // Index dengan nama khusus
+            $table->json('jawaban')->nullable(); // Jawaban dalam format JSON
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('respon_kuesioner');
     }
 }
-
