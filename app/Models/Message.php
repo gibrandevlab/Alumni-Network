@@ -10,7 +10,12 @@ class Message extends Model
     use HasFactory;
 
     // Kolom yang dapat diisi secara massal
-    protected $fillable = ['user_id', 'message'];
+    protected $fillable = [
+        'user_id',
+        'message',
+        'media_path',
+        'media_type',
+    ];
 
     /**
      * Relasi ke User.

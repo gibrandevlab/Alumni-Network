@@ -24,18 +24,22 @@ class RegisterController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        $user = User::create([
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'alumni',
-            'status' => 'pending',
-        ]);
+        try {
+            $user = User::create([
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'alumni',
+                'status' => 'pending',
+            ]);
 
-        ProfilAlumni::create([
-            'user_id' => $user->id,
-        ]);
+            ProfilAlumni::create([
+                'user_id' => $user->id,
+            ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+            return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat registrasi. Silakan coba lagi.');
+        }
     }
 
     // Redirect ke Google
@@ -59,16 +63,22 @@ class RegisterController extends Controller
                 ]
             );
 
-            ProfilAlumni::Create([
+            if (!$user->wasRecentlyCreated) {
+                return redirect()->route('login')->with('info', 'Email sudah terdaftar. Silakan login.');
+            }
+
+            ProfilAlumni::create([
                 'user_id' => $user->id,
             ]);
 
             // Login user setelah registrasi
             Auth::login($user);
 
-            return redirect()->route('login')->with('success', 'Login dengan Google berhasil!');
+            // Mengarahkan ke dashboard menggunakan route name
+            return redirect()->route('dashboard.dashboard')->with('success', 'Login dengan Google berhasil!');
         } catch (\Exception $e) {
-            return redirect()->route('register')->with('error', 'Terjadi kesalahan saat login dengan Google.');
+            // Mengarahkan ke homepage menggunakan route name
+            return redirect()->route('homepage.index')->with('error', 'Terjadi kesalahan saat login dengan Google.');
         }
     }
 }

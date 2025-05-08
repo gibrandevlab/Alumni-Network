@@ -48,8 +48,12 @@ class GroupChatController extends Controller
     {
         $request->validate([
             'message' => 'nullable|string|max:1000',
-            'media'   => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov|max:20480',
+            'media'   => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov|max:10240', // Maksimal 10MB
         ]);
+
+        if (!$request->filled('message') && !$request->hasFile('media')) {
+            return redirect()->back()->with('error', 'Pesan atau media harus diisi.');
+        }
 
         $userId = Auth::user()->id;
         $mediaPath = null;
@@ -57,10 +61,20 @@ class GroupChatController extends Controller
 
         if ($request->hasFile('media')) {
             $media = $request->file('media');
+            $mediaType = explode('/', $media->getMimeType())[0];
+
+            // Validasi ukuran berdasarkan tipe media
+            if ($mediaType === 'image' && $media->getSize() > 1024 * 1024) { // 1MB untuk foto
+                return redirect()->back()->with('error', 'Ukuran foto tidak boleh lebih dari 1MB.');
+            }
+
+            if ($mediaType === 'video' && $media->getSize() > 10 * 1024 * 1024) { // 10MB untuk video
+                return redirect()->back()->with('error', 'Ukuran video tidak boleh lebih dari 10MB.');
+            }
+
             $fileName = time() . '_' . $media->getClientOriginalName();
             $mediaPath = 'images/Grupchat/' . $fileName;
             Storage::disk('public')->putFileAs('images/Grupchat', $media, $fileName);
-            $mediaType = explode('/', $media->getMimeType())[0];
         }
 
         Message::create([

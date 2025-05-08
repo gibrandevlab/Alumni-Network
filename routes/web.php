@@ -15,11 +15,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
 
 // 1. HomepageController
-Route::get('/', [HomepageController::class, 'index']);
+Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
 
 // 2. Routes Menggunakan Closure (Tanpa Controller)
-Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'));
-Route::get('/panduan', fn() => view('pages.panduan'));
+Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'))->name('dashboard.partisipasi-alumni');
+Route::get('/panduan', fn() => view('pages.panduan'))->name('panduan.index');
 Route::get('/pengisian-tracer-study', fn() => view('pages.Kuesioner.index_quest'))->name('kuesioner.index');
 Route::get('/pengisian-tracer-study/Tracer-Study-1', fn() => view('pages.Kuesioner.Tracer-study-1'))->name('kuesioner.tracer-study-1');
 
@@ -58,7 +58,7 @@ Route::controller(DashboardController::class)->group(function () {
     Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
 });
 
-Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus']);
+Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
 // d. EventController (prefix "dashboard")
 Route::prefix('dashboard')->group(function () {
