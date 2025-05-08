@@ -95,7 +95,8 @@ Route::controller(RegisterController::class)->group(function () {
 
 // 6. GroupChatController
 Route::get('/group-chat', [GroupChatController::class, 'index'])->name('group-chat.index');
-Route::post('/group-chat', [GroupChatController::class, 'store'])->name('group-chat.store');
+Route::get('/group-chat/messages', [GroupChatController::class, 'fetchMessages'])->name('group-chat.fetch');
+Route::post('/group-chat/store', [GroupChatController::class, 'store'])->name('group-chat.store');
 
 // 7. ProfileController
 Route::controller(ProfileController::class)->group(function () {
