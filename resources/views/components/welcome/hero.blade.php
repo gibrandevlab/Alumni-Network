@@ -1,28 +1,27 @@
-<div class="flex flex-wrap bg-cover bg-no-repeat relative" id="home">
-    <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover">
-        <source src="{{ asset('videos/hero-bg1.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <div class="w-full sm:w-8/12 mb-10 relative z-10">
-        <div class="container mx-auto min-h-screen flex items-center justify-center sm:p-10">
+<div class="flex flex-wrap bg-cover bg-no-repeat relative" id="home"
+ style="background-image: none; background-size: cover; background-position: center;">
+    <div class="w-full sm:w-10/12 md:w-8/12 mb-10 relative z-10">
+        <div class="container mx-auto min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-10">
             <header class="container px-4 lg:flex items-center h-full lg:mt-0">
                 <div class="w-full hero-fade-in text-left">
-                    <h1 class="text-xl sm:text-2xl lg:text-5xl font-bold text-white mb-4">
+                    <h1 class="text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold text-white mb-4">
                         Portal Alumni Network <br>
                         <span class="text-blue-600">Universitas Bina Sarana Informatika</span>
                     </h1>
-                                    <p class="text-base sm:text-lg lg:text-xl mb-10 text-white">
-                    Ayo, Sukseskan Alumni Network Universitas BSI
-                </p>
-                    <button class="bg-white text-black text-lg font-medium px-6 py-3 rounded shadow">
+                    <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 lg:mb-10 text-white">
+                        Ayo, Sukseskan Alumni Network Universitas BSI
+                    </p>
+                    <button class="bg-white text-black text-sm sm:text-base md:text-lg font-medium px-4 sm:px-6 py-2 sm:py-3 rounded shadow">
                         Mulai Survey
                     </button>
                 </div>
             </header>
         </div>
     </div>
-
+    <!-- Gambar dipindahkan ke bagian paling belakang -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('images/Banner-AI.png') }}" alt="Banner AI" class="w-full h-full object-cover object-center">
+    </div>
 </div>
 
 <script>
@@ -37,3 +36,4 @@
         }, 100); // Waktu tunggu sebelum efek dimulai (dalam milidetik)
     });
 </script>
+

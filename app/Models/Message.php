@@ -15,6 +15,7 @@ class Message extends Model
         'message',
         'media_path',
         'media_type',
+        'mentioned_user_id',
     ];
 
     /**
@@ -24,4 +25,13 @@ class Message extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Relasi ke Mentioned User.
+     */
+    public function mentionedUser()
+    {
+        return $this->belongsTo(User::class, 'mentioned_user_id')->withDefault();
+    }
 }
+

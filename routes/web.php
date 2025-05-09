@@ -93,13 +93,18 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
 });
 
-// 6. GroupChatController
-Route::get('/group-chat', [GroupChatController::class, 'index'])->name('group-chat.index');
-Route::get('/group-chat/messages', [GroupChatController::class, 'fetchMessages'])->name('group-chat.fetch');
-Route::post('/group-chat/store', [GroupChatController::class, 'store'])->name('group-chat.store');
+Route::controller(GroupChatController::class)->group(function () {
+    Route::get('/group-chat', 'index')->name('group-chat.index');
+    Route::post('/group-chat/store', 'store')->name('group-chat.store');
+    Route::get('/group-chat/messages', 'fetchMessages')->name('group-chat.messages');
+    Route::get('/users/search', 'searchUsers')->name('users.search');
+});
+
+
 
 // 7. ProfileController
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile/create', 'create')->name('profile.create');
     Route::post('/profile/store', 'store')->name('profile.store');
 });
+
