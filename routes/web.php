@@ -35,45 +35,47 @@ Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
 
 // 4. Dashboard Controllers
 // a. MemberSettingController
-Route::controller(MemberSettingController::class)->group(function () {
-    Route::get('/dashboard/member/setting', 'memberSetting')->name('dashboard.member-setting');
-    Route::post('/alumni', 'store')->name('alumni.store');
-    Route::get('/alumni/{id}', 'ambilDataAlumni')->name('alumni.show');
-    Route::put('/alumni/{id}', 'update')->name('alumni.update');
-    Route::delete('/alumni/{id}', 'destroy');
+Route::middleware(['auth'])->group(function () {
+    Route::controller(MemberSettingController::class)->group(function () {
+        Route::get('/dashboard/member/setting', 'memberSetting')->name('dashboard.member-setting');
+        Route::post('/alumni', 'store')->name('alumni.store');
+        Route::get('/alumni/{id}', 'ambilDataAlumni')->name('alumni.show');
+        Route::put('/alumni/{id}', 'update')->name('alumni.update');
+        Route::delete('/alumni/{id}', 'destroy');
+    });
+
+    // b. UserSettingController
+    Route::controller(UserSettingController::class)->group(function () {
+        Route::get('dashboard/user/setting', 'index')->name('dashboard.user-setting');
+        Route::post('dashboard/user/setting', 'store')->name('dashboard.user.setting.store');
+        Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.show');
+        Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.search');
+        Route::put('dashboard/user/setting/{id}', 'update')->name('dashboard.user.setting.update');
+        Route::delete('dashboard/user/setting/{id}', 'destroy')->name('dashboard.user.setting.destroy');
+    });
+
+    // c. DashboardController
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
+    });
+
+    Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus']);
+
+    // d. EventController (prefix "dashboard")
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/event/setting', [EventController::class, 'index'])->name('dashboard.events.index');
+        Route::get('/event/create', [EventController::class, 'create'])->name('dashboard.events.create');
+        Route::post('/event/store', [EventController::class, 'store'])->name('dashboard.events.store');
+        Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('dashboard.events.edit');
+        Route::put('/event/{event}/update', [EventController::class, 'update'])->name('dashboard.events.update');
+        Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('dashboard.events.destroy');
+        Route::get('/event/mendaftar', [EventController::class, 'mendaftar'])->name('dashboard.events.mendaftar');
+    });
+
+    // e. ExportDataController
+    Route::get('/export-data', [ExportDataController::class, 'index'])->name('export-data.index');
+    Route::get('dashboard/export-all', [ExportDataController::class, 'export'])->name('dashboard.export-all');
 });
-
-// b. UserSettingController
-Route::controller(UserSettingController::class)->group(function () {
-    Route::get('dashboard/user/setting', 'index')->name('dashboard.user-setting');
-    Route::post('dashboard/user/setting', 'store')->name('dashboard.user.setting.store');
-    Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.show');
-    Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.search');
-    Route::put('dashboard/user/setting/{id}', 'update')->name('dashboard.user.setting.update');
-    Route::delete('dashboard/user/setting/{id}', 'destroy')->name('dashboard.user.setting.destroy');
-});
-
-// c. DashboardController
-Route::controller(DashboardController::class)->group(function () {
-    Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
-});
-
-Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus']);
-
-// d. EventController (prefix "dashboard")
-Route::prefix('dashboard')->group(function () {
-    Route::get('/event/setting', [EventController::class, 'index'])->name('dashboard.events.index');
-    Route::get('/event/create', [EventController::class, 'create'])->name('dashboard.events.create');
-    Route::post('/event/store', [EventController::class, 'store'])->name('dashboard.events.store');
-    Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('dashboard.events.edit');
-    Route::put('/event/{event}/update', [EventController::class, 'update'])->name('dashboard.events.update');
-    Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('dashboard.events.destroy');
-    Route::get('/event/mendaftar', [EventController::class, 'mendaftar'])->name('dashboard.events.mendaftar');
-});
-
-// e. ExportDataController
-Route::get('/export-data', [ExportDataController::class, 'index'])->name('export-data.index');
-Route::get('dashboard/export-all', [ExportDataController::class, 'export'])->name('dashboard.export-all');
 
 // 5. Auth Controllers
 // a. AuthController

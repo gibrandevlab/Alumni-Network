@@ -31,13 +31,31 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->input('email'))->first();
+        $credentials = $request->only('email', 'password');
 
-        if ($this->attemptLogin($user, $request->input('password'))) {
-            return $this->handleUserStatus($request, $user);
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            $user = Auth::user();
+            
+            if ($user->status === 'pending') {
+                Auth::logout();
+                return redirect()->back()->with('notif_login', 'Akun Anda masih dalam status pending. Mohon tunggu persetujuan admin.');
+            }
+
+            if ($user->status === 'rejected') {
+                Auth::logout();
+                return redirect()->back()->with('notif_login', 'Akun Anda ditolak. Silakan hubungi admin.');
+            }
+
+            return match ($user->role) {
+                'admin' => redirect()->intended('/dashboard'),
+                'alumni' => redirect()->intended('/'),
+                default => redirect()->intended('/'),
+            };
         }
 
-        return $this->handleFailedLogin($request, 'Email atau password salah.');
+        return redirect()->back()->with('notif_login', 'Email atau password salah.');
     }
 
     private function attemptLogin(?User $user, string $password): bool

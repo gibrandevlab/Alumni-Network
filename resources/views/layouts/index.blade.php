@@ -40,11 +40,11 @@
 
 <body>
     @vite('resources/js/navbar-burger.js')
-    <div class="relative flex flex-row items-center justify-center bg-white shadow-md sticky top-0 z-10 m-0">
+    <div class=" flex flex-row items-center justify-center bg-white shadow-md sticky top-0 z-10 m-0">
     <nav class="container h-full py-4 flex justify-between items-center" >
         <!-- Logo Section -->
         <a class="text-3xl font-bold leading-none flex items-center" href="#">
-            <img style="width: 150px" src="{{ asset('images/fontbolt-removebg-preview.png') }}" alt="logo">
+            <img style="width: 150px" src="{{ asset('images/logo-alumnet-new.png') }}" alt="logo">
         </a>
 
         <!-- Mobile Menu Button -->

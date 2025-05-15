@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gobana - Login</title>
+    <title>Alumnet - Login</title>
     <meta name="description" content="Login to your Gobana account">
     <meta name="keywords" content="login, gobana, account">
     @vite('resources/css/app.css')
@@ -143,10 +143,21 @@
     <div class="curved-shape curved-2"></div>
 
     <!-- Notification -->
-    @if (session('notif_loginn'))
+    @if (session('notif_login'))
     <div class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-4 rounded-b-lg shadow-md z-50 w-auto max-w-md">
         <div class="flex justify-between items-center">
-            <span>{{ session('notif_loginn') }}</span>
+            <span>{{ session('notif_login') }}</span>
+            <button class="ml-4 text-white focus:outline-none" onclick="this.parentElement.parentElement.style.display='none'">
+                &times;
+            </button>
+        </div>
+    </div>
+    @endif
+
+    @if (session('success'))
+    <div class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-600 text-white p-4 rounded-b-lg shadow-md z-50 w-auto max-w-md">
+        <div class="flex justify-between items-center">
+            <span>{{ session('success') }}</span>
             <button class="ml-4 text-white focus:outline-none" onclick="this.parentElement.parentElement.style.display='none'">
                 &times;
             </button>
@@ -158,7 +169,7 @@
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="login-form">
             <!-- Logo -->
             <div class="text-center mb-6">
-                <img src="{{ asset('images/fontbolt-removebg-preview.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
+                <img src="{{ asset('images/logo-alumnet-white.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
             </div>
 
             <h2 class="text-center text-2xl font-bold text-white mb-6">Login</h2>
@@ -166,14 +177,14 @@
             <form action="{{ route('login') }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-white text-sm">Email</label>
+                    <label class="text-black text-sm">Email</label>
                     <input type="email" name="email" placeholder="username@gmail.com"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-white text-sm">Password</label>
+                    <label class="text-black text-sm">Password</label>
                     <input type="password" name="password" placeholder="Password"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>

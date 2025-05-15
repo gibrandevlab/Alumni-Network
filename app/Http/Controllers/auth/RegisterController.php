@@ -20,11 +20,13 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
+            'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'alumni',
@@ -35,7 +37,9 @@ class RegisterController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+        Auth::login($user);
+        
+        return redirect('/profile/create')->with('success', 'Registrasi berhasil! Silakan lengkapi profil Anda.');
     }
 
     // Redirect ke Google
