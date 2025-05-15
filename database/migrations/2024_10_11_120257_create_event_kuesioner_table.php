@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('judul_event', 255);
             $table->text('deskripsi_event');
-            $table->string('foto')->nullable(); // Foto optional
-            $table->year('tahun_mulai'); // Mengganti tanggal_mulai menjadi tahun_mulai
-            $table->year('tahun_akhir'); // Mengganti tanggal_akhir menjadi tahun_akhir
-            $table->integer('tahun_lulusan')->unsigned()->nullable(); // Nullable jika tidak ada
+            $table->string('foto')->nullable(); // Foto bersifat opsional
+            $table->year('tahun_mulai');        // Tahun mulai event
+            $table->year('tahun_akhir');        // Tahun akhir event
+            $table->unsignedInteger('tahun_lulusan')->nullable(); // Tahun lulusan, bisa null
             $table->timestamps();
-        });    
+        });
     }
 
     /**
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('event_kuesioner');
     }
 };
-

@@ -15,11 +15,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
 
 // 1. HomepageController
-Route::get('/', [HomepageController::class, 'index']);
+Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
 
 // 2. Routes Menggunakan Closure (Tanpa Controller)
-Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'));
-Route::get('/panduan', fn() => view('pages.panduan'));
+Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'))->name('dashboard.partisipasi-alumni');
+Route::get('/panduan', fn() => view('pages.panduan'))->name('panduan.index');
 Route::get('/pengisian-tracer-study', fn() => view('pages.Kuesioner.index_quest'))->name('kuesioner.index');
 Route::get('/pengisian-tracer-study/Tracer-Study-1', fn() => view('pages.Kuesioner.Tracer-study-1'))->name('kuesioner.tracer-study-1');
 
@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
     });
 
-    Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus']);
+    Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
     // d. EventController (prefix "dashboard")
     Route::prefix('dashboard')->group(function () {
@@ -95,12 +95,16 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
 });
 
-// 6. GroupChatController
-Route::get('/group-chat', [GroupChatController::class, 'index'])->name('group-chat.index');
-Route::post('/group-chat', [GroupChatController::class, 'store'])->name('group-chat.store');
+Route::controller(GroupChatController::class)->group(function () {
+    Route::get('/group-chat', 'index')->name('group-chat.index');
+    Route::post('/group-chat/store', 'store')->name('group-chat.store');
+    Route::get('/group-chat/messages', 'fetchMessages')->name('group-chat.messages');
+    Route::get('/users/search', 'searchUsers')->name('users.search');
+});
 
 // 7. ProfileController
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile/create', 'create')->name('profile.create');
     Route::post('/profile/store', 'store')->name('profile.store');
 });
+

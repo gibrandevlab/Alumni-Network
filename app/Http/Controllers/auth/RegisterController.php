@@ -25,31 +25,34 @@ class RegisterController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'alumni',
-            'status' => 'pending',
-        ]);
+        try {
+            $user = User::create([
+                'nama' => $request->nama,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'alumni',
+                'status' => 'pending',
+            ]);
 
-        ProfilAlumni::create([
-            'user_id' => $user->id,
-        ]);
+            if (!ProfilAlumni::where('user_id', $user->id)->exists()) {
+                ProfilAlumni::create([
+                    'user_id' => $user->id,
+                ]);
+            }
 
-        Auth::login($user);
-        
-        return redirect('/profile/create')->with('success', 'Registrasi berhasil! Silakan lengkapi profil Anda.');
+            Auth::login($user);
+            return redirect()->route('profile.create')->with('success', 'Registrasi berhasil! Silakan lengkapi profil Anda.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat registrasi. Silakan coba lagi.');
+        }
     }
 
-    // Redirect ke Google
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
-    // Callback dari Google
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
         try {
             $googleUser = Socialite::driver('google')->user();
@@ -57,22 +60,28 @@ class RegisterController extends Controller
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],
                 [
-                    'password' => Hash::make(uniqid()), // Generate password acak
+                    'password' => Hash::make(uniqid()), // Password random
                     'role' => 'alumni',
                     'status' => 'pending',
                 ]
             );
 
-            ProfilAlumni::Create([
-                'user_id' => $user->id,
-            ]);
+            if (!ProfilAlumni::where('user_id', $user->id)->exists()) {
+                ProfilAlumni::create([
+                    'user_id' => $user->id,
+                ]);
+            }
 
-            // Login user setelah registrasi
             Auth::login($user);
+            $request->session()->regenerate();
 
-            return redirect()->route('login')->with('success', 'Login dengan Google berhasil!');
+            return match ($user->status) {
+                'pending' => redirect()->route('profile.index')->with('info', 'Lengkapi profil Anda terlebih dahulu.'),
+                'rejected' => redirect()->route('login')->with('error', 'Akun Anda ditolak.'),
+                default => redirect()->route('homepage.index')->with('success', 'Login dengan Google berhasil!'),
+            };
         } catch (\Exception $e) {
-            return redirect()->route('register')->with('error', 'Terjadi kesalahan saat login dengan Google.');
+            return redirect()->route('homepage.index')->with('error', 'Terjadi kesalahan saat login dengan Google.');
         }
     }
 }

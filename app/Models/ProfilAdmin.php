@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProfilAdmin extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -30,8 +31,6 @@ class ProfilAdmin extends Model
      */
     protected $fillable = [
         'user_id',
-        'nama',
-        'email',
         'no_telepon',
         'jabatan',
     ];

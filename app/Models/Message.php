@@ -10,7 +10,13 @@ class Message extends Model
     use HasFactory;
 
     // Kolom yang dapat diisi secara massal
-    protected $fillable = ['user_id', 'message', 'media_path', 'media_type'];
+    protected $fillable = [
+        'user_id',
+        'message',
+        'media_path',
+        'media_type',
+        'mentioned_user_id',
+    ];
 
     /**
      * Relasi ke User.
@@ -21,26 +27,11 @@ class Message extends Model
     }
 
     /**
-     * Cek apakah pesan memiliki media.
-     *
-     * @return bool
+     * Relasi ke Mentioned User.
      */
-    public function hasMedia(): bool
+    public function mentionedUser()
     {
-        return !is_null($this->media_path);
-    }
-
-    /**
-     * Dapatkan URL media yang dapat diakses publik.
-     *
-     * @return string|null
-     */
-    public function mediaUrl(): ?string
-    {
-        if ($this->hasMedia()) {
-            return asset('storage/' . $this->media_path);
-        }
-
-        return null;
+        return $this->belongsTo(User::class, 'mentioned_user_id')->withDefault();
     }
 }
+

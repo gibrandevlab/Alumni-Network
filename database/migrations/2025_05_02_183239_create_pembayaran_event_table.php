@@ -16,14 +16,13 @@ return new class extends Migration
             $table->foreignId('pendaftaran_event_id')
             ->constrained('pendaftaran_event') // Referensi tabel 'pendaftaran_event'
             ->onDelete('cascade') // Hapus data terkait jika data dihapus
-            ->index() // Membuat index untuk pencarian yang lebih cepat
-            ->name('fk_pendaftaran_event_id'); // Berikan nama unik pada foreign key constraint
+            ->index('idx_pendaftaran_event_id'); // Berikan nama unik pada index
             $table->enum('status_pembayaran', ['menunggu', 'berhasil', 'gagal'])->default('menunggu');
             $table->string('midtrans_transaction_id')->nullable(); // ID transaksi dari Midtrans
             $table->decimal('jumlah', 10, 2); // Jumlah yang dibayar
             $table->timestamp('waktu_pembayaran')->nullable(); // Waktu pembayaran
             $table->timestamps();
-        });        
+        });
     }
 
     /**

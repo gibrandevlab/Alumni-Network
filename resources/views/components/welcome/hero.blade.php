@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="flex flex-wrap bg-cover bg-no-repeat relative min-h-screen" id="home">
     <img src="{{ asset('images/bg-grad.jpg') }}" alt="Background Cover" class="absolute top-0 left-0 w-full h-full object-cover z-0" />
     <!-- Overlay gradasi gelap -->
@@ -8,14 +9,30 @@
             <header class="container px-4 lg:flex items-center h-full lg:mt-0">
                 <div class="w-full hero-fade-in text-left">
                     <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-lg transition-all duration-700">
+=======
+<div class="flex flex-wrap bg-cover bg-no-repeat relative" id="home"
+ style="background-image: none; background-size: cover; background-position: center;">
+    <div class="w-full sm:w-10/12 md:w-8/12 mb-10 relative z-10">
+        <div class="container mx-auto min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-10">
+            <header class="container px-4 lg:flex items-center h-full lg:mt-0">
+                <div class="w-full hero-fade-in text-left">
+                    <h1 class="text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold text-white mb-4">
+>>>>>>> e403ecdb701270a4e0f23d520d7e0564846129e7
                         Portal Alumni Network <br>
                         <span class="text-blue-500">Universitas Bina Sarana Informatika</span>
                     </h1>
+<<<<<<< HEAD
                     <p class="text-lg sm:text-xl lg:text-2xl mb-10 text-white font-light drop-shadow-md transition-all duration-700">
                         “Kontribusi Anda sangat berarti untuk kemajuan kampus dan dunia pendidikan.”
                     </p>
                     <a href="/pengisian-tracer-study"
                         <button class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-8 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+=======
+                    <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 lg:mb-10 text-white">
+                        Ayo, Sukseskan Alumni Network Universitas BSI
+                    </p>
+                    <button class="bg-white text-black text-sm sm:text-base md:text-lg font-medium px-4 sm:px-6 py-2 sm:py-3 rounded shadow">
+>>>>>>> e403ecdb701270a4e0f23d520d7e0564846129e7
                         Mulai Survey
                         </button>
                     </a>
@@ -23,7 +40,10 @@
             </header>
         </div>
     </div>
-
+    <!-- Gambar dipindahkan ke bagian paling belakang -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('images/Banner-AI.png') }}" alt="Banner AI" class="w-full h-full object-cover object-center">
+    </div>
 </div>
 
 <style>
@@ -47,4 +67,9 @@
             });
         }, 200);
     });
+<<<<<<< HEAD
 </script>
+=======
+</script>
+
+>>>>>>> e403ecdb701270a4e0f23d520d7e0564846129e7
