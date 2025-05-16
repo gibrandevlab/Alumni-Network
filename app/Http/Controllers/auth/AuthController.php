@@ -46,35 +46,17 @@ class AuthController extends Controller
             );
         }
 
-        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->input('email'))->first();
 
-        if (Auth::attempt($credentials)) {
+        if ($this->attemptLogin($user, $request->input('password'))) {
             RateLimiter::clear($throttleKey); // Reset percobaan login jika berhasil
-            $request->session()->regenerate();
-            
-            $user = Auth::user();
-            
-            if ($user->status === 'pending') {
-                Auth::logout();
-                return redirect()->back()->with('notif_login', 'Akun Anda masih dalam status pending. Mohon tunggu persetujuan admin.');
-            }
-
-            if ($user->status === 'rejected') {
-                Auth::logout();
-                return redirect()->back()->with('notif_login', 'Akun Anda ditolak. Silakan hubungi admin.');
-            }
-
-            return match ($user->role) {
-                'admin' => redirect()->route('dashboard.dashboard'),
-                'alumni' => redirect()->route('homepage.index'),
-                default => redirect()->route('homepage.index'),
-            };
+            return $this->handleUserStatus($request, $user);
         }
 
         RateLimiter::hit($throttleKey, self::DECAY_MINUTES * 60); // Tambahkan percobaan login
         $remainingAttempts = self::MAX_LOGIN_ATTEMPTS - RateLimiter::attempts($throttleKey);
 
-        return redirect()->back()->with('notif_login', "Email atau password salah. Percobaan login tersisa: $remainingAttempts.");
+        return $this->handleFailedLogin($request, "Email atau password salah. Percobaan login tersisa: $remainingAttempts.");
     }
 
     private function attemptLogin(?User $user, string $password): bool

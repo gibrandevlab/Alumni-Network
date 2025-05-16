@@ -13,11 +13,11 @@ class User extends Authenticatable
         'id',
         'nama',
         'email',
-        'nama', // Tambahkan kolom 'nama'
+        'nama', // << Hapus ini
         'password',
         'role',
         'status',
-        'foto', // Tambahkan kolom 'foto'
+        'foto',
     ];
 
     protected $hidden = [

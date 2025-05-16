@@ -20,14 +20,12 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
         ]);
 
         try {
             $user = User::create([
-                'nama' => $request->nama,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 'alumni',
@@ -40,8 +38,7 @@ class RegisterController extends Controller
                 ]);
             }
 
-            Auth::login($user);
-            return redirect()->route('profile.create')->with('success', 'Registrasi berhasil! Silakan lengkapi profil Anda.');
+            return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat registrasi. Silakan coba lagi.');
         }
