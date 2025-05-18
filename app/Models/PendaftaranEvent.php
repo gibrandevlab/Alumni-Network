@@ -16,7 +16,7 @@ class PendaftaranEvent extends Model
     protected $fillable = [
         'event_id',
         'user_id',
-        'status', // Disesuaikan dengan migrasi
+        'status',
     ];
 
     /**

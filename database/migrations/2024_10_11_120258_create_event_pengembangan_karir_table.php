@@ -16,18 +16,19 @@ return new class extends Migration
             $table->id();
             $table->string('judul_event', 255);
             $table->text('deskripsi_event');
-            $table->timestamp('tanggal_mulai')->useCurrent();
-            $table->timestamp('tanggal_akhir')->useCurrent();
+            $table->date('tanggal_mulai')->nullable()->comment('Tanggal event dimulai');
+            $table->date('tanggal_akhir_pendaftaran')->nullable()->comment('Tanggal terakhir pendaftaran dibuka');
             $table->string('dilaksanakan_oleh', 100);
             $table->enum('tipe_event', ['loker', 'event'])->default('event');
             $table->string('foto')->nullable();
             $table->string('link')->nullable();
+            $table->integer('harga_daftar')->default(0);
+            $table->integer('maksimal_peserta')->default(0);
             $table->timestamps();
             $table->softDeletes();
-        
+
             $table->index('judul_event');
-            $table->index('tanggal_mulai');
-        });        
+        });
     }
 
     /**

@@ -6,10 +6,12 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\GroupChatController;
 use App\Http\Controllers\Dashboard\MemberSettingController;
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Dashboard\DashboardEffecientController;
 use App\Http\Controllers\Dashboard\UserSettingController;
 use App\Http\Controllers\FormQ1Controllers;
-use App\Http\Controllers\Dashboard\EventController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\PembayaranEventController;
+use App\Http\Controllers\PendaftaranEventController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
@@ -61,20 +63,43 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
-    // d. EventController (prefix "dashboard")
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/event/setting', [EventController::class, 'index'])->name('dashboard.events.index');
-        Route::get('/event/create', [EventController::class, 'create'])->name('dashboard.events.create');
-        Route::post('/event/store', [EventController::class, 'store'])->name('dashboard.events.store');
-        Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('dashboard.events.edit');
-        Route::put('/event/{event}/update', [EventController::class, 'update'])->name('dashboard.events.update');
-        Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('dashboard.events.destroy');
-        Route::get('/event/mendaftar', [EventController::class, 'mendaftar'])->name('dashboard.events.mendaftar');
+    // Dashboard & CRUD Event (Admin only)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('events', [EventController::class, 'dashboard'])
+            ->name('events.dashboard');
+
+        // Create
+        Route::get('events/create', [EventController::class, 'create'])
+            ->name('events.create');
+        Route::post('events', [EventController::class, 'store'])
+            ->name('events.store');
+
+        // Edit / Update
+        Route::get('events/{event}/edit', [EventController::class, 'edit'])
+            ->name('events.edit');
+        Route::post('events/{event}', [EventController::class, 'update'])
+            ->name('events.update');
+
+        // Delete
+        Route::post('events/{event}/delete', [EventController::class, 'destroy'])
+            ->name('events.destroy');
     });
 
-    // e. ExportDataController
-    Route::get('/export-data', [ExportDataController::class, 'index'])->name('export-data.index');
-    Route::get('dashboard/export-all', [ExportDataController::class, 'export'])->name('dashboard.export-all');
+    // Public: Listing & Detail
+    Route::get('events', [EventController::class, 'index'])
+        ->name('events.index');
+    Route::get('events/{event}', [EventController::class, 'show'])
+        ->name('events.show');
+
+    // Pendaftaran (Alumni)
+    Route::post('events/{event}/register', [PendaftaranEventController::class, 'register'])
+        ->name('events.register');
+
+    // AJAX Pembayaran
+    Route::post('payments/snap-token', [PaymentGatewayController::class, 'getSnapToken'])
+        ->name('payments.snap');
+    Route::post('midtrans/callback', [PembayaranEventController::class, 'callback'])
+        ->name('midtrans.callback');
 });
 
 // 5. Auth Controllers
@@ -104,7 +129,6 @@ Route::controller(GroupChatController::class)->group(function () {
 
 // 7. ProfileController
 Route::controller(ProfileController::class)->group(function () {
-    Route::get('/profile/create', 'create')->name('profile.create');
+    Route::get('/profile', 'index')->name('profile.index');
     Route::post('/profile/store', 'store')->name('profile.store');
 });
-

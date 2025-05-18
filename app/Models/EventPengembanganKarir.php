@@ -16,16 +16,18 @@ class EventPengembanganKarir extends Model
         'judul_event',
         'deskripsi_event',
         'tanggal_mulai',
-        'tanggal_akhir',
+        'tanggal_akhir_pendaftaran',
         'dilaksanakan_oleh',
         'tipe_event',
         'foto',
         'link',
+        'harga_daftar',
+        'maksimal_peserta',
     ];
 
     protected $dates = [
         'tanggal_mulai',
-        'tanggal_akhir',
+        'tanggal_akhir_pendaftaran',
         'created_at',
         'updated_at',
         'deleted_at',
