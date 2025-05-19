@@ -6,7 +6,7 @@
     @if ($peranPengguna == 'admin')
         {{-- konten utama dari dashboard admin --}}
         <div
-            class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased dark:bg-gray-700 text-black dark:text-white">
+            class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased dark:bg-gray-300 text-black dark:text-white">
             {{-- menu admin --}}
             @include('layouts.Dashboard.navbaratas')
             @include('layouts.Dashboard.sidebarkiri')
@@ -19,14 +19,22 @@
 
                 <form method="GET" action="{{ route('dashboard.dashboard') }}" >
                     <div class="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
-                        @include('components.dashboard.responbyyears')
-                        @include('components.dashboard.status')
+                        <div class="card shadow-md p-4">
+                            @include('components.dashboard.responbyyears')
+                        </div>
+                        <div class="card shadow-md p-4">
+                            @include('components.dashboard.status')
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 p-4 gap-4">
-                        @include('components.dashboard.statusallyear')
+                        <div class="card shadow-md p-4">
+                            @include('components.dashboard.statusallyear')
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 p-4 gap-4">
-                        @include('components.dashboard.tablependidikan')
+                        <div class="card shadow-md p-4">
+                            @include('components.dashboard.tablependidikan')
+                        </div>
                     </div>
                 </form>
             </div>

@@ -13,7 +13,6 @@ class User extends Authenticatable
         'id',
         'nama',
         'email',
-        'nama', // << Hapus ini
         'password',
         'role',
         'status',

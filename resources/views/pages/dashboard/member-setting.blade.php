@@ -1,52 +1,30 @@
 @extends('layouts.Dashboard.dashboard')
 
-@section('title', 'Admin - SITRA BSI')
-
 @section('content')
-    @if ($peranPengguna == 'admin')
-        <div
-            class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-800 text-black dark:text-white">
-            {{-- Menu Admin --}}
-            @include('layouts.Dashboard.navbaratas')
-            @include('layouts.Dashboard.sidebarkiri')
-
-            <div class="h-full ml-14 mt-14 mb-10 md:ml-64 p-6">
-                {{-- Tabel Pengguna --}}
-                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-                    <div class="flex justify-end mb-4">
-                        <button onclick="showCreateModal()"
-                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700">Tambah Alumni</button>
-                    </div>
-                    <h2 class="text-2xl font-semibold mb-4 dark:bg-gray-800 dark:text-gray-200">Data Alumni</h2>
-
-                    @include('components.dashboard.Member Setting.table-member', ['alumniProfiles' => $alumniProfiles])
-
-                </div>
-
-                <!-- Pagination -->
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-gray-700 dark:text-gray-300">
-                        Showing {{ $alumniProfiles->firstItem() }} to {{ $alumniProfiles->lastItem() }} of
-                        {{ $alumniProfiles->total() }} results
-                    </div>
-                    <div>
-                        {{ $alumniProfiles->links('vendor.pagination.tailwind') }} <!-- Menampilkan pagination -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Modal Pop-Up untuk Detail Data --}}
-    @include('components.dashboard.Member Setting.detail-member')
-
-    {{-- Modal Pop-Up untuk Edit Data --}}
-    @include('components.dashboard.Member Setting.edit-member')
-
-    {{-- Modal Pop-Up untuk Tambah Data --}}
-    @include('components.dashboard.Member Setting.create-member')
-
+<div class="min-h-screen flex flex-row flex-auto flex-shrink-0 antialiased dark:bg-gray-300 text-black dark:text-white">
+    @include('layouts.Dashboard.sidebarkiri')
 @endsection
+    <div class="h-full mx-14 my-14 md:mx-64" style="padding-left: 1rem; padding-right: 1rem;">
+        <header class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Manage Alumni</h1>
+        </header>
+        <section>
+            @include('components.dashboard.Member Setting.table-member')
+        </section>
+    </div>
+</div>
+
+
+<style>
+    @media (max-width: 768px) {
+        .min-h-screen {
+            padding: 1rem;
+        }
+        header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 
 <script>
     // Function to show modal and reset the form

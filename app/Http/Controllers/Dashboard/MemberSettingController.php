@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Auth;
 
 class MemberSettingController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     public function memberSetting(Request $request)
     {
         if (!Auth::check()) {
@@ -27,7 +34,7 @@ class MemberSettingController extends Controller
 
         $users = User::whereNotIn('id', $alumniIds)
             ->where('role', 'alumni')
-            ->select('id', 'email')
+            ->select('id')
             ->orderByDesc('updated_at')
             ->get();
 
@@ -41,33 +48,43 @@ class MemberSettingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate($this->getStoreValidationRules());
+        $request->validate([
+            'nim' => 'required|string|max:20|unique:profil_alumnis,nim',
+            'nama' => 'required|string|max:255',
+        ]);
 
-        try {
-            ProfilAlumni::create($request->all());
-            return redirect()->route('dashboard.member-setting')->with('success', 'Data alumni berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            return redirect()->route('dashboard.member-setting')->with('error', 'Gagal menambahkan data alumni: ' . $e->getMessage());
-        }
+        ProfilAlumni::create($request->only(['nim', 'nama']));
+
+        return response()->json(['success' => 'Data added successfully']);
     }
 
     public function ambilDataAlumni($id)
     {
-        return $this->findAlumni($id);
+        $alumni = ProfilAlumni::find($id);
+
+        if (!$alumni) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
+
+        return response()->json($alumni);
     }
 
     public function update(Request $request, $id)
     {
-        $this->validateUpdateRequest($request);
+        $request->validate([
+            'nim' => 'required|string|max:20',
+            'nama' => 'required|string|max:255',
+        ]);
 
-        try {
-            $alumni = ProfilAlumni::findOrFail($id);
-            $alumni->update(array_filter($this->getUpdateData($request)));
+        $alumni = ProfilAlumni::find($id);
 
-            return redirect()->route('dashboard.member-setting')->with('success', 'Data berhasil diperbarui.');
-        } catch (\Exception $e) {
-            return redirect()->route('dashboard.member-setting')->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
+        if (!$alumni) {
+            return response()->json(['error' => 'Data not found'], 404);
         }
+
+        $alumni->update($request->only(['nim', 'nama']));
+
+        return response()->json(['success' => 'Data updated successfully']);
     }
 
     public function destroy($id)
@@ -95,8 +112,8 @@ class MemberSettingController extends Controller
     private function getProfileColumns($role)
     {
         return [
-            'admin' => ['nama', 'email', 'no_telepon', 'jabatan'],
-            'alumni' => ['nama', 'tahun_lulus', 'linkedin', 'instagram', 'email', 'no_telepon'],
+            'admin' => ['no_telepon', 'jabatan'],
+            'alumni' => ['tahun_lulus', 'linkedin', 'instagram', 'no_telepon'],
         ][$role] ?? [];
     }
 
@@ -111,7 +128,8 @@ class MemberSettingController extends Controller
 
     private function getPaginatedAlumniProfiles(Request $request)
     {
-        return ProfilAlumni::paginate(10);
+        return ProfilAlumni::with('user:id,nama') // Eager load the user relationship and select the nama field
+            ->paginate(10);
     }
 
     private function validateUpdateRequest(Request $request)
@@ -122,8 +140,8 @@ class MemberSettingController extends Controller
     private function getUpdateData(Request $request)
     {
         return $request->only([
-            'nim', 'nama', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
-            'email', 'alamat_rumah', 'ipk', 'linkedin', 'instagram', 'email_alternatif'
+            'nim', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
+            'alamat_rumah', 'ipk', 'linkedin', 'instagram', 'email_alternatif'
         ]);
     }
 
@@ -132,11 +150,9 @@ class MemberSettingController extends Controller
         return [
             'user_id' => 'required|integer|exists:users,id',
             'nim' => 'required|string',
-            'nama' => 'required|string',
             'tahun_masuk' => 'required|integer',
             'tahun_lulus' => 'required|integer',
             'no_telepon' => 'required|string',
-            'email' => 'required|email|unique:profil_alumni,email',
             'alamat_rumah' => 'nullable|string',
             'ipk' => 'nullable|numeric',
             'linkedin' => 'nullable|string',
@@ -149,11 +165,9 @@ class MemberSettingController extends Controller
     {
         return [
             'nim' => 'nullable|string',
-            'nama' => 'nullable|string',
             'tahun_masuk' => 'nullable|integer',
             'tahun_lulus' => 'nullable|integer',
             'no_telepon' => 'nullable|string',
-            'email' => 'nullable|string|email',
             'alamat_rumah' => 'nullable|string',
             'ipk' => 'nullable|numeric',
             'linkedin' => 'nullable|string',

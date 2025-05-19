@@ -11,6 +11,7 @@ use App\Http\Controllers\FormQ1Controllers;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Dashboard\EventController;
 use Illuminate\Support\Facades\Route;
 
 // 1. HomepageController
@@ -68,6 +69,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/event-user/daftar/{eventId}', function($eventId) {
         return redirect()->route('event.user.order', $eventId);
     });
+});
+
+// EventController
+Route::controller(EventController::class)->group(function () {
+    Route::get('/events', 'index')->name('events.index');
+    Route::get('/events/create', 'create')->name('events.create');
+    Route::post('/events', 'store')->name('events.store');
+    Route::get('/events/{id}', 'show')->name('events.show');
+    Route::get('/events/{id}/edit', 'edit')->name('events.edit');
+    Route::put('/events/{id}', 'update')->name('events.update');
+    Route::delete('/events/{id}', 'destroy')->name('events.destroy');
 });
 
 // 5. Auth Controllers

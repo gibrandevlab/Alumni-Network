@@ -12,7 +12,6 @@ class ResponKuesioner extends Model
 
     protected $fillable = [
         'event_kuesioner_id',
-        'user_id',
         'jawaban', // Menyimpan jawaban dalam format JSON
     ];
 

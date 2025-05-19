@@ -16,6 +16,13 @@ use App\Models\PendaftaranEvent;
 
 class EventController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     public function index()
     {
         // Menggunakan pagination, ganti all() menjadi paginate()
@@ -153,8 +160,8 @@ class EventController extends Controller
     private function getProfileColumns($role)
     {
         return [
-            'admin' => ['nama', 'email', 'no_telepon', 'jabatan'],
-            'alumni' => ['nama', 'tahun_lulus', 'linkedin', 'instagram', 'email', 'no_telepon'],
+            'admin' => ['no_telepon', 'jabatan'],
+            'alumni' => ['tahun_lulus', 'linkedin', 'instagram', 'no_telepon'],
         ][$role] ?? [];
     }
 

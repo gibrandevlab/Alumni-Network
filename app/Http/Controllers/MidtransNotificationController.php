@@ -92,61 +92,19 @@ class MidtransNotificationController extends Controller
 
     public function finish(Request $request)
     {
-        $orderId = $request->query('order_id');
-        $statusPembayaran = null;
-        $statusPendaftaran = null;
-        $pembayaran = null;
-        $pendaftaran = null;
-        if ($orderId) {
-            $parts = explode('-', $orderId, 3);
-            $pendaftaranId = $parts[1] ?? null;
-            if ($pendaftaranId) {
-                $pembayaran = \App\Models\PembayaranEvent::where('pendaftaran_event_id', $pendaftaranId)->first();
-                $pendaftaran = \App\Models\PendaftaranEvent::find($pendaftaranId);
-                $statusPembayaran = $pembayaran ? $pembayaran->status_pembayaran : null;
-                $statusPendaftaran = $pendaftaran ? $pendaftaran->status : null;
-            }
-        }
-        return view('event.user.midtrans-finish', compact('statusPembayaran', 'statusPendaftaran', 'pembayaran', 'pendaftaran'));
+        // Halaman redirect jika pembayaran sukses
+        return view('event.user.midtrans-finish');
     }
 
     public function unfinish(Request $request)
     {
-        $orderId = $request->query('order_id');
-        $statusPembayaran = null;
-        $statusPendaftaran = null;
-        $pembayaran = null;
-        $pendaftaran = null;
-        if ($orderId) {
-            $parts = explode('-', $orderId, 3);
-            $pendaftaranId = $parts[1] ?? null;
-            if ($pendaftaranId) {
-                $pembayaran = \App\Models\PembayaranEvent::where('pendaftaran_event_id', $pendaftaranId)->first();
-                $pendaftaran = \App\Models\PendaftaranEvent::find($pendaftaranId);
-                $statusPembayaran = $pembayaran ? $pembayaran->status_pembayaran : null;
-                $statusPendaftaran = $pendaftaran ? $pendaftaran->status : null;
-            }
-        }
-        return view('event.user.midtrans-unfinish', compact('statusPembayaran', 'statusPendaftaran', 'pembayaran', 'pendaftaran'));
+        // Halaman redirect jika pembayaran tidak selesai
+        return view('event.user.midtrans-unfinish');
     }
 
     public function error(Request $request)
     {
-        $orderId = $request->query('order_id');
-        $statusPembayaran = null;
-        $statusPendaftaran = null;
-        $pembayaran = null;
-        $pendaftaran = null;
-        if ($orderId) {
-            $parts = explode('-', $orderId, 3);
-            $pendaftaranId = $parts[1] ?? null;
-            if ($pendaftaranId) {
-                $pembayaran = \App\Models\PembayaranEvent::where('pendaftaran_event_id', $pendaftaranId)->first();
-                $pendaftaran = \App\Models\PendaftaranEvent::find($pendaftaranId);
-                $statusPembayaran = $pembayaran ? $pembayaran->status_pembayaran : null;
-                $statusPendaftaran = $pendaftaran ? $pendaftaran->status : null;
-            }
-        }
-        return view('event.user.midtrans-error', compact('statusPembayaran', 'statusPendaftaran', 'pembayaran', 'pendaftaran'));
+        // Halaman redirect jika terjadi error pada pembayaran
+        return view('event.user.midtrans-error');
     }
 }

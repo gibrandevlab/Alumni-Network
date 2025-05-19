@@ -19,16 +19,39 @@
 <!-- User Table -->
 <table class="min-w-full leading-normal">
     <thead>
-        <tr>
-            <th scope="col" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center text-sm uppercase font-semibold">ID</th>
-            <th scope="col" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center text-sm uppercase font-semibold">Email</th>
-            <th scope="col" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center text-sm uppercase font-semibold">Role</th>
-            <th scope="col" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center text-sm uppercase font-semibold">Status</th>
-            <th scope="col" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center text-sm uppercase font-semibold">Aksi</th>
+        <tr class="bg-gray-100">
+            <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                Name
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                Email
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                Role
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                Actions
+            </th>
         </tr>
     </thead>
-    <tbody id="userTableBody">
-        @include('components.dashboard.User Setting.partial-table', ['users' => $users])
+    <tbody>
+        @foreach ($users as $user)
+            <tr class="bg-white hover:bg-gray-50">
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                    {{ $user->name }}
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                    {{ $user->email }}
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                    {{ $user->role }}
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                    <button class="btn-primary">Edit</button>
+                    <button class="btn-secondary">Delete</button>
+                </td>
+            </tr>
+        @endforeach
     </tbody>
 </table>
 
@@ -46,8 +69,6 @@
         {{ $users->links('vendor.pagination.tailwind') }} <!-- Display pagination links -->
     </div>
 </div>
-
-
 
 <script>
 // Attach input event listener to search input

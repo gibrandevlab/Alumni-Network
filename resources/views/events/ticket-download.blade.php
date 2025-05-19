@@ -6,7 +6,6 @@
     <div class="bg-white rounded shadow p-4 mb-4">
         <h2 class="font-semibold text-lg">{{ $event->judul_event }}</h2>
         <p>Nama: {{ $pendaftaran->user->nama ?? '-' }}</p>
-        <p>Email: {{ $pendaftaran->user->email ?? '-' }}</p>
         <p>No. Booking: <span class="font-mono">EVT-{{ $pendaftaran->id }}</span></p>
         <p>Event: {{ $event->judul_event }}</p>
         <p>Tanggal: {{ $event->tanggal_mulai }}</p>
