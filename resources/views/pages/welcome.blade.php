@@ -13,7 +13,6 @@
         @include('components.welcome.panduan')
         @include('components.welcome.floatchat')
         @include('components.welcome.berita')
-        @include('components.welcome.event')
     </div>
 @endsection
 <script>

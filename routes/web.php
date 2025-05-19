@@ -8,13 +8,10 @@ use App\Http\Controllers\Dashboard\MemberSettingController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\UserSettingController;
 use App\Http\Controllers\FormQ1Controllers;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\PaymentGatewayController;
-use App\Http\Controllers\PembayaranEventController;
-use App\Http\Controllers\PendaftaranEventController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
+use App\Http\Controllers\PaymentController;
+use Illuminate\Support\Facades\Route;
 
 // 1. HomepageController
 Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
@@ -63,43 +60,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
-    // Dashboard & CRUD Event (Admin only)
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('events', [EventController::class, 'dashboard'])
-            ->name('events.dashboard');
-
-        // Create
-        Route::get('events/create', [EventController::class, 'create'])
-            ->name('events.create');
-        Route::post('events', [EventController::class, 'store'])
-            ->name('events.store');
-
-        // Edit / Update
-        Route::get('events/{event}/edit', [EventController::class, 'edit'])
-            ->name('events.edit');
-        Route::post('events/{event}', [EventController::class, 'update'])
-            ->name('events.update');
-
-        // Delete
-        Route::post('events/{event}/delete', [EventController::class, 'destroy'])
-            ->name('events.destroy');
+    // Event User (Alumni Approved)
+    Route::get('/event-user', [\App\Http\Controllers\EventUserController::class, 'index'])->name('event.user.index');
+    Route::get('/event-user/order/{eventId}', [\App\Http\Controllers\EventUserController::class, 'order'])->name('event.user.order');
+    Route::post('/event-user/daftar/{eventId}', [\App\Http\Controllers\EventUserController::class, 'daftar'])->name('event.user.daftar');
+    // Tambahan: jika user akses GET ke daftar, redirect ke order
+    Route::get('/event-user/daftar/{eventId}', function($eventId) {
+        return redirect()->route('event.user.order', $eventId);
     });
-
-    // Public: Listing & Detail
-    Route::get('events', [EventController::class, 'index'])
-        ->name('events.index');
-    Route::get('events/{event}', [EventController::class, 'show'])
-        ->name('events.show');
-
-    // Pendaftaran (Alumni)
-    Route::post('events/{event}/register', [PendaftaranEventController::class, 'register'])
-        ->name('events.register');
-
-    // AJAX Pembayaran
-    Route::post('payments/snap-token', [PaymentGatewayController::class, 'getSnapToken'])
-        ->name('payments.snap');
-    Route::post('midtrans/callback', [PembayaranEventController::class, 'callback'])
-        ->name('midtrans.callback');
 });
 
 // 5. Auth Controllers
@@ -132,3 +100,12 @@ Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile.index');
     Route::post('/profile/store', 'store')->name('profile.store');
 });
+
+// Midtrans Notification Webhook
+Route::post('/midtrans/notification', [\App\Http\Controllers\MidtransNotificationController::class, 'handle']);
+Route::post('/midtrans/webhook', [PaymentController::class, 'handleWebhook']);
+
+// Midtrans Redirects
+Route::get('/midtrans/finish', [\App\Http\Controllers\MidtransNotificationController::class, 'finish'])->name('midtrans.finish');
+Route::get('/midtrans/unfinish', [\App\Http\Controllers\MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
+Route::get('/midtrans/error', [\App\Http\Controllers\MidtransNotificationController::class, 'error'])->name('midtrans.error');

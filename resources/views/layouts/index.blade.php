@@ -68,6 +68,7 @@
             <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#berita">Berita</a></li>
             <li class="text-gray-300">:</li>
             <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#footer">Kontak</a></li>
+            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="/event-user">Event</a></li>
         </ul>
 
         <!-- Auth Links -->
