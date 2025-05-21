@@ -11,8 +11,7 @@ class MemberSettingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('profilAlumni')
-            ->where('role', 'alumni');
+        $query = User::with('profilAlumni')->where('role', 'alumni');
 
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
@@ -21,18 +20,16 @@ class MemberSettingController extends Controller
             });
         }
 
-        return response()->json(
-            $query->paginate(10)
-        );
+        $alumni = $query->paginate(10);
+
+        return view('pages.dashboard.member-setting', compact('alumni'));
     }
 
     public function show($id)
     {
-        $alumni = User::with('profilAlumni')
-            ->where('role', 'alumni')
-            ->findOrFail($id);
+        $alumni = User::with('profilAlumni')->where('role', 'alumni')->findOrFail($id);
 
-        return response()->json($alumni);
+        return $alumni;
     }
 
     public function store(Request $request)
@@ -104,7 +101,7 @@ class MemberSettingController extends Controller
             ])
         );
 
-        return response()->json($user->load('profilAlumni'));
+        return;
     }
 
     public function destroy($id)
@@ -112,6 +109,6 @@ class MemberSettingController extends Controller
         $user = User::where('role', 'alumni')->findOrFail($id);
         $user->delete();
 
-        return response()->json(['message' => 'Alumni deleted.']);
+        return;
     }
 }

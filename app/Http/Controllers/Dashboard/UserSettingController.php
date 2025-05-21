@@ -19,13 +19,16 @@ class UserSettingController extends Controller
             });
         }
 
-        return response()->json($query->paginate(10));
+        $users = $query->paginate(10);
+
+        return view('pages.dashboard.user-setting', compact('users'));
     }
 
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+
+        return $user;
     }
 
     public function store(Request $request)
@@ -66,7 +69,7 @@ class UserSettingController extends Controller
             $user->update(['password' => bcrypt($request->password)]);
         }
 
-        return response()->json($user);
+        return;
     }
 
     public function destroy($id)
@@ -74,6 +77,6 @@ class UserSettingController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return response()->json(['message' => 'User deleted.']);
+        return;
     }
 }
