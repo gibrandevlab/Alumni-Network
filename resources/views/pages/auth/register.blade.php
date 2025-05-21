@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gobana - Register</title>
+    <title>Alumnet - Register</title>
     <meta name="description" content="Register for your Gobana account">
     <meta name="keywords" content="register, gobana, account">
     @vite('resources/css/app.css')
@@ -139,10 +139,29 @@
             background: rgba(255, 255, 255, 1);
             transform: translateY(-2px);
         }
+
+        /* Custom scrollbar style */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-800 relative overflow-hidden">
+<body class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-y-auto">
     <!-- Floating Shapes -->
     <div class="floating-shape shape-1"></div>
     <div class="floating-shape shape-2"></div>
@@ -155,7 +174,7 @@
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="register-form">
             <!-- Logo -->
             <div class="text-center mb-6">
-                <img src="{{ asset('images/fontbolt-removebg-preview.png') }}" alt="Alumni Network Logo"
+                <img src="{{ asset('images/alumnet-logo-white.png') }}" alt="Alumni Network Logo"
                     class="mx-auto h-12">
             </div>
 
@@ -163,6 +182,12 @@
 
             <form action="{{ route('register') }}" method="POST" class="space-y-4">
                 @csrf
+                <div class="space-y-2">
+                    <label class="text-white text-sm">Nama</label>
+                    <input type="text" name="nama" placeholder="Input Nama Anda"
+                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required>
+                </div>
                 <div class="space-y-2">
                     <label class="text-white text-sm">Email</label>
                     <input type="email" name="email" placeholder="username@gmail.com"

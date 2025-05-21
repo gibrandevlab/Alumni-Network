@@ -3,27 +3,20 @@
 @section('title', 'Admin - SITRA BSI')
 
 @section('content')
-    @if ($peranPengguna == 'admin')
-        <div
-            class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-800 text-black dark:text-white">
-            @include('layouts.Dashboard.navbaratas')
-            @include('layouts.Dashboard.sidebarkiri')
-
-            <div class="h-full ml-14 mt-14 mb-10 md:ml-64 p-6">
-                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+    <div class="min-h-screen flex flex-col bg-gray-50">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">User Settings</h1>
+            </div>
+        </header>
+        <main class="flex-1">
+            <div class="py-6 sm:px-6 lg:px-8">
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                     @include('components.dashboard.User Setting.table-user', ['users' => $users])
                 </div>
             </div>
-        </div>
-    @endif
-
-    @include('components.dashboard.User Setting.detail-user')
-
-    {{-- Modal Pop-Up untuk Edit Data --}}
-    @include('components.dashboard.User Setting.edit-user')
-
-    {{-- Modal Pop-Up untuk Tambah Data --}}
-    @include('components.dashboard.User Setting.create-user')
+        </main>
+    </div>
 @endsection
 
 <script>

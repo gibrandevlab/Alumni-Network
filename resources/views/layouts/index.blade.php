@@ -40,11 +40,11 @@
 
 <body>
     @vite('resources/js/navbar-burger.js')
-    <div class="relative flex flex-row items-center justify-center bg-white shadow-md sticky top-0 z-10 m-0">
+    <div class=" flex flex-row items-center justify-center bg-white shadow-md sticky top-0 z-10 m-0">
     <nav class="container h-full py-4 flex justify-between items-center" >
         <!-- Logo Section -->
         <a class="text-3xl font-bold leading-none flex items-center" href="#">
-            <img style="width: 150px" src="{{ asset('images/logoAlumnetFix.png') }}" alt="logo">
+            <img style="width: 150px" src="{{ asset('images/logo-alumnet-new.png') }}" alt="logo">
         </a>
 
         <!-- Mobile Menu Button -->
@@ -68,6 +68,7 @@
             <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#berita">Berita</a></li>
             <li class="text-gray-300">:</li>
             <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#footer">Kontak</a></li>
+            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="/event-user">Event</a></li>
         </ul>
 
         <!-- Auth Links -->

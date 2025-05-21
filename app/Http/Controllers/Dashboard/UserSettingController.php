@@ -14,6 +14,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserSettingController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     public function index(Request $request)
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
@@ -40,11 +47,9 @@ class UserSettingController extends Controller
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'nim' => 'required|numeric|digits:8',
-            'nama' => 'required|string|max:50',
             'tahun_masuk' => 'required|numeric|min:1900|max:' . date('Y'),
             'tahun_lulus' => 'required|numeric|min:1900|max:' . date('Y'),
             'no_telepon' => 'required|numeric|digits_between:8,12',
-            'email' => 'required|email',
             'ipk' => 'required|numeric|min:0|max:4',
             'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Maks 2MB
         ]);
@@ -86,7 +91,6 @@ class UserSettingController extends Controller
     {
         // Validate the incoming request data, password is optional now
         $validated = $request->validate([
-            'email' => 'required|email',
             'password' => 'nullable|string',  // No minimum length and password is optional
             'role' => 'required|in:admin,alumni,pencari_kerja',
             'status' => 'required|in:pending,approved,rejected',
@@ -133,8 +137,7 @@ class UserSettingController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('email', 'like', "%{$search}%")
-                    ->orWhere('role', 'like', "%{$search}%")
+                $q->orWhere('role', 'like', "%{$search}%")
                     ->orWhere('status', 'like', "%{$search}%");
             });
         }
@@ -157,7 +160,6 @@ class UserSettingController extends Controller
     private function getStoreValidationRules()
     {
         return [
-            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,alumni,pencari_kerja',
             'status' => 'required|in:pending,approved,rejected',
@@ -167,7 +169,6 @@ class UserSettingController extends Controller
     private function getUpdateValidationRules(Request $request)
     {
         return [
-            'email' => 'nullable|string|email|unique:users,email,' . $request->id,
             'password' => 'nullable|string|min:8',
             'role' => 'nullable|in:admin,alumni,pencari_kerja',
             'status' => 'nullable|in:pending,approved,rejected',

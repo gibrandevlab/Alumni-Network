@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Illuminate\Support\Facades\Auth;
 
 // Import Model
 use App\Models\EventPengembanganKarir;
@@ -22,6 +23,13 @@ use App\Models\User;
 
 class ExportDataController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     /**
      * Menampilkan halaman ekspor data.
      *

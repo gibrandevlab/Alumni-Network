@@ -20,9 +20,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->string('foto')->nullable();
             $table->timestamps();
-        });        
+        });
     }
-
     /**
      * Reverse the migrations.
      */
@@ -31,4 +30,5 @@ return new class extends Migration
         Schema::dropIfExists('users');
     }
 };
+
 

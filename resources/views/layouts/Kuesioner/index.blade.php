@@ -36,7 +36,7 @@
     </main>
     <footer class="bg-gray-50 lg:grid lg:grid-cols-5 rounded-b-lg mt-8">
         <div class="relative block h-32 lg:col-span-2 lg:h-full bg-gray-50">
-            <img src="{{ asset('images/bsi.png') }}" alt=""
+            <img src="{{ asset('images/bsigedung.png') }}" alt=""
                 class="absolute inset-0 h-full w-full object-cover" />
         </div>
 

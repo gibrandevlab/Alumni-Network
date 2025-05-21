@@ -13,6 +13,13 @@ use App\Models\ResponKuesioner;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     public function dashboard(Request $request)
     {
         // Pastikan user terautentikasi dan memiliki hak akses
@@ -92,8 +99,8 @@ class DashboardController extends Controller
     {
         $profilClass = ($userRole === 'admin') ? ProfilAdmin::class : ProfilAlumni::class;
         $columns = ($userRole === 'admin')
-            ? ['nama', 'email', 'no_telepon', 'jabatan']
-            : ['nama', 'tahun_lulus', 'linkedin', 'instagram', 'email', 'no_telepon'];
+            ? ['no_telepon', 'jabatan']
+            : ['tahun_lulus', 'linkedin', 'instagram', 'no_telepon'];
 
         return $profilClass::where('user_id', $userId)
             ->firstOrFail($columns);
