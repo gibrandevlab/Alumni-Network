@@ -169,7 +169,7 @@
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="login-form">
             <!-- Logo -->
             <div class="text-center mb-6">
-                <img src="{{ asset('images/logo-alumnet-white.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
+                <img src="{{ asset('images/logoAlumnetFix.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
             </div>
 
             <h2 class="text-center text-2xl font-bold text-white mb-6">Login</h2>
@@ -177,14 +177,14 @@
             <form action="{{ route('login') }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-black text-sm">Email</label>
+                    <label class="text-white text-sm">Email</label>
                     <input type="email" name="email" placeholder="username@gmail.com"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-black text-sm">Password</label>
+                    <label class="text-white text-sm">Password</label>
                     <input type="password" name="password" placeholder="Password"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>

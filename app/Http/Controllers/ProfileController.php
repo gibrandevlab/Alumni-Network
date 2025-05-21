@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Models\ProfilAlumni;
 
 class ProfileController extends Controller
 {
@@ -97,6 +99,31 @@ class ProfileController extends Controller
         }
 
         return redirect()->route('profile.index')->with('success', 'Profil berhasil disimpan!');
+    }
+
+    public function register(Request $request)
+    {
+        // Validasi data untuk tabel users
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'alumni',
+            'status' => 'pending',
+        ]);
+
+        ProfilAlumni::create([
+            'user_id' => $user->id,
+            'nama_lengkap' => $request->name,
+        ]);
+
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 }
 

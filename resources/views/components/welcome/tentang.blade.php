@@ -3,7 +3,7 @@
         <!-- Konten Tentang Nadiem -->
         <div class="flex flex-col lg:flex-row items-center bg-white rounded-lg w-full mx-auto overflow-hidden">
             <div class="lg:w-1/2 w-full order-1 lg:order-1">
-                <img src="{{ url('images/nadiem-blue.jpg') }}" alt="Nadiem Anwar Makarim, B.A., M.B.A."
+                <img src="{{ url('images/nadiem-new.jpg') }}" alt="Nadiem Anwar Makarim, B.A., M.B.A."
                     class="w-full h-300px max-h-300px object-cover transition-transform duration-500 hover:scale-105">
             </div>
             <div class="lg:w-1/2 w-full order-2 lg:order-2 px-4 lg:px-8 py-6">

@@ -12,18 +12,7 @@ class ProfilAlumni extends Model
     protected $table = 'profil_alumni';
 
     protected $fillable = [
-        'user_id',
-        'nim',
-        'nama',
-        'tahun_masuk',
-        'tahun_lulus',
-        'no_telepon',
-        'email',
-        'alamat_rumah',
-        'ipk',
-        'linkedin',
-        'instagram',
-        'email_alternatif',
+        'user_id', 'nama_lengkap', 'nim', 'jurusan', 'tahun_masuk', 'tahun_lulus', 'ipk', 'no_telepon', 'alamat_rumah', 'linkedin', 'instagram', 'email_alternatif'
     ];
 
     public function user()
@@ -31,4 +20,3 @@ class ProfilAlumni extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 }
-
