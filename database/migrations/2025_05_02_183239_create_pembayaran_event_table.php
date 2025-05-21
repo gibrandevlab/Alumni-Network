@@ -17,7 +17,7 @@ return new class extends Migration
             ->constrained('pendaftaran_event') // Referensi tabel 'pendaftaran_event'
             ->onDelete('cascade') // Hapus data terkait jika data dihapus
             ->index('idx_pendaftaran_event_id'); // Berikan nama unik pada index
-            $table->enum('status_pembayaran', ['menunggu', 'berhasil', 'gagal'])->default('menunggu');
+            $table->enum('status_pembayaran', ['pending', 'capture', 'settlement', 'deny', 'expire', 'cancel'])->default('pending');
             $table->string('midtrans_transaction_id')->nullable(); // ID transaksi dari Midtrans
             $table->decimal('jumlah', 10, 2); // Jumlah yang dibayar
             $table->timestamp('waktu_pembayaran')->nullable(); // Waktu pembayaran

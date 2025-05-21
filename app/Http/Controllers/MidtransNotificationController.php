@@ -4,107 +4,87 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Config as LaravelConfig;
-use App\Models\PembayaranEvent;
+use Illuminate\Support\Facades\DB;
 use App\Models\PendaftaranEvent;
-use Midtrans\Config as MidtransConfig;
+use App\Models\PembayaranEvent;
 use Midtrans\Notification;
 
 class MidtransNotificationController extends Controller
 {
     public function handle(Request $request)
     {
-        // 1. Konfigurasi Midtrans
-        MidtransConfig::$serverKey    = LaravelConfig::get('services.midtrans.server_key');
-        MidtransConfig::$isProduction = LaravelConfig::get('services.midtrans.is_production');
-        MidtransConfig::$isSanitized  = LaravelConfig::get('services.midtrans.is_sanitized');
-        MidtransConfig::$is3ds        = LaravelConfig::get('services.midtrans.is_3ds');
+        // Log payload for debugging
+        Log::info('⚡ Midtrans Webhook hit', ['url' => url()->current(), 'payload' => request()->all()]);
 
-        // 2. Tangkap notification payload
+        // 1. Instansiasi dan validasi signature otomatis
         $notif = new Notification();
-        Log::info('Midtrans notification received', $request->all());
-        Log::info('Midtrans notif payload', (array)$notif);
 
-        // 3. Verifikasi signature
-        $expectedSignature = hash(
-            'sha512',
-            $notif->order_id . $notif->status_code . $notif->gross_amount . LaravelConfig::get('services.midtrans.server_key')
-        );
-        Log::info('Midtrans signature check', [
-            'expected' => $expectedSignature,
-            'got' => $notif->signature_key,
-            'order_id' => $notif->order_id,
-            'status_code' => $notif->status_code,
-            'gross_amount' => $notif->gross_amount,
-            'server_key' => LaravelConfig::get('services.midtrans.server_key')
-        ]);
-        if ($notif->signature_key !== $expectedSignature) {
-            Log::warning('Midtrans signature mismatch', [
-                'expected' => $expectedSignature,
-                'got'      => $notif->signature_key
-            ]);
-            return response()->json(['message' => 'Invalid signature'], 403);
-        }
+        // 2. Baca payload
+        $transactionStatus = $notif->transaction_status;  // e.g. pending, capture, settlement, expire, deny, cancel
+        $orderIdFull       = $notif->order_id;            // format: EVT-{pendaftaranId}-{timestamp}
+        $fraudStatus       = $notif->fraud_status;        // e.g. accept, challenge, deny
+        $transactionId     = $notif->transaction_id;
+        $grossAmount       = $notif->gross_amount;
 
-        // 4. Extract pendaftaran_id (format: EVT-{id}-{timestamp})
-        $parts = explode('-', $notif->order_id, 3);
+        // 3. Ekstrak ID pendaftaran
+        $parts = explode('-', $orderIdFull);
         $pendaftaranId = $parts[1] ?? null;
         if (! $pendaftaranId) {
-            Log::warning('Midtrans: invalid order_id', ['order_id' => $notif->order_id]);
-            return response()->json(['message' => 'Invalid order_id'], 400);
+            Log::warning('Format order_id tidak valid', ['order_id' => $orderIdFull]);
+            return response('OK', 200);
         }
 
-        // 5. Cari record pendaftaran & pembayaran
-        $pembayaran  = PembayaranEvent::where('pendaftaran_event_id', $pendaftaranId)->first();
+        // 4. Ambil Eloquent models
         $pendaftaran = PendaftaranEvent::find($pendaftaranId);
-        if (! $pembayaran || ! $pendaftaran) {
-            Log::warning('Midtrans: data not found', ['pendaftaran_id' => $pendaftaranId]);
-            return response()->json(['message' => 'Data not found'], 404);
+        $pembayaran  = $pendaftaran?->pembayaran;  // relasi method pembayaran()
+        if (! $pendaftaran || ! $pembayaran) {
+            Log::warning('Data pendaftaran/pembayaran tidak ditemukan', ['id' => $pendaftaranId]);
+            return response('OK', 200);
         }
 
-        // 6. Mapping status Midtrans ke kolom status_pembayaran
-        $transactionStatus = $notif->transaction_status; // capture, settlement, pending, deny, expire, cancel
+        // 5. Update tabel dalam satu DB transaction “live”
+        DB::transaction(function() use (
+            $transactionStatus, $fraudStatus,
+            $pendaftaran, $pembayaran,
+            $transactionId, $grossAmount
+        ) {
+            $pembayaran->update([
+                'status_pembayaran'       => $transactionStatus,
+                'midtrans_transaction_id' => $transactionId,
+                'jumlah'                  => $grossAmount,
+                'waktu_pembayaran'        => now(),
+            ]);
 
-        $pembayaran->midtrans_transaction_id = $notif->order_id;
-        $pembayaran->jumlah                 = $notif->gross_amount;
-        $pembayaran->waktu_pembayaran       = now();
-        $pembayaran->status_pembayaran      = $transactionStatus;
+            // Jika sukses dan fraud = accept → set pendaftaran berhasil
+            if (in_array($transactionStatus, ['capture','settlement'])
+                && $fraudStatus === 'accept') {
+                $pendaftaran->update(['status' => 'berhasil']);
+            }
+            // Jika gagal/expire/deny → set pendaftaran gagal
+            elseif (in_array($transactionStatus, ['deny','expire','cancel'])) {
+                $pendaftaran->update(['status' => 'gagal']);
+            }
+        });
 
-        // 7. Update status pendaftaran hanya jika sukses
-        if (in_array($transactionStatus, ['capture', 'settlement'], true)) {
-            $pendaftaran->status = 'berhasil';
-        } else {
-            $pendaftaran->status = 'menunggu';
-        }
+        // 6. Balas HTTP 200 OK
+        return response('OK', 200);
 
-        // 8. Simpan perubahan
-        $pembayaran->save();
-        $pendaftaran->save();
 
-        Log::info('Midtrans: status updated', [
-            'pendaftaran_id'     => $pendaftaranId,
-            'transactionStatus'  => $transactionStatus,
-            'order_id'           => $notif->order_id,
-        ]);
-
-        return response()->json(['message' => 'OK']);
     }
 
     public function finish(Request $request)
     {
-        // Halaman redirect jika pembayaran sukses
-        return view('event.user.midtrans-finish');
+        $orderId = $request->query('order_id');
+        return view('midtrans.success', compact('orderId'));
     }
 
-    public function unfinish(Request $request)
+    public function unfinish()
     {
-        // Halaman redirect jika pembayaran tidak selesai
-        return view('event.user.midtrans-unfinish');
+        return view('midtrans.unfinish');
     }
 
-    public function error(Request $request)
+    public function error()
     {
-        // Halaman redirect jika terjadi error pada pembayaran
-        return view('event.user.midtrans-error');
+        return view('midtrans.error');
     }
 }

@@ -10,21 +10,28 @@ class ProfileController extends Controller
 {
     /**
      * Tampilkan halaman profil dengan data pengguna dan relasinya.
-     *
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index()
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Anda belum login.');
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
         }
 
         /** @var User $user */
         $user = Auth::user();
 
-        // Lazy eager load relasi berdasarkan role
-        $user->load($user->role === 'admin' ? 'profilAdmin' : 'profilAlumni');
+        // Hanya izinkan user dengan status pending atau approved
+        if (!in_array($user->status, ['approved', 'pending'])) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Akun Anda tidak diizinkan mengakses profil.');
+        }
 
+        // Load relasi sesuai role
+        $user->load([
+            $user->role === 'admin' ? 'profilAdmin' : 'profilAlumni'
+        ]);
+
+        // Ambil data profil via accessor
         $profileData = $user->profil();
 
         return view('pages.Profile', compact('user', 'profileData'));
@@ -32,63 +39,53 @@ class ProfileController extends Controller
 
     /**
      * Simpan atau update data profil berdasarkan role user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$user) {
-            return redirect()->route('login')->with('error', 'Akses tidak valid.');
+        if (!$user || !in_array($user->status, ['approved', 'pending'])) {
+            return redirect()->route('login')->with('error', 'Akses tidak valid atau akun Anda ditolak.');
         }
 
-        // Validasi data untuk tabel users
+        // Validasi dan update user
         $request->validate([
             'nama'  => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $user->id,
         ]);
 
-        // Update nama & email di tabel users
         $user->update([
             'nama'  => $request->input('nama'),
             'email' => $request->input('email'),
         ]);
 
-        // Simpan data profil sesuai role
+        // Simpan profil sesuai role
         if ($user->role === 'admin') {
             $request->validate([
-                'no_telepon' => 'required|digits_between:1,20',
+                'no_telepon' => 'required|digits_between:10,15',
                 'jabatan'    => 'required|string|max:100',
             ]);
 
             $user->profilAdmin()->updateOrCreate(
                 ['user_id' => $user->id],
-                [
-                    'no_telepon' => $request->input('no_telepon'),
-                    'jabatan'    => $request->input('jabatan'),
-                ]
+                $request->only('no_telepon', 'jabatan')
             );
 
         } elseif ($user->role === 'alumni') {
             $request->validate([
-                'no_telepon' => 'required|digits_between:1,20',
-                'alamat_rumah'    => 'required|string|max:255',
-                'linkedin'        => 'nullable|url',
-                'instagram'       => 'nullable|string|max:100',
-                'email_alternatif'=> 'nullable|email',
+                'no_telepon'       => 'required|digits_between:10,15',
+                'alamat_rumah'     => 'required|string|max:255',
+                'linkedin'         => 'nullable|url|max:255',
+                'instagram'        => 'nullable|string|max:100',
+                'email_alternatif' => 'nullable|email|max:255',
             ]);
 
             $user->profilAlumni()->updateOrCreate(
                 ['user_id' => $user->id],
                 $request->only([
-                    'no_telepon',
-                    'alamat_rumah',
-                    'linkedin',
-                    'instagram',
-                    'email_alternatif',
+                    'no_telepon', 'alamat_rumah', 'linkedin',
+                    'instagram', 'email_alternatif'
                 ])
             );
 
@@ -96,7 +93,6 @@ class ProfileController extends Controller
             return redirect()->route('profile.index')->with('error', 'Role pengguna tidak dikenali.');
         }
 
-        return redirect()->route('profile.index')->with('success', 'Profil berhasil disimpan!');
+        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui.');
     }
 }
-

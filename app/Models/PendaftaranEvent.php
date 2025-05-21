@@ -19,6 +19,10 @@ class PendaftaranEvent extends Model
         'status',
     ];
 
+    // Status pendaftaran event
+    const STATUS_MENUNGGU = 'menunggu';
+    const STATUS_BERHASIL = 'berhasil';
+
     /**
      * Relasi ke model EventPengembanganKarir.
      * Satu pendaftaran_event milik satu event.

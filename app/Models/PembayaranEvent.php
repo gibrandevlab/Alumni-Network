@@ -18,6 +18,14 @@ class PembayaranEvent extends Model
         'waktu_pembayaran',
     ];
 
+    // Status pembayaran event
+    const STATUS_PENDING = 'pending';
+    const STATUS_CAPTURE = 'capture';
+    const STATUS_SETTLEMENT = 'settlement';
+    const STATUS_DENY = 'deny';
+    const STATUS_EXPIRE = 'expire';
+    const STATUS_CANCEL = 'cancel';
+
     /**
      * Relasi ke model PendaftaranEvent.
      * Satu pembayaran_event milik satu pendaftaran_event.

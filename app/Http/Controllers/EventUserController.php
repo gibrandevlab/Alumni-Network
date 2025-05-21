@@ -86,7 +86,7 @@ class EventUserController extends Controller
                 // Buat baris pembayaran status menunggu
                 $pembayaran = PembayaranEvent::create([
                     'pendaftaran_event_id' => $pendaftaran->id,
-                    'status_pembayaran' => 'menunggu',
+                    'status_pembayaran' => 'pending',
                     'jumlah' => $event->harga_daftar,
                 ]);
                 // Midtrans config

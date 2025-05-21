@@ -12,6 +12,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Dashboard\EventController;
+use App\Http\Controllers\MidtransNotificationController;
+use App\Http\Controllers\EventUserController;
 use Illuminate\Support\Facades\Route;
 
 // 1. HomepageController
@@ -34,24 +36,32 @@ Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
     ->name('alumni.searchByNim');
 
 // 4. Dashboard Controllers
-// a. MemberSettingController
+
 Route::middleware(['auth'])->group(function () {
-    Route::controller(MemberSettingController::class)->group(function () {
-        Route::get('/dashboard/member/setting', 'memberSetting')->name('dashboard.member-setting');
-        Route::post('/alumni', 'store')->name('alumni.store');
-        Route::get('/alumni/{id}', 'ambilDataAlumni')->name('alumni.show');
-        Route::put('/alumni/{id}', 'update')->name('alumni.update');
-        Route::delete('/alumni/{id}', 'destroy');
+    // a. MemberSettingController
+    Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
+        Route::resource('alumni', MemberSettingController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy'])
+            ->names([
+                'index' => 'alumni.index',
+                'show' => 'alumni.show',
+                'store' => 'alumni.store',
+                'update' => 'alumni.update',
+                'destroy' => 'alumni.destroy',
+            ]);
     });
 
     // b. UserSettingController
-    Route::controller(UserSettingController::class)->group(function () {
-        Route::get('dashboard/user/setting', 'index')->name('dashboard.user-setting');
-        Route::post('dashboard/user/setting', 'store')->name('dashboard.user.setting.store');
-        Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.show');
-        Route::get('dashboard/user/setting/{id}', 'show')->name('dashboard.user.setting.search');
-        Route::put('dashboard/user/setting/{id}', 'update')->name('dashboard.user.setting.update');
-        Route::delete('dashboard/user/setting/{id}', 'destroy')->name('dashboard.user.setting.destroy');
+    Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
+        Route::resource('users', UserSettingController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy'])
+            ->names([
+                'index' => 'users.index',
+                'show' => 'users.show',
+                'store' => 'users.store',
+                'update' => 'users.update',
+                'destroy' => 'users.destroy',
+            ]);
     });
 
     // c. DashboardController
@@ -62,11 +72,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
     // Event User (Alumni Approved)
-    Route::get('/event-user', [\App\Http\Controllers\EventUserController::class, 'index'])->name('event.user.index');
-    Route::get('/event-user/order/{eventId}', [\App\Http\Controllers\EventUserController::class, 'order'])->name('event.user.order');
-    Route::post('/event-user/daftar/{eventId}', [\App\Http\Controllers\EventUserController::class, 'daftar'])->name('event.user.daftar');
+    Route::get('/event-user', [EventUserController::class, 'index'])->name('event.user.index');
+    Route::get('/event-user/order/{eventId}', [EventUserController::class, 'order'])->name('event.user.order');
+    Route::post('/event-user/daftar/{eventId}', [EventUserController::class, 'daftar'])->name('event.user.daftar');
     // Tambahan: jika user akses GET ke daftar, redirect ke order
-    Route::get('/event-user/daftar/{eventId}', function($eventId) {
+    Route::get('/event-user/daftar/{eventId}', function ($eventId) {
         return redirect()->route('event.user.order', $eventId);
     });
 });
@@ -113,11 +123,10 @@ Route::controller(ProfileController::class)->group(function () {
     Route::post('/profile/store', 'store')->name('profile.store');
 });
 
-// Midtrans Notification Webhook
-Route::post('/midtrans/notification', [\App\Http\Controllers\MidtransNotificationController::class, 'handle']);
-Route::post('/midtrans/webhook', [PaymentController::class, 'handleWebhook']);
+// Notification Webhook (live update)
+Route::post('/midtrans/notification', [MidtransNotificationController::class, 'handle']);
 
-// Midtrans Redirects
-Route::get('/midtrans/finish', [\App\Http\Controllers\MidtransNotificationController::class, 'finish'])->name('midtrans.finish');
-Route::get('/midtrans/unfinish', [\App\Http\Controllers\MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
-Route::get('/midtrans/error', [\App\Http\Controllers\MidtransNotificationController::class, 'error'])->name('midtrans.error');
+// Redirect setelah pembayaran
+Route::get('/midtrans/finish',   [MidtransNotificationController::class, 'finish'])->name('midtrans.finish');
+Route::get('/midtrans/unfinish', [MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
+Route::get('/midtrans/error',    [MidtransNotificationController::class, 'error'])->name('midtrans.error');
