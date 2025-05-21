@@ -44,7 +44,7 @@
     <nav class="container h-full py-4 flex justify-between items-center" >
         <!-- Logo Section -->
         <a class="text-3xl font-bold leading-none flex items-center" href="#">
-            <img style="width: 150px" src="{{ asset('images/fontbolt-removebg-preview.png') }}" alt="logo">
+            <img style="width: 150px" src="{{ asset('images/logoAlumnetFix.png') }}" alt="logo">
         </a>
 
         <!-- Mobile Menu Button -->
