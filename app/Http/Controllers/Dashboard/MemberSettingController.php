@@ -3,136 +3,115 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ProfilAlumni;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class MemberSettingController extends Controller
 {
-    private function checkAdminAccess()
-    {
-        $user = Auth::user();
-        if (!$user || $user->role !== 'admin' || $user->status !== 'approved') {
-            abort(403, 'Unauthorized action.');
-        }
-    }
-
-    // List alumni dengan pagination dan search
     public function index(Request $request)
     {
-        $this->checkAdminAccess();
+        $query = User::with('profilAlumni')
+            ->where('role', 'alumni');
 
-        $query = ProfilAlumni::with('user')
-            ->whereHas('user', fn($q) => $q->where('role', 'alumni'));
-
-        if ($request->filled('search')) {
-            $search = $request->search;
+        if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('user', fn($q2) => $q2->where('nama', 'like', "%{$search}%"))
-                  ->orWhere('nim', 'like', "%{$search}%");
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        $alumniProfiles = $query->orderByDesc('updated_at')->paginate(10)->withQueryString();
-
-        return view('pages.dashboard.member-setting', [
-            'alumniProfiles' => $alumniProfiles,
-            'search' => $request->search,
-        ]);
+        return response()->json(
+            $query->paginate(10)
+        );
     }
 
-    // Tampilkan detail alumni berdasarkan id profil_alumni
     public function show($id)
     {
-        $this->checkAdminAccess();
-
-        $alumni = ProfilAlumni::with('user:id,nama,email')->find($id);
-
-        if (!$alumni) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
-        }
+        $alumni = User::with('profilAlumni')
+            ->where('role', 'alumni')
+            ->findOrFail($id);
 
         return response()->json($alumni);
     }
 
-    // Simpan data alumni baru
     public function store(Request $request)
     {
-        $this->checkAdminAccess();
-
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nim' => 'required|string|max:20|unique:profil_alumnis,nim',
-            'tahun_masuk' => 'required|integer',
-            'tahun_lulus' => 'required|integer',
-            'no_telepon' => 'required|string|max:20',
+        $validated = $request->validate([
+            'email' => 'required|email|unique:users',
+            'nama' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
+            'status' => 'required|in:pending,approved,rejected',
+            'nim' => 'nullable|string|max:255',
+            'jurusan' => 'nullable|string|max:255',
+            'tahun_masuk' => 'nullable|integer|min:1900|max:'.date('Y'),
+            'tahun_lulus' => 'nullable|integer|min:1900|max:'.date('Y'),
+            'no_telepon' => 'nullable|string|max:20',
             'alamat_rumah' => 'nullable|string|max:255',
-            'ipk' => 'nullable|numeric',
-            'linkedin' => 'nullable|string|max:255',
+            'ipk' => 'nullable|numeric|min:0|max:4',
+            'linkedin' => 'nullable|url',
             'instagram' => 'nullable|string|max:255',
             'email_alternatif' => 'nullable|email|max:255',
         ]);
 
-        $user = User::find($request->user_id);
-        if (!$user || $user->role !== 'alumni') {
-            return response()->json(['error' => 'User tidak valid atau bukan alumni'], 400);
-        }
+        $user = User::create([
+            'email' => $validated['email'],
+            'nama' => $validated['nama'],
+            'password' => bcrypt($validated['password']),
+            'role' => 'alumni',
+            'status' => $validated['status'],
+        ]);
 
-        if (ProfilAlumni::where('user_id', $user->id)->exists()) {
-            return response()->json(['error' => 'Profil alumni untuk user ini sudah ada'], 400);
-        }
-
-        ProfilAlumni::create($request->only([
-            'user_id', 'nim', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
+        $user->profilAlumni()->create($request->only([
+            'nim', 'jurusan', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
             'alamat_rumah', 'ipk', 'linkedin', 'instagram', 'email_alternatif'
         ]));
 
-        return response()->json(['success' => 'Data alumni berhasil ditambahkan']);
+        return response()->json($user->load('profilAlumni'), 201);
     }
 
-    // Update data alumni
     public function update(Request $request, $id)
     {
-        $this->checkAdminAccess();
+        $user = User::with('profilAlumni')->findOrFail($id);
 
-        $request->validate([
-            'nim' => 'required|string|max:20|unique:profil_alumnis,nim,' . $id,
-            'tahun_masuk' => 'required|integer',
-            'tahun_lulus' => 'required|integer',
-            'no_telepon' => 'required|string|max:20',
+        $validated = $request->validate([
+            'email' => 'sometimes|required|email|unique:users,email,'.$id,
+            'nama' => 'sometimes|required|string|max:255',
+            'password' => 'nullable|string|min:8',
+            'status' => 'sometimes|required|in:pending,approved,rejected',
+            'nim' => 'nullable|string|max:255',
+            'jurusan' => 'nullable|string|max:255',
+            'tahun_masuk' => 'nullable|integer|min:1900|max:'.date('Y'),
+            'tahun_lulus' => 'nullable|integer|min:1900|max:'.date('Y'),
+            'no_telepon' => 'nullable|string|max:20',
             'alamat_rumah' => 'nullable|string|max:255',
-            'ipk' => 'nullable|numeric',
-            'linkedin' => 'nullable|string|max:255',
+            'ipk' => 'nullable|numeric|min:0|max:4',
+            'linkedin' => 'nullable|url',
             'instagram' => 'nullable|string|max:255',
             'email_alternatif' => 'nullable|email|max:255',
         ]);
 
-        $alumni = ProfilAlumni::find($id);
-        if (!$alumni) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        $user->update($request->only(['email', 'nama', 'status']));
+        if ($request->filled('password')) {
+            $user->update(['password' => bcrypt($request->password)]);
         }
 
-        $alumni->update($request->only([
-            'nim', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
-            'alamat_rumah', 'ipk', 'linkedin', 'instagram', 'email_alternatif'
-        ]));
+        $user->profilAlumni()->updateOrCreate(
+            ['user_id' => $user->id],
+            $request->only([
+                'nim', 'jurusan', 'tahun_masuk', 'tahun_lulus', 'no_telepon',
+                'alamat_rumah', 'ipk', 'linkedin', 'instagram', 'email_alternatif'
+            ])
+        );
 
-        return response()->json(['success' => 'Data alumni berhasil diperbarui']);
+        return response()->json($user->load('profilAlumni'));
     }
 
-    // Hapus data alumni
     public function destroy($id)
     {
-        $this->checkAdminAccess();
+        $user = User::where('role', 'alumni')->findOrFail($id);
+        $user->delete();
 
-        try {
-            $alumni = ProfilAlumni::findOrFail($id);
-            $alumni->delete();
-
-            return response()->json(['success' => 'Data alumni berhasil dihapus']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal menghapus data: ' . $e->getMessage()], 500);
-        }
+        return response()->json(['message' => 'Alumni deleted.']);
     }
 }

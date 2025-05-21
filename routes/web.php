@@ -38,7 +38,7 @@ Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
 // 4. Dashboard Controllers
 
 Route::middleware(['auth'])->group(function () {
-    // a. MemberSettingController
+    // MemberSettingController Routes
     Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
         Route::resource('alumni', MemberSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
             ]);
     });
 
-    // b. UserSettingController
+    // UserSettingController Routes
     Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
         Route::resource('users', UserSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
@@ -64,18 +64,17 @@ Route::middleware(['auth'])->group(function () {
             ]);
     });
 
-    // c. DashboardController
+    // DashboardController Routes
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
     });
 
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
 
-    // Event User (Alumni Approved)
+    // Event User Routes
     Route::get('/event-user', [EventUserController::class, 'index'])->name('event.user.index');
     Route::get('/event-user/order/{eventId}', [EventUserController::class, 'order'])->name('event.user.order');
     Route::post('/event-user/daftar/{eventId}', [EventUserController::class, 'daftar'])->name('event.user.daftar');
-    // Tambahan: jika user akses GET ke daftar, redirect ke order
     Route::get('/event-user/daftar/{eventId}', function ($eventId) {
         return redirect()->route('event.user.order', $eventId);
     });
