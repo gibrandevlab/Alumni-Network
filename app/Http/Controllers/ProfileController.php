@@ -53,11 +53,20 @@ class ProfileController extends Controller
         $request->validate([
             'nama'  => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'foto'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Handle file upload for foto
+        $fotoPath = $user->foto; // Default to existing foto
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto');
+            $fotoPath = $foto->storeAs('profile_pictures', uniqid() . '.' . $foto->getClientOriginalExtension(), 'public');
+        }
 
         $user->update([
             'nama'  => $request->input('nama'),
             'email' => $request->input('email'),
+            'foto'  => $fotoPath,
         ]);
 
         // Simpan profil sesuai role
@@ -74,18 +83,20 @@ class ProfileController extends Controller
 
         } elseif ($user->role === 'alumni') {
             $request->validate([
-                'no_telepon'       => 'required|digits_between:10,15',
-                'alamat_rumah'     => 'required|string|max:255',
-                'linkedin'         => 'nullable|url|max:255',
-                'instagram'        => 'nullable|string|max:100',
-                'email_alternatif' => 'nullable|email|max:255',
+                'nim'             => 'nullable|string|max:50',
+                'jurusan'         => 'nullable|string|max:100',
+                'no_telepon'      => 'required|digits_between:10,15',
+                'alamat_rumah'    => 'required|string|max:255',
+                'linkedin'        => 'nullable|url|max:255',
+                'instagram'       => 'nullable|string|max:100',
+                'email_alternatif'=> 'nullable|email|max:255',
             ]);
 
             $user->profilAlumni()->updateOrCreate(
                 ['user_id' => $user->id],
                 $request->only([
-                    'no_telepon', 'alamat_rumah', 'linkedin',
-                    'instagram', 'email_alternatif'
+                    'nim', 'jurusan', 'no_telepon', 'alamat_rumah',
+                    'linkedin', 'instagram', 'email_alternatif'
                 ])
             );
 
