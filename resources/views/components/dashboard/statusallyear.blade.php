@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="block w-full overflow-x-auto px-4">
-            <div id="statuskarir2" class="w-full font-sans"></div>
+            <div id="statuskarir2" class="w-full font-sans" id="status-all-year-chart"></div>
         </div>
     </div>
 </div>

@@ -13,153 +13,112 @@ use App\Models\ResponKuesioner;
 
 class DashboardController extends Controller
 {
+    // Gunakan middleware auth standar
     public function __construct()
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->middleware('auth');
     }
 
     public function dashboard(Request $request)
     {
-        // Pastikan user terautentikasi dan memiliki hak akses
-        $this->authorizeDashboard();
+        $user = Auth::user();
+        // Otorisasi admin approved
+        if ($user->role !== 'admin' || $user->status !== 'approved') {
+            abort(403, 'Unauthorized action.');
+        }
+        $profil = $this->getUserProfile($user);
 
-        $userData = $this->getUserData();
-        $profil = $this->getUserProfile($userData['id'], $userData['role']);
-
-        $jumlahPenggunaDisetujui = User::where('status', 'approved')
-            ->where('role', 'alumni')
-            ->count();
-
-        $jumlahPenggunaPending = User::where('status', 'pending')
-            ->where('role', 'alumni')
-            ->count();
-
+        // Ambil statistik alumni dan responden per tahun (sekali query)
         $jurusanDefault = $request->query('jurusandefault');
+        $alumniStats = $this->getAlumniStats($jurusanDefault);
 
-        $alumniDanResponden = $this->getAlumniAndRespondents($jurusanDefault);
-        $persentasePerTahun = $this->calculatePercentagePerYear($alumniDanResponden);
+        // Hitung total dan persentase
+        $totalAlumni = $alumniStats->sum('total_alumni');
+        $totalResponden = $alumniStats->sum('total_responden');
+        $persentasePerTahun = $alumniStats->map(function ($row) {
+            $row->persentase = $row->total_alumni > 0 ? ($row->total_responden / $row->total_alumni) * 100 : 0;
+            return $row;
+        });
+        $persentaseRespondenKeseluruhan = $totalAlumni > 0 ? ($totalResponden / $totalAlumni) * 100 : 0;
 
-        $totalAlumni = $alumniDanResponden->sum('total_alumni');
-        $totalResponden = $alumniDanResponden->sum('total_responden');
-        $persentaseRespondenKeseluruhan = $this->calculateOverallPercentage($totalAlumni, $totalResponden);
+        // Statistik pengguna
+        $jumlahPenggunaDisetujui = User::where('status', 'approved')->where('role', 'alumni')->count();
+        $jumlahPenggunaPending = User::where('status', 'pending')->where('role', 'alumni')->count();
 
-        // Ambil parameter filter jurusan dari request
-        $jurusan1 = $request->query('jurusan1');
-        $jurusan2 = $request->query('jurusan2');
-
-        $jumlahRespondenJurusan0 = DB::table('profil_alumni')
-            ->select('jurusan', DB::raw('COUNT(*) as jumlah_responden'))
-            ->when($jurusanDefault, fn($query) => $query->where('jurusan', $jurusanDefault))
+        // Statistik responden per jurusan
+        $jumlahRespondenJurusan0 = ProfilAlumni::select('jurusan', DB::raw('COUNT(*) as jumlah_responden'))
+            ->when($jurusanDefault, fn($q) => $q->where('jurusan', $jurusanDefault))
             ->groupBy('jurusan')
             ->get();
 
-        $jawabanKuesioner1 = $this->getQuestionnaireResponses($jurusan1, $jurusanDefault);
+        // Jawaban kuesioner (per jurusan)
+        $jurusan1 = $request->query('jurusan1');
+        $jurusan2 = $request->query('jurusan2');
+        $jawabanKuesioner1 = $this->getStatusKuesionerByTahun($jurusan1 ?: $jurusanDefault);
         $jawabanKuesioner2 = ($jurusan1 === $jurusan2)
             ? $jawabanKuesioner1
-            : $this->getQuestionnaireResponses($jurusan2, $jurusanDefault);
+            : $this->getStatusKuesionerByTahun($jurusan2 ?: $jurusanDefault);
 
+        // Kirim data ke blade (struktur tetap sama)
         return view('pages.dashboard.index', [
-            'profil'                         => $profil,
-            'jumlahPenggunaDisetujui'         => $jumlahPenggunaDisetujui,
-            'jumlahPenggunaPending'           => $jumlahPenggunaPending,
-            'peranPengguna'                   => $userData['role'],
-            'persentasePerTahun'              => $persentasePerTahun,
-            'persentaseRespondenKeseluruhan'   => $persentaseRespondenKeseluruhan,
-            'totalResponden'                  => $totalResponden,
-            'jawabanKuesioner1'               => $jawabanKuesioner1,
-            'jawabanKuesioner2'               => $jawabanKuesioner2,
-            'jumlahRespondenJurusan0'         => $jumlahRespondenJurusan0,
-            'jurusandefault'                  => $jurusanDefault,
-            'jurusan1'                      => $jurusan1,
-            'jurusan2'                      => $jurusan2,
+            'profil' => $profil,
+            'jumlahPenggunaDisetujui' => $jumlahPenggunaDisetujui,
+            'jumlahPenggunaPending' => $jumlahPenggunaPending,
+            'peranPengguna' => $user->role,
+            'persentasePerTahun' => $persentasePerTahun,
+            'persentaseRespondenKeseluruhan' => $persentaseRespondenKeseluruhan,
+            'totalResponden' => $totalResponden,
+            'jawabanKuesioner1' => $jawabanKuesioner1,
+            'jawabanKuesioner2' => $jawabanKuesioner2,
+            'jumlahRespondenJurusan0' => $jumlahRespondenJurusan0,
+            'jurusandefault' => $jurusanDefault,
+            'jurusan1' => $jurusan1,
+            'jurusan2' => $jurusan2,
         ]);
     }
 
-    private function authorizeDashboard(): void
+    // Ambil profil user (admin/alumni)
+    private function getUserProfile($user)
     {
-        // Cek apakah user sudah login dan mempunyai peran admin yang disetujui
-        if (!Auth::check() || ($this->getUserData()['status'] !== 'approved') || $this->getUserData()['role'] !== 'admin') {
-            abort(403, 'Unauthorized action.');
+        if ($user->role === 'admin') {
+            return ProfilAdmin::where('user_id', $user->id)->first();
         }
+        return ProfilAlumni::where('user_id', $user->id)->first();
     }
 
-    private function getUserData(): array
+    // Statistik alumni & responden per tahun (gabungan)
+    private function getAlumniStats($jurusan = null)
     {
-        $user = Auth::user();
-        return [
-            'id'     => Auth::id(),
-            'role'   => $user->role,
-            'status' => $user->status,
-        ];
-    }
-
-    private function getUserProfile($userId, $userRole)
-    {
-        $profilClass = ($userRole === 'admin') ? ProfilAdmin::class : ProfilAlumni::class;
-        $columns = ($userRole === 'admin')
-            ? ['no_telepon', 'jabatan']
-            : ['tahun_lulus', 'linkedin', 'instagram', 'no_telepon'];
-
-        return $profilClass::where('user_id', $userId)
-            ->firstOrFail($columns);
-    }
-
-    private function getAlumniAndRespondents($jurusanDefault = null)
-    {
-        $query = ProfilAlumni::select(
-            'profil_alumni.tahun_lulus',
+        return ProfilAlumni::select(
+            'tahun_lulus',
             DB::raw('COUNT(profil_alumni.id) as total_alumni'),
             DB::raw('COUNT(DISTINCT respon_kuesioner.user_id) as total_responden')
         )
             ->leftJoin('respon_kuesioner', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
-            ->groupBy('profil_alumni.tahun_lulus');
-
-        if ($jurusanDefault) {
-            $query->where('profil_alumni.jurusan', $jurusanDefault);
-        }
-
-        return $query->get();
+            ->when($jurusan, fn($q) => $q->where('profil_alumni.jurusan', $jurusan))
+            ->groupBy('tahun_lulus')
+            ->get();
     }
 
-    private function calculatePercentagePerYear($alumniAndRespondents)
-    {
-        return $alumniAndRespondents->transform(function ($data) {
-            $data->persentase = $data->total_alumni > 0
-                ? ($data->total_responden / $data->total_alumni) * 100
-                : 0;
-            return $data;
-        });
-    }
-
-    private function calculateOverallPercentage($totalAlumni, $totalResponden)
-    {
-        return $totalAlumni > 0 ? ($totalResponden / $totalAlumni) * 100 : 0;
-    }
-
-    private function getQuestionnaireResponses($jurusan = null, $jurusanDefault = null): array
+    // Statistik status kuesioner per tahun lulus
+    private function getStatusKuesionerByTahun($jurusan = null): array
     {
         $responses = ResponKuesioner::with('user.profilAlumni')
             ->join('profil_alumni', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
             ->whereNotNull('profil_alumni.jurusan')
-            ->when($jurusan, fn($query) => $query->where('profil_alumni.jurusan', $jurusan))
-            ->when($jurusanDefault, fn($query) => $query->where('profil_alumni.jurusan', $jurusanDefault))
+            ->when($jurusan, fn($q) => $q->where('profil_alumni.jurusan', $jurusan))
             ->get();
 
         $dataAlumni = [];
-
         foreach ($responses as $response) {
             $profilAlumni = $response->user->profilAlumni;
             if ($profilAlumni && $profilAlumni->tahun_lulus) {
                 $tahunLulus = $profilAlumni->tahun_lulus;
                 $jawaban = json_decode($response->jawaban, true);
-
                 if (isset($jawaban['status'])) {
                     if (!isset($dataAlumni[$tahunLulus])) {
                         $dataAlumni[$tahunLulus] = ['status_1' => 0, 'status_2' => 0, 'status_3' => 0];
                     }
-
                     $statusKey = 'status_' . $jawaban['status'];
                     if (array_key_exists($statusKey, $dataAlumni[$tahunLulus])) {
                         $dataAlumni[$tahunLulus][$statusKey]++;
@@ -167,7 +126,6 @@ class DashboardController extends Controller
                 }
             }
         }
-
         return $dataAlumni;
     }
 }

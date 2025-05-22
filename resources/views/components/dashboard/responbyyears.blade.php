@@ -31,7 +31,7 @@
         </div>
         <div class="block w-full overflow-x-auto px-4">
             <!-- Pastikan id container sesuai -->
-            <div id="barchart1" class="w-full font-sans"></div>
+            <div id="barchart1" class="w-full font-sans" id="responbyyears-barchart"></div>
         </div>
     </div>
 </div>

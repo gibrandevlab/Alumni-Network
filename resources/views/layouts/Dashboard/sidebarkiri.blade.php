@@ -19,7 +19,7 @@
                         </div>
                     </li>
                     <li>
-                        <a href="/dashboard"
+                        <a href="{{ route('dashboard.dashboard') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -32,7 +32,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('dashboard.member.alumni.index') }}
+                        <a href="{{ route('dashboard.member.alumni.index') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +44,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/dashboard/user/setting"
+                        <a href="{{ route('dashboard.member.users.index') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -57,7 +57,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/dashboard/event/setting"
+                        <a href="{{ route('events.index') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -70,7 +70,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/export-excel"
+                        <a href="{{ url('/export-excel') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"

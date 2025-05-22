@@ -30,13 +30,12 @@
             </div>
         </div>
         <div class="block w-full overflow-x-auto px-4">
-            <div id="statuskarir" class="w-full font-sans" style="background-color: #2d3748; color: #fff;"></div>
+            <div id="statuskarir" class="w-full font-sans" style="background-color: #2d3748; color: #fff;" id="status-tahun-chart"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Ambil data dari controller (pastikan $jawabanKuesioner1 sudah terdefinisi)
     var dataAlumni = @json($jawabanKuesioner1);
     var currentYear = new Date().getFullYear();
     var years = [];

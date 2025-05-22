@@ -4,6 +4,10 @@
 <div class="min-h-screen flex flex-row flex-auto flex-shrink-0 antialiased dark:bg-gray-300 text-black dark:text-white">
     @include('layouts.Dashboard.sidebarkiri')
 @endsection
+    @php
+        // Kompatibilitas variabel lama
+        $alumniProfiles = $alumni ?? null;
+    @endphp
     <div class="h-full mx-14 my-14 md:mx-64" style="padding-left: 1rem; padding-right: 1rem;">
         <header class="mb-6">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Manage Alumni</h1>

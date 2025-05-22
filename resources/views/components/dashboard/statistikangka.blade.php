@@ -1,5 +1,5 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-4">
-    <div class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md">
+    <div class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md" id="statistik-user-disetujui">
         <div class="flex justify-center items-center w-14 h-14 bg-amber-100 rounded-full">
             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-amber-500">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -10,7 +10,7 @@
             <p class="text-sm text-gray-500">Users</p>
         </div>
     </div>
-    <a href="/dashboard/user/setting?search=pending" class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md">
+    <a href="/dashboard/user/setting?search=pending" class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md" id="statistik-user-pending">
         <div class="flex justify-center items-center w-14 h-14 bg-amber-100 rounded-full">
             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-amber-500">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -21,7 +21,7 @@
             <p class="text-sm text-gray-500">Awaiting Verification</p>
         </div>
     </a>
-    <div class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md">
+    <div class="card flex items-center justify-between border-b-4 border-amber-500 shadow-md" id="statistik-responden-keseluruhan">
         <div class="flex justify-center items-center w-14 h-14 bg-amber-100 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 493.474 493.474" xml:space="preserve" style="width: 30px; height: 30px;">
                 <g>
