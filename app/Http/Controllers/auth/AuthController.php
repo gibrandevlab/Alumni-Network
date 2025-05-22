@@ -13,8 +13,8 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    private const MAX_LOGIN_ATTEMPTS = 5;
-    private const DECAY_MINUTES = 15;
+    private const MAX_LOGIN_ATTEMPTS = 5; // Maksimal percobaan login
+    private const DECAY_MINUTES = 15; // Waktu blokir dalam menit
 
     public function showLoginForm()
     {
@@ -32,7 +32,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -40,21 +40,23 @@ class AuthController extends Controller
 
         if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-            $minutes = ceil($seconds / 60);
-            return back()->withInput()->with('error', "Terlalu banyak percobaan login. Coba lagi dalam {$minutes} menit.");
+            return redirect()->back()->withInput()->with(
+                'notif_login',
+                "Terlalu banyak percobaan login. Silakan coba lagi dalam " . ceil($seconds / 60) . " menit."
+            );
         }
 
         $user = User::where('email', $request->input('email'))->first();
 
         if ($this->attemptLogin($user, $request->input('password'))) {
-            RateLimiter::clear($throttleKey);
+            RateLimiter::clear($throttleKey); // Reset percobaan login jika berhasil
             return $this->handleUserStatus($request, $user);
         }
 
-        RateLimiter::hit($throttleKey, self::DECAY_MINUTES * 60);
-        $remaining = self::MAX_LOGIN_ATTEMPTS - RateLimiter::attempts($throttleKey);
+        RateLimiter::hit($throttleKey, self::DECAY_MINUTES * 60); // Tambahkan percobaan login
+        $remainingAttempts = self::MAX_LOGIN_ATTEMPTS - RateLimiter::attempts($throttleKey);
 
-        return back()->withInput()->with('error', "Email atau password salah. Percobaan tersisa: $remaining.");
+        return $this->handleFailedLogin($request, "Email atau password salah. Percobaan login tersisa: $remainingAttempts.");
     }
 
     private function attemptLogin(?User $user, string $password): bool
@@ -62,20 +64,26 @@ class AuthController extends Controller
         return $user && Hash::check($password, $user->password);
     }
 
+    private function handleFailedLogin(Request $request, string $message)
+    {
+        return redirect()->back()->withInput()->with('notif_login', $message);
+    }
+
     private function handleUserStatus(Request $request, User $user)
     {
+        if ($user->status === 'pending') {
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect()->route('profile.create');
+        }
+
         if ($user->status === 'rejected') {
-            return redirect()->route('login')->with('error', 'Akun Anda telah ditolak. Silakan hubungi admin.');
+            return $this->handleFailedLogin($request, 'Akun Anda telah ditolak. Silakan hubungi admin untuk informasi lebih lanjut.');
         }
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        if ($user->status === 'pending') {
-            return redirect()->route('profile.index')->with('info', 'Akun Anda sedang menunggu persetujuan. Silakan lengkapi profil.');
-        }
-
-        // Jika status approved, arahkan berdasarkan role
         return match ($user->role) {
             'admin' => redirect()->route('dashboard.dashboard'),
             'alumni' => redirect()->route('homepage.index'),
@@ -93,14 +101,15 @@ class AuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback(Request $request)
+    public function handleGoogleCallback($request)
     {
         try {
             $googleUser = Socialite::driver('google')->user();
+
             $user = User::where('google_id', $googleUser->getId())->first();
 
             if (!$user) {
-                return redirect()->route('login')->with('error', 'Akun Google belum terdaftar.');
+                return redirect()->route('login')->with('error', 'Akun Google Anda belum terdaftar.');
             }
 
             Auth::login($user);
@@ -112,7 +121,7 @@ class AuthController extends Controller
                 default => redirect()->route('homepage.index'),
             };
         } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Login Google gagal.');
+            return redirect()->route('login')->with('error', 'Terjadi kesalahan saat login dengan Google.');
         }
     }
 
@@ -121,7 +130,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return redirect()->route('homepage.index')->with('success', 'Anda telah logout.');
+        return redirect()->route('homepage.index')->with('success', 'Anda telah berhasil logout.');
     }
 }
