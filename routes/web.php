@@ -129,3 +129,4 @@ Route::post('/midtrans/notification', [MidtransNotificationController::class, 'h
 Route::get('/midtrans/finish',   [MidtransNotificationController::class, 'finish'])->name('midtrans.finish');
 Route::get('/midtrans/unfinish', [MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
 Route::get('/midtrans/error',    [MidtransNotificationController::class, 'error'])->name('midtrans.error');
+

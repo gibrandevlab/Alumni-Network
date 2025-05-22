@@ -206,7 +206,7 @@
                 @csrf
                 <div class="space-y-2">
                     <label class="text-white text-sm">Nama Lengkap</label>
-                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap"
+                    <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Masukkan nama lengkap"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>

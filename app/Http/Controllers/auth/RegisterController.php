@@ -20,11 +20,11 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ], [
-            'name.required' => 'Nama lengkap harus diisi',
+            'nama.required' => 'Nama lengkap harus diisi',
             'email.required' => 'Email harus diisi',
             'email.email' => 'Format email tidak valid',
             'email.unique' => 'Email sudah terdaftar',
@@ -35,7 +35,7 @@ class RegisterController extends Controller
 
         try {
             $user = User::create([
-                'name' => $request->name,
+                'nama' => $request->nama,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 'alumni',
@@ -45,7 +45,6 @@ class RegisterController extends Controller
             if (!ProfilAlumni::where('user_id', $user->id)->exists()) {
                 ProfilAlumni::create([
                     'user_id' => $user->id,
-                    'nama_lengkap' => $request->name,
                 ]);
             }
 
