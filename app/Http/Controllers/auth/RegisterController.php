@@ -20,12 +20,22 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'name.required' => 'Nama lengkap harus diisi',
+            'email.required' => 'Email harus diisi',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Password harus diisi',
+            'password.min' => 'Password minimal 8 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak sesuai',
         ]);
 
         try {
             $user = User::create([
+                'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 'alumni',
@@ -35,12 +45,15 @@ class RegisterController extends Controller
             if (!ProfilAlumni::where('user_id', $user->id)->exists()) {
                 ProfilAlumni::create([
                     'user_id' => $user->id,
+                    'nama_lengkap' => $request->name,
                 ]);
             }
 
-            return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+            return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat registrasi. Silakan coba lagi.');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat registrasi. Silakan coba lagi.');
         }
     }
 
