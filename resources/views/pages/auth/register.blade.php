@@ -174,39 +174,87 @@
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="register-form">
             <!-- Logo -->
             <div class="text-center mb-6">
-                <img src="{{ asset('images/alumnet-logo-white.png') }}" alt="Alumni Network Logo"
+                <img src="{{ asset('images/logoAlumnetFix.png') }}" alt="Alumni Network Logo"
                     class="mx-auto h-12">
             </div>
 
-            <h2 class="text-center text-2xl font-bold text-white mb-6">Register</h2>
+            <h2 class="text-center text-2xl font-bold text-white mb-6">Sign Up</h2>
+
+            @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <ul>
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
             <form action="{{ route('register') }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-white text-sm">Nama</label>
-                    <input type="text" name="nama" placeholder="Input Nama Anda"
+                    <label class="text-white text-sm">Nama Lengkap</label>
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>
+
                 <div class="space-y-2">
                     <label class="text-white text-sm">Email</label>
-                    <input type="email" name="email" placeholder="username@gmail.com"
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="username@gmail.com"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>
 
                 <div class="space-y-2">
                     <label class="text-white text-sm">Password</label>
-                    <input type="password" name="password" placeholder="Password"
-                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" placeholder="Password"
+                            class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            required>
+                        <button type="button" onclick="togglePassword('password', this)" tabindex="-1"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-900 bg-transparent p-0 m-0 focus:outline-none">
+                            <svg id="icon-password" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-gray-400 text-sm">*minimal 8 karakter</p>
                 </div>
 
                 <div class="space-y-2">
                     <label class="text-white text-sm">Confirm Password</label>
-                    <input type="password" name="password_confirmation" placeholder="Confirm Password"
-                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required>
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password"
+                            class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            required>
+                        <button type="button" onclick="togglePassword('password_confirmation', this)" tabindex="-1"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-900 bg-transparent p-0 m-0 focus:outline-none">
+                            <svg id="icon-password_confirmation" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit"
@@ -230,7 +278,7 @@
                     </a>
                 </div>
                 <div class="text-center text-white/80 text-sm">
-                    Already have an account?
+                    already have an account?
                     <a href="{{ route('login') }}" class="text-white hover:underline">Login here</a>
                 </div>
             </form>
@@ -251,8 +299,28 @@
             const registerForm = document.getElementById('register-form');
             observer.observe(registerForm);
         });
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const svg = btn.querySelector('svg');
+            if (input.type === "password") {
+                input.type = "text";
+                svg.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-3.95m1.414-1.414A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.293 5.95M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3l18 18" />
+                `;
+            } else {
+                input.type = "password";
+                svg.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                `;
+            }
+        }
     </script>
 </body>
-
-
 </html>
