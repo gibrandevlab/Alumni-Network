@@ -10,9 +10,23 @@ class ProfileController extends Controller
 {
     /**
      * Tampilkan halaman profil dengan data pengguna dan relasinya.
+     * Jika diberikan parameter id, role, dan status, tampilkan profil sesuai parameter.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $id = $request->input('id');
+        $role = $request->input('role');
+        $status = $request->input('status');
+
+        if (!empty($id) && !empty($role) && !empty($status)) {
+            $user = \App\Models\User::find($id);
+            if (!$user) {
+                return redirect()->back()->with('error', 'User tidak ditemukan.');
+            }
+            $profileData = $role === 'admin' ? $user->profilAdmin : $user->profilAlumni;
+            return view('pages.Profile', compact('user', 'profileData', 'id', 'role', 'status'));
+        }
+
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
         }
@@ -32,7 +46,7 @@ class ProfileController extends Controller
             return redirect()->route('login')->with('error', 'Akses tidak valid.');
         }
 
-        // Validasi dan update user
+        // Validasi dan update user (readonly kecuali password)
         $request->validate([
             'nama'  => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -53,6 +67,13 @@ class ProfileController extends Controller
         $user->nama = $request->input('nama');
         $user->email = $request->input('email');
         $user->foto = $fotoName;
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+            $user->password = bcrypt($request->input('password'));
+        }
         $user->save();
         session()->forget('old_foto');
 
@@ -102,5 +123,21 @@ class ProfileController extends Controller
             );
         }
         return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    /**
+     * Tampilkan profil berdasarkan id, role, dan status jika ketiganya tidak kosong.
+     */
+    public function showByIdRoleStatus($id = null, $role = null, $status = null)
+    {
+        if (!empty($id) && !empty($role) && !empty($status)) {
+            $user = \App\Models\User::find($id);
+            if (!$user) {
+                return redirect()->back()->with('error', 'User tidak ditemukan.');
+            }
+            $profileData = $role === 'admin' ? $user->profilAdmin : $user->profilAlumni;
+            return view('pages.Profile', compact('user', 'profileData', 'id', 'role', 'status'));
+        }
+        return redirect()->back()->with('error', 'Parameter tidak lengkap.');
     }
 }

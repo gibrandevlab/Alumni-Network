@@ -1,5 +1,5 @@
 <style>
-    html, body {
+    html {
         overflow-x: hidden;
     }
 </style>
@@ -8,7 +8,7 @@
 <title>@yield('title', 'ALUMNET - Alumni Network')</title>
 @include('components.welcome.hero')
 @section('content')
-    <div class="flex flex-col gap-12">
+    <div class="flex flex-col gap-12 mx-auto md:mx-6 lg:mx-12 xl:mx-18 2xl:mx-24">
         @include('components.welcome.tentang')
         @include('components.welcome.panduan')
         @include('components.welcome.floatchat')

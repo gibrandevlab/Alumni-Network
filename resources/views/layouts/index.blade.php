@@ -4,353 +4,1117 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title')</title>
+    <title>@yield('title', 'ALUMNET - Jaringan Alumni Instansi Pendidikan')</title>
 
-    <meta name="description" content="ALUMNET - Aplikasi Sistem Informasi Jaringan Alumni">
-    <meta name="keywords" content="Alumni Network, Pelacak Alumni, Jaringan Alumni, Instansi Pendidikan">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="ALUMNET - Platform yang menghubungkan alumni dengan instansi pendidikan untuk kolaborasi, peluang karir, dan informasi terkini.">
+    <meta name="keywords" content="Alumni Network, Pelacak Alumni, Jaringan Alumni, Instansi Pendidikan, Karir, Networking">
+    <meta name="author" content="ALUMNET">
+    <meta name="robots" content="index, follow">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="ALUMNET - Jaringan Alumni Instansi Pendidikan" />
-    <meta property="og:description"
-        content="Hubungkan alumni dengan instansi pendidikan untuk kolaborasi, peluang, dan informasi terkini." />
+    <meta property="og:title" content="@yield('og_title', 'ALUMNET - Jaringan Alumni Instansi Pendidikan')" />
+    <meta property="og:description" content="@yield('og_description', 'Platform yang menghubungkan alumni dengan instansi pendidikan untuk kolaborasi, peluang karir, dan networking profesional.')" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
+    <meta property="og:site_name" content="ALUMNET" />
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ALUMNET - Jaringan Alumni Instansi Pendidikan">
-    <meta name="twitter:description"
-        content="Platform yang menghubungkan alumni dengan instansi pendidikan dan sesama alumni.">
+    <meta name="twitter:title" content="@yield('twitter_title', 'ALUMNET - Jaringan Alumni Instansi Pendidikan')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Platform yang menghubungkan alumni dengan instansi pendidikan dan sesama alumni.')">
+    <meta name="twitter:image" content="{{ asset('images/twitter-card.jpg') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="{{ asset('images/testing.png') }}" as="image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- CSS -->
     @vite('resources/css/app.css')
+
     <style>
-        html, body {
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 0.5rem;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Navigation Styles */
+        .nav-menu {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu.active {
+            display: flex;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        /* Auth Section */
+        .auth-section {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .auth-section.active {
+            display: flex;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-button:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .dropdown-item.danger {
+            color: var(--error-color);
+        }
+
+        .dropdown-item.danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-button:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            padding: 2rem;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active .mobile-menu-content {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mobile-close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .mobile-close-button:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .mobile-nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .mobile-nav-link:hover {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-primary);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .social-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .nav-menu {
+                display: flex;
+            }
+
+            .auth-section {
+                display: flex;
+            }
+
+            .mobile-menu-button {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 3rem;
+            }
+
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .nav-container {
+                padding: 1rem 3rem;
+            }
+
+            .logo img {
+                height: 48px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles */
+        *:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
         }
     </style>
+
     <!-- Scripts -->
     @vite('resources/js/Event.js')
-
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/lib/browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/lib/browser.min.js" defer></script>
     @yield('script')
 </head>
 
-
 <body>
-    @vite('resources/js/navbar-burger.js')
-    <div class=" flex flex-row items-center justify-center bg-white shadow-md sticky top-0 z-10 m-0">
-    <nav class="container h-full py-4 flex justify-between items-center" >
-        <!-- Logo Section -->
-        <a class="text-3xl font-bold leading-none flex items-center" href="#">
-            <img style="width: 150px" src="{{ asset('images/logo-alumnet-new.png') }}" alt="logo">
-        </a>
+    <!-- Header -->
+    <header class="header" id="header" role="banner">
+        <nav class="nav-container" role="navigation" aria-label="Main navigation">
+            <!-- Logo -->
+            <a href="/" class="logo" aria-label="ALUMNET Home">
+                <img src="{{ asset('images/testing.png') }}" alt="ALUMNET Logo" width="150" height="40">
+            </a>
 
-        <!-- Mobile Menu Button -->
-        <div class="lg:hidden">
-            <button class="navbar-burger flex items-center text-blue-600 p-3">
-                <svg class="block h-5 w-5 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <title>Mobile menu</title>
-                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+            <!-- Desktop Navigation -->
+            <ul class="nav-menu" role="menubar">
+                <li role="none"><a href="/" class="nav-link" role="menuitem">Home</a></li>
+                <li role="none"><a href="#tentang" class="nav-link" role="menuitem">Tentang</a></li>
+                <li role="none"><a href="#panduan" class="nav-link" role="menuitem">Panduan</a></li>
+                <li role="none"><a href="#berita" class="nav-link" role="menuitem">Berita</a></li>
+                <li role="none"><a href="#footer" class="nav-link" role="menuitem">Kontak</a></li>
+                <li role="none"><a href="/event-user" class="nav-link" role="menuitem">Event</a></li>
+            </ul>
+
+            <!-- Auth Section -->
+            <div class="auth-section">
+                @if (!empty($id) && !empty($role) && !empty($status))
+                    @php
+                        $user = \App\Models\User::find($id);
+                        $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
+                    @endphp
+                    <div class="profile-dropdown">
+                        <button class="profile-button flex flex-row items-center gap-2" id="profileButton" aria-haspopup="true" aria-expanded="false">
+                            <img src="{{ $foto }}" alt="Profile picture of {{ $user->nama ?? 'User' }}" class="profile-avatar" />
+                            <span class="profile-name">{{ $user->nama ?? 'User' }}</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;"><polyline points="6,9 12,15 18,9"></polyline></svg>
+                        </button>
+                        <div class="dropdown-menu" id="profileDropdown" role="menu">
+                            <a href="{{ route('profile.index') }}" class="dropdown-item flex items-center gap-2" role="menuitem">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-profile"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4z"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <span>Profile</span>
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="dropdown-item danger flex items-center gap-2" role="menuitem">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="/login" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10,17 15,12 10,7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Sign In
+                    </a>
+                    <a href="/register" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Sign Up
+                    </a>
+                @endif
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-button" id="mobileMenuButton" aria-label="Open mobile menu" aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
-        </div>
+        </nav>
+    </header>
 
-        <!-- Menu Links -->
-        <ul class="hidden lg:flex lg:mx-auto lg:items-center lg:space-x-4 lg:gap-4">
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#home">Home</a></li>
-            <li class="text-gray-300">:</li>
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#tentang">Tentang</a></li>
-            <li class="text-gray-300">:</li>
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#panduan">Panduan</a></li>
-            <li class="text-gray-300">:</li>
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#berita">Berita</a></li>
-            <li class="text-gray-300">:</li>
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="#footer">Kontak</a></li>
-            <li><a class="text-sm text-gray-500 hover:text-gray-700" href="/event-user">Event</a></li>
-        </ul>
-
-        <!-- Auth Links -->
-        @if (!empty($id) && !empty($role) && !empty($status))
-        @else
-            <div class="hidden lg:flex lg:items-center lg:justify-center lg:space-x-2">
-                <a href="/login" class="flex flex-row gap-2 py-2 px-4 text-sm text-blue-500 font-semibold rounded-xl transition duration-200 items-center justify-center" style="line-height: 1; text-align: center;">
-                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                        <g id="SVGRepo_iconCarrier">
-                            <path
-                                d="M14.9453 1.25C13.5778 1.24998 12.4754 1.24996 11.6085 1.36652C10.7084 1.48754 9.95048 1.74643 9.34857 2.34835C8.82363 2.87328 8.55839 3.51836 8.41916 4.27635C8.28387 5.01291 8.25799 5.9143 8.25196 6.99583C8.24966 7.41003 8.58357 7.74768 8.99778 7.74999C9.41199 7.7523 9.74964 7.41838 9.75194 7.00418C9.75803 5.91068 9.78643 5.1356 9.89448 4.54735C9.99859 3.98054 10.1658 3.65246 10.4092 3.40901C10.686 3.13225 11.0746 2.9518 11.8083 2.85315C12.5637 2.75159 13.5648 2.75 15.0002 2.75H16.0002C17.4356 2.75 18.4367 2.75159 19.1921 2.85315C19.9259 2.9518 20.3144 3.13225 20.5912 3.40901C20.868 3.68577 21.0484 4.07435 21.1471 4.80812C21.2486 5.56347 21.2502 6.56459 21.2502 8V16C21.2502 17.4354 21.2486 18.4365 21.1471 19.1919C21.0484 19.9257 20.868 20.3142 20.5912 20.591C20.3144 20.8678 19.9259 21.0482 19.1921 21.1469C18.4367 21.2484 17.4356 21.25 16.0002 21.25H15.0002C13.5648 21.25 12.5637 21.2484 11.8083 21.1469C11.0746 21.0482 10.686 20.8678 10.4092 20.591C10.1658 20.3475 9.99859 20.0195 9.89448 19.4527C9.78643 18.8644 9.75803 18.0893 9.75194 16.9958C9.74964 16.5816 9.41199 16.2477 8.99778 16.25C8.58357 16.2523 8.24966 16.59 8.25196 17.0042C8.25799 18.0857 8.28387 18.9871 8.41916 19.7236C8.55839 20.4816 8.82363 21.1267 9.34857 21.6517C9.95048 22.2536 10.7084 22.5125 11.6085 22.6335C12.4754 22.75 13.5778 22.75 14.9453 22.75H16.0551C17.4227 22.75 18.525 22.75 19.392 22.6335C20.2921 22.5125 21.0499 22.2536 21.6519 21.6517C22.2538 21.0497 22.5127 20.2919 22.6337 19.3918C22.7503 18.5248 22.7502 17.4225 22.7502 16.0549V7.94513C22.7502 6.57754 22.7503 5.47522 22.6337 4.60825C22.5127 3.70814 22.2538 2.95027 21.6519 2.34835C21.0499 1.74643 20.2921 1.48754 19.392 1.36652C18.525 1.24996 17.4227 1.24998 16.0551 1.25H14.9453Z"
-                                fill="#4163d2"></path>
-                            <path
-                                d="M2.00098 11.249C1.58676 11.249 1.25098 11.5848 1.25098 11.999C1.25098 12.4132 1.58676 12.749 2.00098 12.749L13.9735 12.749L12.0129 14.4296C11.6984 14.6991 11.662 15.1726 11.9315 15.4871C12.2011 15.8016 12.6746 15.838 12.9891 15.5685L16.4891 12.5685C16.6553 12.426 16.751 12.218 16.751 11.999C16.751 11.7801 16.6553 11.5721 16.4891 11.4296L12.9891 8.42958C12.6746 8.16002 12.2011 8.19644 11.9315 8.51093C11.662 8.82543 11.6984 9.2989 12.0129 9.56847L13.9735 11.249L2.00098 11.249Z"
-                                fill="#4163d2"></path>
-                        </g>
-                    </svg>
-                    <span>Sign In</span>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <h2 id="mobile-menu-title" class="sr-only">Navigation Menu</h2>
+                <a href="/" class="logo">
+                    <img src="{{ asset('images/testing.png') }}" alt="ALUMNET Logo" width="120" height="32">
                 </a>
-                <a href="/register" class="flex flex-row gap-2 py-2 px-4 text-sm text-gray-500 font-semibold rounded-xl transition duration-200 items-center justify-center" style="line-height: 1; text-align: center;">
-                    <svg fill="#6b7280" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#6b7280"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M2,21h8a1,1,0,0,0,0-2H3.071A7.011,7.011,0,0,1,10,13a5.044,5.044,0,1,0-3.377-1.337A9.01,9.01,0,0,0,1,20,1,1,0,0,0,2,21ZM10,5A3,3,0,1,1,7,8,3,3,0,0,1,10,5ZM23,16a1,1,0,0,1-1,1H19v3a1,1,0,0,1-2,0V17H14a1,1,0,0,1,0-2h3V12a1,1,0,0,1,2,0v3h3A1,1,0,0,1,23,16Z"></path></g></svg>
-                    <span>Sign Up</span>
-                </a>
-            </div>
-        @endif
-    </nav>
-    </div>
-    <div class="navbar-menu relative z-50 hidden">
-        <div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
-        <nav
-            class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
-
-            <!-- Logo Section -->
-            <div class="flex items-center mb-8">
-                <a class="mr-auto text-3xl font-bold leading-none" href="#">
-                    <svg class="h-12" alt="logo" viewBox="0 0 10240 10240">
-                        <!-- Logo Path Here -->
-                    </svg>
-                </a>
-                <button class="navbar-close">
-                    <svg class="h-6 w-6 text-gray-400 cursor-pointer hover:text-gray-500"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
+                <button class="mobile-close-button" id="mobileCloseButton" aria-label="Close mobile menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
 
-            <!-- Menu Links -->
-            <div>
-                <ul class="space-y-2">
-                    <li>
-                        <a class="block p-4 text-sm font-semibold text-gray-500 hover:bg-blue-50 hover:text-blue-600 rounded"
-                            href="#home">Home</a>
-                    </li>
-                    <li>
-                        <a class="block p-4 text-sm font-semibold text-gray-500 hover:bg-blue-50 hover:text-blue-600 rounded"
-                            href="#tentang">Tentang</a>
-                    </li>
-                    <li>
-                        <a class="block p-4 text-sm font-semibold text-gray-500 hover:bg-blue-50 hover:text-blue-600 rounded"
-                            href="#panduan">Panduan</a>
-                    </li>
-                    <li>
-                        <a class="block p-4 text-sm font-semibold text-gray-500 hover:bg-blue-50 hover:text-blue-600 rounded"
-                            href="#berita">Berita</a>
-                    </li>
-                    <li>
-                        <a class="block p-4 text-sm font-semibold text-gray-500 hover:bg-blue-50 hover:text-blue-600 rounded"
-                            href="#footer">Kontak</a>
-                    </li>
-                </ul>
-            </div>
+            <ul class="mobile-nav-menu" role="menu">
+                <li class="mobile-nav-item" role="none">
+                    <a href="/" class="mobile-nav-link" role="menuitem">Home</a>
+                </li>
+                <li class="mobile-nav-item" role="none">
+                    <a href="#tentang" class="mobile-nav-link" role="menuitem">Tentang</a>
+                </li>
+                <li class="mobile-nav-item" role="none">
+                    <a href="#panduan" class="mobile-nav-link" role="menuitem">Panduan</a>
+                </li>
+                <li class="mobile-nav-item" role="none">
+                    <a href="#berita" class="mobile-nav-link" role="menuitem">Berita</a>
+                </li>
+                <li class="mobile-nav-item" role="none">
+                    <a href="#footer" class="mobile-nav-link" role="menuitem">Kontak</a>
+                </li>
+                <li class="mobile-nav-item" role="none">
+                    <a href="/event-user" class="mobile-nav-link" role="menuitem">Event</a>
+                </li>
+            </ul>
 
-            <!-- Auth Links -->
-            <div class="mt-auto pt-6">
+            <!-- Mobile Auth Section -->
+            <div class="mobile-auth-section">
                 @if (!empty($id) && !empty($role) && !empty($status))
+                    @php
+                        $user = \App\Models\User::find($id);
+                        $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
+                    @endphp
+                    <div style="padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <img src="{{ $foto }}" alt="Profile picture" class="profile-avatar" style="width: 48px; height: 48px;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-primary);">{{ $user->nama ?? 'User' }}</div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">{{ $user->email ?? '' }}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="{{ route('profile.index') }}" class="btn btn-secondary" style="justify-content: center;">Profile</a>
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn" style="width: 100%; justify-content: center; background-color: var(--error-color); color: white;">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @else
-                    <div class="flex flex-col space-y-3">
-                        <a class="py-2 px-6 bg-gray-50 hover:bg-gray-100 text-sm text-gray-900 font-bold rounded-xl transition duration-200"
-                            href="/login">
-                            <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                        </a>
-                        <a class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200"
-                            href="/register">
-                            <i class="fas fa-user-plus mr-2"></i> Sign Up
-                        </a>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                        <a href="/login" class="btn btn-secondary" style="justify-content: center;">Sign In</a>
+                        <a href="/register" class="btn btn-primary" style="justify-content: center;">Sign Up</a>
                     </div>
                 @endif
             </div>
-
-            <!-- Footer -->
-            <p class="my-4 text-xs text-center text-gray-400">
-                <span>Copyright © 2024 Afwan Gibran Muhammad Algiffari</span>
-            </p>
-        </nav>
+        </div>
     </div>
 
-    <main>
+    <!-- Main Content -->
+    <main id="main-content" role="main">
         @yield('content')
     </main>
 
-
-    <footer id="footer" class="bg-white lg:grid lg:grid-cols-5 rounded-b-lg mt-32 shadow-lg">
-        <div class="relative block h-32 lg:col-span-2 lg:h-full bg-white">
-            <img src="{{ asset('images/bsigedung.png') }}" alt=""
-                class="absolute inset-0 h-full w-full object-cover" />
-        </div>
-
-        <div class="px-4 py-16 sm:px-6 lg:col-span-3 lg:px-8">
-            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                <div>
-                    <p>
-                        <span class="text-xs uppercase tracking-wide text-gray-500"> Hubungi Kami </span>
-
-                        <a href="#"
-                            class="block text-2xl font-medium text-gray-900 hover:opacity-75 sm:text-3xl">
-                            085814791149
+    <!-- Footer -->
+    <footer class="footer" id="footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <!-- Contact Section -->
+                <div class="footer-section">
+                    <h3>Hubungi Kami</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <a href="tel:+6285814791149" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); text-decoration: none;">
+                            +62 858-1479-1149
                         </a>
-                    </p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.875rem;">
+                        <p>Senin hingga Jumat: 10:00 - 17:00</p>
+                        <p>Akhir pekan: 10:00 - 15:00</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
 
-                    <ul class="mt-8 space-y-1 text-sm text-gray-700">
-                        <li>Senin hingga Jumat: 10am - 5pm</li>
-                        <li>Akhir pekan: 10am - 3pm</li>
-                    </ul>
-
-                    <ul class="mt-8 flex gap-6">
-                        <li>
-                            <a href="#" rel="noreferrer" target="_blank"
-                                class="text-gray-700 transition hover:opacity-75">
-                                <span class="sr-only">Facebook</span>
-
-                                <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" rel="noreferrer" target="_blank"
-                                class="text-gray-700 transition hover:opacity-75">
-                                <span class="sr-only">Instagram</span>
-
-                                <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" rel="noreferrer" target="_blank"
-                                class="text-gray-700 transition hover:opacity-75">
-                                <span class="sr-only">Twitter</span>
-
-                                <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path
-                                        d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                                </svg>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" rel="noreferrer" target="_blank"
-                                class="text-gray-700 transition hover:opacity-75">
-                                <span class="sr-only">GitHub</span>
-
-                                <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" rel="noreferrer" target="_blank"
-                                class="text-gray-700 transition hover:opacity-75">
-                                <span class="sr-only">Dribbble</span>
-
-                                <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
+                <!-- Services Section -->
+                <div class="footer-section">
+                    <h3>Layanan</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Testimoni & Saran</a></li>
+                        <li><a href="#">Lapor Kesalahan</a></li>
+                        <li><a href="#">Pusat Bantuan</a></li>
+                        <li><a href="#">Bantuan Online</a></li>
+                        <li><a href="#">Panduan Penggunaan</a></li>
+                        <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                        <p class="font-medium text-gray-900">Layanan</p>
-
-                        <ul class="mt-6 space-y-4 text-sm">
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Testimoni & Saran
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Lapor Kesalahan
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Pusat Bantuan
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Bantuan Online
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Panduan
-                                    Penggunaan
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> FAQ
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p class="font-medium text-gray-900">Perusahaan</p>
-
-                        <ul class="mt-6 space-y-4 text-sm">
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Tentang Kami </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Tim Kami
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="text-gray-700 transition hover:opacity-75"> Review Akun
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                <!-- Company Section -->
+                <div class="footer-section">
+                    <h3>Perusahaan</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Tentang Kami</a></li>
+                        <li><a href="#">Tim Kami</a></li>
+                        <li><a href="#">Karir</a></li>
+                        <li><a href="#">Review Akun</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="mt-12 border-t border-gray-100 pt-12">
-                <div class="sm:flex sm:items-center sm:justify-between">
-                    <ul class="flex flex-wrap gap-4 text-xs">
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75"> Syarat & Kondisi
-                            </a>
-                        </li>
 
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75"> Kebijakan Privasi
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75"> Cookie </a>
-                        </li>
+            <div class="footer-bottom">
+                <div>
+                    <ul style="display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; margin-bottom: 1rem;">
+                        <li><a href="#" style="color: var(--text-secondary); font-size: 0.875rem; text-decoration: none;">Syarat & Kondisi</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); font-size: 0.875rem; text-decoration: none;">Kebijakan Privasi</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); font-size: 0.875rem; text-decoration: none;">Cookie</a></li>
                     </ul>
-
-                    <p class="mt-8 text-xs text-gray-500 sm:mt-0">
-                        &copy; 2024. Gobanan Company. Seluruh hak cipta dilindungi.
-                    </p>
                 </div>
+                <p>&copy; 2024 ALUMNET. Seluruh hak cipta dilindungi.</p>
             </div>
         </div>
     </footer>
 
+    <!-- JavaScript -->
+    <script>
+        // Enhanced JavaScript with better performance and accessibility
+        class AlumnetApp {
+            constructor() {
+                this.init();
+            }
 
+            init() {
+                this.setupEventListeners();
+                this.setupScrollEffects();
+                this.setupDropdowns();
+                this.setupMobileMenu();
+                this.setupAccessibility();
+            }
+
+            setupEventListeners() {
+                // Debounced scroll handler
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    if (scrollTimeout) {
+                        window.cancelAnimationFrame(scrollTimeout);
+                    }
+                    scrollTimeout = window.requestAnimationFrame(() => {
+                        this.handleScroll();
+                    });
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeAllDropdowns();
+                        this.closeMobileMenu();
+                    }
+                });
+
+                // Click outside to close dropdowns
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.profile-dropdown')) {
+                        this.closeAllDropdowns();
+                    }
+                    if (!e.target.closest('.mobile-menu') && !e.target.closest('.mobile-menu-button')) {
+                        this.closeMobileMenu();
+                    }
+                });
+            }
+
+            setupScrollEffects() {
+                const header = document.getElementById('header');
+                let lastScrollY = window.scrollY;
+
+                this.handleScroll = () => {
+                    const currentScrollY = window.scrollY;
+
+                    // Add scrolled class for styling
+                    if (currentScrollY > 50) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+
+                    lastScrollY = currentScrollY;
+                };
+            }
+
+            setupDropdowns() {
+                const profileButton = document.getElementById('profileButton');
+                const profileDropdown = document.getElementById('profileDropdown');
+
+                if (profileButton && profileDropdown) {
+                    let hideTimeout;
+
+                    const showDropdown = () => {
+                        clearTimeout(hideTimeout);
+                        profileDropdown.classList.add('active');
+                        profileButton.setAttribute('aria-expanded', 'true');
+                    };
+
+                    const hideDropdown = () => {
+                        hideTimeout = setTimeout(() => {
+                            profileDropdown.classList.remove('active');
+                            profileButton.setAttribute('aria-expanded', 'false');
+                        }, 150);
+                    };
+
+                    profileButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (profileDropdown.classList.contains('active')) {
+                            hideDropdown();
+                        } else {
+                            showDropdown();
+                        }
+                    });
+
+                    profileButton.addEventListener('mouseenter', showDropdown);
+                    profileButton.addEventListener('mouseleave', hideDropdown);
+                    profileDropdown.addEventListener('mouseenter', showDropdown);
+                    profileDropdown.addEventListener('mouseleave', hideDropdown);
+
+                    // Keyboard navigation for dropdown
+                    profileButton.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            showDropdown();
+                            // Focus first dropdown item
+                            const firstItem = profileDropdown.querySelector('.dropdown-item');
+                            if (firstItem) firstItem.focus();
+                        }
+                    });
+
+                    // Arrow key navigation in dropdown
+                    profileDropdown.addEventListener('keydown', (e) => {
+                        const items = profileDropdown.querySelectorAll('.dropdown-item');
+                        const currentIndex = Array.from(items).indexOf(document.activeElement);
+
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            const nextIndex = (currentIndex + 1) % items.length;
+                            items[nextIndex].focus();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                            items[prevIndex].focus();
+                        }
+                    });
+                }
+            }
+
+            setupMobileMenu() {
+                const mobileMenuButton = document.getElementById('mobileMenuButton');
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mobileCloseButton = document.getElementById('mobileCloseButton');
+
+                if (mobileMenuButton && mobileMenu && mobileCloseButton) {
+                    mobileMenuButton.addEventListener('click', () => {
+                        this.openMobileMenu();
+                    });
+
+                    mobileCloseButton.addEventListener('click', () => {
+                        this.closeMobileMenu();
+                    });
+
+                    // Close on backdrop click
+                    mobileMenu.addEventListener('click', (e) => {
+                        if (e.target === mobileMenu) {
+                            this.closeMobileMenu();
+                        }
+                    });
+
+                    // Close mobile menu when clicking nav links
+                    const mobileNavLinks = mobileMenu.querySelectorAll('.mobile-nav-link');
+                    mobileNavLinks.forEach(link => {
+                        link.addEventListener('click', () => {
+                            this.closeMobileMenu();
+                        });
+                    });
+                }
+            }
+
+            openMobileMenu() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mobileMenuButton = document.getElementById('mobileMenuButton');
+
+                mobileMenu.classList.add('active');
+                mobileMenuButton.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+
+                // Focus first nav item
+                const firstNavItem = mobileMenu.querySelector('.mobile-nav-link');
+                if (firstNavItem) {
+                    setTimeout(() => firstNavItem.focus(), 100);
+                }
+            }
+
+            closeMobileMenu() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mobileMenuButton = document.getElementById('mobileMenuButton');
+
+                mobileMenu.classList.remove('active');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            closeAllDropdowns() {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+
+                const buttons = document.querySelectorAll('[aria-expanded="true"]');
+                buttons.forEach(button => {
+                    button.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            setupAccessibility() {
+                // Skip to main content link
+                const skipLink = document.createElement('a');
+                skipLink.href = '#main-content';
+                skipLink.textContent = 'Skip to main content';
+                skipLink.className = 'sr-only';
+                skipLink.style.cssText = `
+                    position: absolute;
+                    top: -40px;
+                    left: 6px;
+                    background: var(--primary-color);
+                    color: white;
+                    padding: 8px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    z-index: 9999;
+                    transition: top 0.3s;
+                `;
+
+                skipLink.addEventListener('focus', () => {
+                    skipLink.style.top = '6px';
+                });
+
+                skipLink.addEventListener('blur', () => {
+                    skipLink.style.top = '-40px';
+                });
+
+                document.body.insertBefore(skipLink, document.body.firstChild);
+
+                // Announce page changes for screen readers
+                const announcer = document.createElement('div');
+                announcer.setAttribute('aria-live', 'polite');
+                announcer.setAttribute('aria-atomic', 'true');
+                announcer.className = 'sr-only';
+                document.body.appendChild(announcer);
+
+                // Focus management for SPA-like behavior
+                window.addEventListener('popstate', () => {
+                    const mainContent = document.getElementById('main-content');
+                    if (mainContent) {
+                        mainContent.focus();
+                        announcer.textContent = 'Page content updated';
+                    }
+                });
+            }
+        }
+
+        // Initialize app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new AlumnetApp();
+            });
+        } else {
+            new AlumnetApp();
+        }
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            // Add fade-in animation to elements
+            const elements = document.querySelectorAll('main > *');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+                el.classList.add('fade-in');
+            });
+        });
+    </script>
+
+    @yield('additional_scripts')
+    @push('script')
+    <script>
+    (function() {
+        const btn = document.getElementById('profileButton');
+        const dropdown = document.getElementById('profileDropdown');
+        let hideTimeout;
+        if (!btn || !dropdown) return;
+        function showDropdown() {
+            clearTimeout(hideTimeout);
+            dropdown.classList.add('active', 'fade-in');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+        function hideDropdown() {
+            hideTimeout = setTimeout(() => {
+                dropdown.classList.remove('active', 'fade-in');
+                btn.setAttribute('aria-expanded', 'false');
+            }, 180); // delay supaya tidak langsung hilang
+        }
+        btn.addEventListener('mouseenter', showDropdown);
+        btn.addEventListener('focus', showDropdown);
+        btn.addEventListener('mouseleave', hideDropdown);
+        btn.addEventListener('blur', hideDropdown);
+        dropdown.addEventListener('mouseenter', showDropdown);
+        dropdown.addEventListener('mouseleave', hideDropdown);
+        // Untuk klik di luar dropdown
+        document.addEventListener('mousedown', function(e) {
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active', 'fade-in');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+        // Untuk mobile: toggle dengan klik
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active', 'fade-in');
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                showDropdown();
+            }
+        });
+    })();
+    </script>
+    @endpush
 </body>
-
 </html>
