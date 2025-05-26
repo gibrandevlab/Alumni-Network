@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
-class MemberSettingController extends Controller
+class AlumniSettingController extends Controller
 {
    public function __construct()
     {
@@ -42,7 +42,7 @@ class MemberSettingController extends Controller
 
         $alumni = $query->paginate(10)->appends($request->query());
 
-        return view('pages.dashboard.member-setting', compact('alumni', 'jurusanList'));
+        return view('pages.dashboard.AlumniSetting', compact('alumni', 'jurusanList'));
     }
 
     public function show($id)

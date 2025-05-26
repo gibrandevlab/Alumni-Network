@@ -4,7 +4,7 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\GroupChatController;
-use App\Http\Controllers\Dashboard\MemberSettingController;
+use App\Http\Controllers\Dashboard\AlumniSettingController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\UserSettingController;
 use App\Http\Controllers\FormQ1Controllers;
@@ -40,7 +40,7 @@ Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
 Route::middleware(['auth'])->group(function () {
     // MemberSettingController Routes
     Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
-        Route::resource('alumni', MemberSettingController::class)
+        Route::resource('alumni', AlumniSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
             ->names([
                 'index' => 'alumni.index',
@@ -49,8 +49,8 @@ Route::middleware(['auth'])->group(function () {
                 'update' => 'alumni.update',
                 'destroy' => 'alumni.destroy',
             ]);
-       
-        Route::get('alumni-export-all', [MemberSettingController::class, 'exportAll'])->name('alumni.exportAll');
+
+        Route::get('alumni-export-all', [AlumniSettingController::class, 'exportAll'])->name('alumni.exportAll');
     });
 
     // UserSettingController Routes
