@@ -6,12 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\ProfilAlumni;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class MemberSettingController extends Controller
 {
+   public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request)
     {
+        if (Auth::user()->role !== 'admin' || Auth::user()->status !== 'approved') {
+            abort(403);
+        }
+
         $query = User::with('profilAlumni')->where('role', 'alumni');
+
+        // Ambil daftar jurusan unik dari tabel profil_alumni
+        $jurusanList = ProfilAlumni::select('jurusan')->distinct()->pluck('jurusan')->filter()->values();
 
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
@@ -20,16 +34,22 @@ class MemberSettingController extends Controller
             });
         }
 
-        $alumni = $query->paginate(10);
+        if ($jurusan = $request->query('jurusan')) {
+            $query->whereHas('profilAlumni', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
 
-        return view('pages.dashboard.member-setting', compact('alumni'));
+        $alumni = $query->paginate(10)->appends($request->query());
+
+        return view('pages.dashboard.member-setting', compact('alumni', 'jurusanList'));
     }
 
     public function show($id)
     {
         $alumni = User::with('profilAlumni')->where('role', 'alumni')->findOrFail($id);
 
-        return $alumni;
+        return response()->json($alumni);
     }
 
     public function store(Request $request)
@@ -101,7 +121,10 @@ class MemberSettingController extends Controller
             ])
         );
 
-        return;
+        return response()->json([
+            'success' => true,
+            'data' => $user->load('profilAlumni')
+        ]);
     }
 
     public function destroy($id)
@@ -109,6 +132,54 @@ class MemberSettingController extends Controller
         $user = User::where('role', 'alumni')->findOrFail($id);
         $user->delete();
 
-        return;
+        return response()->json([
+            'success' => true,
+            'message' => 'Alumni deleted successfully'
+        ]);
+    }
+
+    public function exportAll()
+    {
+        $alumni = User::with('profilAlumni')
+            ->where('role', 'alumni')
+            ->get();
+
+        $filename = 'all-alumni-' . now()->format('Ymd_His') . '.xlsx';
+
+        // Use Laravel Excel for better Excel support
+        return \Maatwebsite\Excel\Facades\Excel::download(new class($alumni) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithTitle {
+            private $alumni;
+            public function __construct($alumni) { $this->alumni = $alumni; }
+            public function array(): array {
+                $data = [];
+                foreach ($this->alumni as $alumni) {
+                    $profil = $alumni->profilAlumni;
+                    $data[] = [
+                        'Nama' => $alumni->nama,
+                        'Email' => $alumni->email,
+                        'Status' => $alumni->status,
+                        'NIM' => $profil->nim ?? '',
+                        'Jurusan' => $profil->jurusan ?? '',
+                        'Tahun Masuk' => $profil->tahun_masuk ?? '',
+                        'Tahun Lulus' => $profil->tahun_lulus ?? '',
+                        'No Telepon' => $profil->no_telepon ?? '',
+                        'IPK' => $profil->ipk ?? '',
+                        'Alamat Rumah' => $profil->alamat_rumah ?? '',
+                        'LinkedIn' => $profil->linkedin ?? '',
+                        'Instagram' => $profil->instagram ?? '',
+                        'Email Alternatif' => $profil->email_alternatif ?? '',
+                        'Created At' => $alumni->created_at,
+                        'Updated At' => $alumni->updated_at,
+                    ];
+                }
+                return $data;
+            }
+            public function headings(): array {
+                return [
+                    'Nama', 'Email', 'Status', 'NIM', 'Jurusan', 'Tahun Masuk', 'Tahun Lulus', 'No Telepon', 'IPK', 'Alamat Rumah', 'LinkedIn', 'Instagram', 'Email Alternatif', 'Created At', 'Updated At'
+                ];
+            }
+            public function title(): string { return 'Alumni'; }
+        }, $filename);
     }
 }

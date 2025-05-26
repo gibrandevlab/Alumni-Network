@@ -32,30 +32,29 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('dashboard.member.alumni.index') }}"
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill="none" stroke="#FFFFFF" stroke-width="2" d="M18.0003,20.9998 C16.3453,20.9998 15.0003,19.6538 15.0003,17.9998 C15.0003,16.3458 16.3453,14.9998 18.0003,14.9998 C19.6543,14.9998 21.0003,16.3458 21.0003,17.9998 C21.0003,19.6538 19.6543,20.9998 18.0003,20.9998 L18.0003,20.9998 Z M24.0003,17.9998 L21.0003,17.9998 L24.0003,17.9998 Z M20.1213,20.1218 L22.2423,22.2428 L20.1213,20.1218 Z M18.0003,23.9998 L18.0003,20.9998 L18.0003,23.9998 Z M13.7573,22.2428 L15.8783,20.1208 L13.7573,22.2428 Z M12.0003,17.9998 L15.0003,17.9998 L12.0003,17.9998 Z M15.8783,15.8788 L13.7573,13.7578 L15.8783,15.8788 Z M18.0003,14.9998 L18.0003,11.9998 L18.0003,14.9998 Z M20.1213,15.8788 L22.2423,13.7578 L20.1213,15.8788 Z M12.5,12.5 C11.2660678,11.4458897 9.77508483,11 8,11 C4.13400675,11 1,13.0294373 1,18 L1,23 L11,23 M8,11 C10.7614237,11 13,8.76142375 13,6 C13,3.23857625 10.7614237,1 8,1 C5.23857625,1 3,3.23857625 3,6 C3,8.76142375 5.23857625,11 8,11 Z"/>
-                                </svg>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Manage Alumni</span>
-                            <span class="hidden md:block px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-blue-300 bg-blue-800 rounded-full">New</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('dashboard.member.users.index') }}"
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                                </svg>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Manage Users</span>
-                        </a>
-                    </li>
+                    <button id="manage-account-toggle" type="button"
+                        class="w-full text-left relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
+                        <span class="inline-flex justify-center items-center ml-4">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="none" stroke="#FFFFFF" stroke-width="2" d="M18.0003,20.9998 C16.3453,20.9998 15.0003,19.6538 15.0003,17.9998 C15.0003,16.3458 16.3453,14.9998 18.0003,14.9998 C19.6543,14.9998 21.0003,16.3458 21.0003,17.9998 C21.0003,19.6538 19.6543,20.9998 18.0003,20.9998 L18.0003,20.9998 Z M24.0003,17.9998 L21.0003,17.9998 L24.0003,17.9998 Z M20.1213,20.1218 L22.2423,22.2428 L20.1213,20.1218 Z M18.0003,23.9998 L18.0003,20.9998 L18.0003,23.9998 Z M13.7573,22.2428 L15.8783,20.1208 L13.7573,22.2428 Z M12.0003,17.9998 L15.0003,17.9998 L12.0003,17.9998 Z M15.8783,15.8788 L13.7573,13.7578 L15.8783,15.8788 Z M18.0003,14.9998 L18.0003,11.9998 L18.0003,14.9998 Z M20.1213,15.8788 L22.2423,13.7578 L20.1213,15.8788 Z M12.5,12.5 C11.2660678,11.4458897 9.77508483,11 8,11 C4.13400675,11 1,13.0294373 1,18 L1,23 L11,23 M8,11 C10.7614237,11 13,8.76142375 13,6 C13,3.23857625 10.7614237,1 8,1 C5.23857625,1 3,3.23857625 3,6 C3,8.76142375 5.23857625,11 8,11 Z"/>
+                            </svg>
+                        </span>
+                        <span class="ml-2 text-sm tracking-wide truncate">Manage Account</span>
+                        <svg id="manage-account-arrow" class="w-4 h-4 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <ul id="manage-account-submenu" class="ml-8 mt-1 hidden">
+                        <li>
+                            <a href="{{ route('dashboard.member.alumni.index') }}" class="flex items-center h-9 px-2 rounded hover:bg-blue-700">
+                                <span class="text-sm">Alumni</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://127.0.0.1:8000/dashboard/member/alumni" class="flex items-center h-9 px-2 rounded hover:bg-blue-700">
+                                <span class="text-sm">Admin</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                     <li>
                         <a href="{{ route('events.index') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
@@ -145,4 +144,15 @@
     window.addEventListener('resize', () => {
         toggleSidebar(window.innerWidth >= 768);
     });
+
+    // Manage Account submenu toggle
+    const manageAccountToggle = document.getElementById('manage-account-toggle');
+    const manageAccountSubmenu = document.getElementById('manage-account-submenu');
+    const manageAccountArrow = document.getElementById('manage-account-arrow');
+    if (manageAccountToggle && manageAccountSubmenu && manageAccountArrow) {
+        manageAccountToggle.addEventListener('click', () => {
+            manageAccountSubmenu.classList.toggle('hidden');
+            manageAccountArrow.classList.toggle('rotate-180');
+        });
+    }
 </script>

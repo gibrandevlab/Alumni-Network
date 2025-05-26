@@ -8,207 +8,233 @@
             <!-- Profile Header Card -->
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
                 <div class="md:flex">
-                    <div id="read-fast-info" class="md:w-1/3 bg-gradient-to-br from-blue-500 to-indigo-600 p-8 text-white">
-                        <!-- Profile Photo -->
-                        <div class="flex justify-center mb-6">
-                            @php
-                                $fotoPreview = old('foto')
-                                    ? asset('images/profil/' . old('foto'))
-                                    : ($user->foto
-                                        ? asset('images/profil/' . $user->foto)
-                                        : asset('images/profil/default.png'));
-                            @endphp
-                            <div class="relative group">
-                                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                                    <img src="{{ $fotoPreview }}" alt="Profile Photo" class="w-full h-full object-cover">
-                                </div>
-                                <!-- Status indicator -->
-                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-white flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
+                    <!-- Sticky Sidebar -->
+                    <div id="read-fast-info" class="md:w-1/3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white md:sticky md:top-0 md:self-start md:max-h-screen md:overflow-y-auto">
+                        <div class="p-8">
+                            <!-- Profile Photo -->
+                            <div class="flex justify-center mb-6">
+                                @php
+                                    $fotoPreview = old('foto')
+                                        ? asset('images/profil/' . old('foto'))
+                                        : ($user->foto
+                                            ? asset('images/profil/' . $user->foto)
+                                            : asset('images/profil/default.png'));
+                                @endphp
+                                <div class="relative group">
+                                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                                        <img src="{{ $fotoPreview }}" alt="Profile Photo" class="w-full h-full object-cover">
+                                    </div>
+                                    <!-- Status indicator -->
+                                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-white flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Essential Info Only -->
-                        <div class="text-center">
-                            <h1 class="text-2xl font-bold mb-2">{{ $user->nama }}</h1>
+                            <!-- Essential Info Only -->
+                            <div class="text-center">
+                                <h1 class="text-2xl font-bold mb-2">{{ $user->nama }}</h1>
 
-                            <!-- Role Badge -->
-                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white bg-opacity-20 text-white mb-4">
-                                @if($user->role === 'alumni')
-                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
-                                    </svg>
-                                    Alumni
-                                @else
-                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Administrator
-                                @endif
-                            </div>
-
-                            <!-- Key Information Cards -->
-                            @if ($user->role === 'alumni' && isset($profileData))
-                                <div class="space-y-4">
-                                    <!-- Program Study -->
-                                    @if(isset($profileData->jurusan))
-                                    <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
-                                        <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Program</div>
-                                        <div class="text-white font-medium text-sm">{{ $profileData->jurusan }}</div>
-                                    </div>
+                                <!-- Role Badge -->
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white bg-opacity-20 text-white mb-4">
+                                    @if($user->role === 'alumni')
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                                        </svg>
+                                        Alumni
+                                    @else
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Administrator
                                     @endif
+                                </div>
 
-                                    <!-- Graduation Year -->
-                                    @if(isset($profileData->tahun_lulus))
-                                    <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
-                                        <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Graduated</div>
-                                        <div class="text-white font-medium text-sm">{{ $profileData->tahun_lulus }}</div>
-                                    </div>
-                                    @endif
-
-                                    <!-- GPA (only if excellent) -->
-                                    @if(isset($profileData->ipk) && $profileData->ipk >= 3.5)
-                                    <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs text-blue-100 uppercase tracking-wide font-semibold">GPA</span>
-                                            <span class="text-white font-bold">{{ $profileData->ipk }}</span>
+                                <!-- Key Information Cards -->
+                                @if ($user->role === 'alumni' && isset($profileData))
+                                    <div class="space-y-4">
+                                        <!-- Program Study -->
+                                        @if(isset($profileData->jurusan))
+                                        <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+                                            <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Program</div>
+                                            <div class="text-white font-medium text-sm">{{ $profileData->jurusan }}</div>
                                         </div>
-                                        <div class="w-full bg-blue-200 bg-opacity-30 rounded-full h-1.5">
-                                            <div class="bg-white rounded-full h-1.5" style="width: {{ min(($profileData->ipk / 4) * 100, 100) }}%"></div>
+                                        @endif
+
+                                        <!-- Graduation Year -->
+                                        @if(isset($profileData->tahun_lulus))
+                                        <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+                                            <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Graduated</div>
+                                            <div class="text-white font-medium text-sm">{{ $profileData->tahun_lulus }}</div>
                                         </div>
+                                        @endif
+
+                                        <!-- GPA (only if excellent) -->
+                                        @if(isset($profileData->ipk) && $profileData->ipk >= 3.5)
+                                        <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-xs text-blue-100 uppercase tracking-wide font-semibold">GPA</span>
+                                                <span class="text-white font-bold">{{ $profileData->ipk }}</span>
+                                            </div>
+                                            <div class="w-full bg-blue-200 bg-opacity-30 rounded-full h-1.5">
+                                                <div class="bg-white rounded-full h-1.5" style="width: {{ min(($profileData->ipk / 4) * 100, 100) }}%"></div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                @elseif($user->role === 'admin' && isset($profileData))
+                                    <!-- Admin specific info -->
+                                    @if(isset($profileData->jabatan))
+                                    <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+                                        <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Position</div>
+                                        <div class="text-white font-medium text-sm">{{ $profileData->jabatan }}</div>
                                     </div>
                                     @endif
-                                </div>
-                            @elseif($user->role === 'admin' && isset($profileData))
-                                <!-- Admin specific info -->
-                                @if(isset($profileData->jabatan))
-                                <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
-                                    <div class="text-xs text-blue-100 uppercase tracking-wide font-semibold mb-1">Position</div>
-                                    <div class="text-white font-medium text-sm">{{ $profileData->jabatan }}</div>
+                                @endif
+
+                                <!-- Contact Quick Access -->
+                                @if(isset($profileData->no_telepon))
+                                <div class="mt-6 pt-4 border-t border-white border-opacity-20">
+                                    <a href="tel:{{ $profileData->no_telepon }}" class="inline-flex items-center text-white hover:text-blue-100 transition-colors">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                        </svg>
+                                        <span class="text-sm">{{ $profileData->no_telepon }}</span>
+                                    </a>
                                 </div>
                                 @endif
-                            @endif
 
-                            <!-- Contact Quick Access -->
-                            @if(isset($profileData->no_telepon))
-                            <div class="mt-6 pt-4 border-t border-white border-opacity-20">
-                                <a href="tel:{{ $profileData->no_telepon }}" class="inline-flex items-center text-white hover:text-blue-100 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-                                    </svg>
-                                    <span class="text-sm">{{ $profileData->no_telepon }}</span>
-                                </a>
-                            </div>
-                            @endif
-
-                            <!-- Profile Completion Indicator -->
-                            @php
-                                $completionFields = ['nama', 'email'];
-                                if($user->role === 'alumni') {
-                                    $completionFields = array_merge($completionFields, ['nim', 'jurusan', 'tahun_lulus', 'no_telepon']);
-                                    $filledFields = 2; // nama, email always filled
-                                    if(isset($profileData)) {
-                                        if($profileData->nim) $filledFields++;
-                                        if($profileData->jurusan) $filledFields++;
-                                        if($profileData->tahun_lulus) $filledFields++;
-                                        if($profileData->no_telepon) $filledFields++;
+                                <!-- Profile Completion Indicator -->
+                                @php
+                                    $completionFields = ['nama', 'email'];
+                                    if($user->role === 'alumni') {
+                                        $completionFields = array_merge($completionFields, ['nim', 'jurusan', 'tahun_lulus', 'no_telepon']);
+                                        $filledFields = 2; // nama, email always filled
+                                        if(isset($profileData)) {
+                                            if($profileData->nim) $filledFields++;
+                                            if($profileData->jurusan) $filledFields++;
+                                            if($profileData->tahun_lulus) $filledFields++;
+                                            if($profileData->no_telepon) $filledFields++;
+                                        }
+                                        $completionPercentage = ($filledFields / 6) * 100;
+                                    } else {
+                                        $completionFields = array_merge($completionFields, ['no_telepon', 'jabatan']);
+                                        $filledFields = 2; // nama, email always filled
+                                        if(isset($profileData)) {
+                                            if($profileData->no_telepon) $filledFields++;
+                                            if($profileData->jabatan) $filledFields++;
+                                        }
+                                        $completionPercentage = ($filledFields / 4) * 100;
                                     }
-                                    $completionPercentage = ($filledFields / 6) * 100;
-                                } else {
-                                    $completionFields = array_merge($completionFields, ['no_telepon', 'jabatan']);
-                                    $filledFields = 2; // nama, email always filled
-                                    if(isset($profileData)) {
-                                        if($profileData->no_telepon) $filledFields++;
-                                        if($profileData->jabatan) $filledFields++;
-                                    }
-                                    $completionPercentage = ($filledFields / 4) * 100;
-                                }
-                            @endphp
+                                @endphp
 
-                            <div class="mt-6 pt-4 border-t border-white border-opacity-20">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs text-blue-100 uppercase tracking-wide font-semibold">Profile</span>
-                                    <span class="text-white font-bold text-sm">{{ round($completionPercentage) }}%</span>
+                                <div class="mt-6 pt-4 border-t border-white border-opacity-20">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs text-blue-100 uppercase tracking-wide font-semibold">Profile</span>
+                                        <span class="text-white font-bold text-sm">{{ round($completionPercentage) }}%</span>
+                                    </div>
+                                    <div class="w-full bg-blue-200 bg-opacity-30 rounded-full h-2">
+                                        <div class="bg-white rounded-full h-2 transition-all duration-300" style="width: {{ $completionPercentage }}%"></div>
+                                    </div>
+                                    @if($completionPercentage < 100)
+                                    <p class="text-xs text-blue-100 mt-2">Complete your profile to unlock all features</p>
+                                    @else
+                                    <p class="text-xs text-blue-100 mt-2">Profile completed! 🎉</p>
+                                    @endif
                                 </div>
-                                <div class="w-full bg-blue-200 bg-opacity-30 rounded-full h-2">
-                                    <div class="bg-white rounded-full h-2 transition-all duration-300" style="width: {{ $completionPercentage }}%"></div>
+
+                                <!-- Quick Actions -->
+                                <div class="mt-6 pt-4 border-t border-white border-opacity-20">
+                                    <div class="space-y-2">
+                                        <button onclick="scrollToSection('basic-info')" class="w-full text-left px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors">
+                                            📝 Basic Information
+                                        </button>
+                                        @if($user->role === 'alumni')
+                                        <button onclick="scrollToSection('academic-info')" class="w-full text-left px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors">
+                                            🎓 Academic Information
+                                        </button>
+                                        <button onclick="scrollToSection('contact-info')" class="w-full text-left px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors">
+                                            📞 Contact Information
+                                        </button>
+                                        @endif
+                                        <button onclick="scrollToSection('password-section')" class="w-full text-left px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors">
+                                            🔒 Change Password
+                                        </button>
+                                    </div>
                                 </div>
-                                @if($completionPercentage < 100)
-                                <p class="text-xs text-blue-100 mt-2">Complete your profile to unlock all features</p>
-                                @else
-                                <p class="text-xs text-blue-100 mt-2">Profile completed! 🎉</p>
-                                @endif
                             </div>
                         </div>
                     </div>
 
-                    <div class="md:w-2/3 p-8" id="store-data">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Profile Information</h2>
-                            <div class="text-sm text-gray-500">Last updated: {{ $user->updated_at->format('d M Y') }}</div>
-                        </div>
-
-                        <p class="text-gray-600 mb-8">Please complete your profile information below. This information will
-                            be used to connect you with other alumni and opportunities.</p>
-
-                        <form action="{{ route('profile.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-
-                            <!-- Photo Upload Section -->
-                            <div class="mb-8">
-                                <label for="foto" class="block text-sm font-medium text-gray-700 mb-1">Profile
-                                    Photo</label>
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 mr-4">
-                                        <div
-                                            class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
-                                            <img src="{{ $fotoPreview }}" alt="Current profile photo"
-                                                class="w-full h-full object-cover">
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <input type="file" id="foto" name="foto" accept="image/*" class="hidden"
-                                            onchange="updateFileLabel(this)">
-                                        <label for="foto"
-                                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
-                                            <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            Change photo
-                                        </label>
-                                        <p id="fileLabel" class="mt-1 text-sm text-gray-500">No file selected</p>
-                                    </div>
-                                </div>
+                    <!-- Scrollable Form Area -->
+                    <div class="md:w-2/3 md:max-h-screen md:overflow-y-auto" id="store-data">
+                        <div class="p-8">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-gray-800">Profile Information</h2>
+                                <div class="text-sm text-gray-500">Last updated: {{ $user->updated_at->format('d M Y') }}</div>
                             </div>
 
-                            <!-- User Table Fields (Readonly except password) -->
-                            <div class="mb-8">
-                                <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">User
-                                    Account Data</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="role"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                                        <input type="text" id="role" name="role" value="{{ $user->role }}"
-                                            readonly
-                                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 shadow-sm">
+                            <p class="text-gray-600 mb-8">Please complete your profile information below. This information will
+                                be used to connect you with other alumni and opportunities.</p>
+
+                            <form action="{{ route('profile.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+
+                                <!-- Photo Upload Section -->
+                                <div class="mb-8">
+                                    <label for="foto" class="block text-sm font-medium text-gray-700 mb-1">Profile
+                                        Photo</label>
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 mr-4">
+                                            <div
+                                                class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+                                                <img src="{{ $fotoPreview }}" alt="Current profile photo"
+                                                    class="w-full h-full object-cover">
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <input type="file" id="foto" name="foto" accept="image/*" class="hidden"
+                                                onchange="updateFileLabel(this)">
+                                            <label for="foto"
+                                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
+                                                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                Change photo
+                                            </label>
+                                            <p id="fileLabel" class="mt-1 text-sm text-gray-500">No file selected</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label for="status"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                        <input type="text" id="status" name="status" value="{{ $user->status }}"
-                                            readonly
-                                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 shadow-sm">
+                                </div>
+
+                                <!-- User Table Fields (Readonly except password) -->
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">User
+                                        Account Data</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label for="role"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                            <input type="text" id="role" name="role" value="{{ $user->role }}"
+                                                readonly
+                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 shadow-sm">
+                                        </div>
+                                        <div>
+                                            <label for="status"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                            <input type="text" id="status" name="status" value="{{ $user->status }}"
+                                                readonly
+                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 shadow-sm">
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Password Section -->
-                                <div class="mb-8">
+                                <div class="mb-8" id="password-section">
                                     <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Change
                                         Password</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -235,7 +261,7 @@
                                 <!-- Form Fields -->
                                 <div class="space-y-6">
                                     <!-- Basic Information Section -->
-                                    <div>
+                                    <div id="basic-info">
                                         <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
                                             Basic Information</h3>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -296,7 +322,7 @@
 
                                     @if ($user->role === 'alumni')
                                         <!-- Academic Information Section -->
-                                        <div>
+                                        <div id="academic-info">
                                             <h3
                                                 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
                                                 Academic Information</h3>
@@ -339,7 +365,7 @@
                                         </div>
 
                                         <!-- Contact Information Section -->
-                                        <div>
+                                        <div id="contact-info">
                                             <h3
                                                 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
                                                 Contact Information</h3>
@@ -433,12 +459,71 @@
                                         </div>
                                     </div>
                                 </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        /* Custom scrollbar for better UX */
+        #store-data::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #store-data::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        #store-data::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        #store-data::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        #read-fast-info::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #read-fast-info::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        #read-fast-info::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        #read-fast-info::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Smooth scroll behavior */
+        #store-data {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #read-fast-info {
+                position: static !important;
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+
+            #store-data {
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+        }
+    </style>
 
     <script>
         function updateFileLabel(input) {
@@ -460,5 +545,60 @@
                 fileLabel.textContent = 'No file selected';
             }
         }
+
+        function scrollToSection(sectionId) {
+            const storeDataContainer = document.getElementById('store-data');
+            const targetSection = document.getElementById(sectionId);
+
+            if (targetSection && storeDataContainer) {
+                const containerRect = storeDataContainer.getBoundingClientRect();
+                const targetRect = targetSection.getBoundingClientRect();
+                const scrollTop = storeDataContainer.scrollTop;
+
+                const targetPosition = scrollTop + targetRect.top - containerRect.top - 20; // 20px offset
+
+                storeDataContainer.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Add scroll indicator for active section
+        document.addEventListener('DOMContentLoaded', function() {
+            const storeDataContainer = document.getElementById('store-data');
+            const quickActionButtons = document.querySelectorAll('#read-fast-info button[onclick^="scrollToSection"]');
+
+            if (storeDataContainer && quickActionButtons.length > 0) {
+                storeDataContainer.addEventListener('scroll', function() {
+                    const sections = ['basic-info', 'academic-info', 'contact-info', 'password-section'];
+                    let activeSection = null;
+
+                    sections.forEach(sectionId => {
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            const rect = section.getBoundingClientRect();
+                            const containerRect = storeDataContainer.getBoundingClientRect();
+
+                            if (rect.top <= containerRect.top + 100 && rect.bottom >= containerRect.top + 100) {
+                                activeSection = sectionId;
+                            }
+                        }
+                    });
+
+                    // Update active button styling
+                    quickActionButtons.forEach(button => {
+                        const buttonSectionId = button.getAttribute('onclick').match(/scrollToSection$$'(.+?)'$$/)[1];
+                        if (buttonSectionId === activeSection) {
+                            button.classList.add('bg-white', 'bg-opacity-20', 'text-white');
+                            button.classList.remove('text-blue-100');
+                        } else {
+                            button.classList.remove('bg-white', 'bg-opacity-20', 'text-white');
+                            button.classList.add('text-blue-100');
+                        }
+                    });
+                });
+            }
+        });
     </script>
 @endsection

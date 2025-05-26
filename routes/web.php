@@ -49,6 +49,8 @@ Route::middleware(['auth'])->group(function () {
                 'update' => 'alumni.update',
                 'destroy' => 'alumni.destroy',
             ]);
+       
+        Route::get('alumni-export-all', [MemberSettingController::class, 'exportAll'])->name('alumni.exportAll');
     });
 
     // UserSettingController Routes

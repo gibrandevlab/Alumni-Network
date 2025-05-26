@@ -19,28 +19,36 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($alumniProfiles as $alumni)
-            <tr class="bg-white dark:bg-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
-                    {{ ($alumniProfiles->currentPage() - 1) * $alumniProfiles->perPage() + $loop->iteration }}</td>
-                <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">{{ $alumni->nim }}</td>
-                <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">{{ $alumni->nama }}</td>
-                <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
-                    <span
-                        class="px-2 py-1 rounded-full text-black {{ $alumni->status === 'approved' ? 'bg-green-500' : ($alumni->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500') }}">
-                        {{ ucfirst($alumni->status) }}
-                    </span>
-                </td>
-                <td class="px-5 py-4 border-b border-gray-200 text-sm space-x-2 text-black dark:text-black">
-                    <button onclick="showDetail({{ $alumni->id }})"
-                        class="text-blue-500 hover:text-blue-700 font-semibold">View</button>
-                    <button onclick="showEditModal({{ $alumni->id }})"
-                        class="text-yellow-500 hover:text-yellow-700 font-semibold">Edit</button>
-                    <button onclick="deleteDetail({{ $alumni->id }})"
-                        class="text-red-500 hover:text-red-700 font-semibold">Delete</button>
-                </td>
+        @if ($alumniProfiles)
+            @foreach ($alumniProfiles as $alumni)
+                <tr class="bg-white dark:bg-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
+                        {{ ($alumniProfiles->currentPage() - 1) * $alumniProfiles->perPage() + $loop->iteration }}</td>
+                    <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
+                        {{ $alumni->profilAlumni->nim ?? 'N/A' }}</td>
+                    <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
+                        {{ $alumni->nama }}</td>
+                    <td class="px-5 py-4 border-b border-gray-200 text-sm text-black dark:text-black">
+                        <span
+                            class="px-2 py-1 rounded-full text-black {{ $alumni->status === 'approved' ? 'bg-green-500' : ($alumni->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500') }}">
+                            {{ ucfirst($alumni->status) }}
+                        </span>
+                    </td>
+                    <td class="px-5 py-4 border-b border-gray-200 text-sm space-x-2 text-black dark:text-black">
+                        <button onclick="showDetail({{ $alumni->id }})"
+                            class="text-blue-500 hover:text-blue-700 font-semibold">View</button>
+                        <button onclick="showEditModal({{ $alumni->id }})"
+                            class="text-yellow-500 hover:text-yellow-700 font-semibold">Edit</button>
+                        <button onclick="deleteDetail({{ $alumni->id }})"
+                            class="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr>
+                <td colspan="5" class="text-center">No data available</td>
             </tr>
-        @endforeach
+        @endif
     </tbody>
 </table>
 <button onclick="showAddModal()"
@@ -70,37 +78,53 @@
 </div>
 
 <!-- Edit Modal -->
-<div id="editModal" class="hidden fixed inset-0 items-center justify-center z-50 backdrop-blur-sm">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 class="text-lg font-semibold mb-4">Edit Alumni</h2>
+<div id="editModal" class="hidden fixed inset-0 items-center justify-center z-50 backdrop-blur-sm shadow-xl">
+    <div class="dark:bg-gray-800 p-8 rounded-lg text-center max-w-sm w-full">
+        <h2 class="text-lg font-semibold mb-6 text-white">Edit Alumni</h2>
         <form id="editForm">
-            <label for="editNim" class="block mb-2">NIM</label>
-            <input type="text" id="editNim" name="nim" class="w-full mb-4 p-2 border rounded">
-
-            <label for="editNama" class="block mb-2">Nama</label>
-            <input type="text" id="editNama" name="nama" class="w-full mb-4 p-2 border rounded">
-
-            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Save</button>
-            <button type="button" onclick="closeModal('editModal')"
-                class="ml-2 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+            <input type="hidden" name="id">
+            <input type="text" name="nama" placeholder="Name" class="w-full mb-4 p-2 rounded">
+            <input type="email" name="email" placeholder="Email" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="nim" placeholder="NIM" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="jurusan" placeholder="Jurusan" class="w-full mb-4 p-2 rounded">
+            <input type="number" name="tahun_masuk" placeholder="Tahun Masuk" class="w-full mb-4 p-2 rounded">
+            <input type="number" name="tahun_lulus" placeholder="Tahun Lulus" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="no_telepon" placeholder="No Telepon" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="alamat_rumah" placeholder="Alamat Rumah" class="w-full mb-4 p-2 rounded">
+            <input type="number" step="0.01" name="ipk" placeholder="IPK" class="w-full mb-4 p-2 rounded">
+            <input type="url" name="linkedin" placeholder="LinkedIn" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="instagram" placeholder="Instagram" class="w-full mb-4 p-2 rounded">
+            <input type="email" name="email_alternatif" placeholder="Email Alternatif" class="w-full mb-4 p-2 rounded">
+            <button type="submit"
+                class="bg-yellow-500 text-white px-5 py-2 rounded-lg hover:bg-yellow-600">Save</button>
+            <button type="button" onclick="closeEditModal()"
+                class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600">Cancel</button>
         </form>
     </div>
 </div>
 
 <!-- Add Modal -->
-<div id="addModal" class="hidden fixed inset-0 items-center justify-center z-50 backdrop-blur-sm">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 class="text-lg font-semibold mb-4">Add Alumni</h2>
+<div id="addModal" class="hidden fixed inset-0 items-center justify-center z-50 backdrop-blur-sm shadow-xl">
+    <div class="dark:bg-gray-800 p-8 rounded-lg text-center max-w-sm w-full">
+        <h2 class="text-lg font-semibold mb-6 text-white">Add Alumni</h2>
         <form id="addForm">
-            <label for="addNim" class="block mb-2">NIM</label>
-            <input type="text" id="addNim" name="nim" class="w-full mb-4 p-2 border rounded">
-
-            <label for="addNama" class="block mb-2">Nama</label>
-            <input type="text" id="addNama" name="nama" class="w-full mb-4 p-2 border rounded">
-
-            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add</button>
-            <button type="button" onclick="closeModal('addModal')"
-                class="ml-2 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+            <input type="text" name="nama" placeholder="Name" class="w-full mb-4 p-2 rounded">
+            <input type="email" name="email" placeholder="Email" class="w-full mb-4 p-2 rounded">
+            <input type="password" name="password" placeholder="Password" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="nim" placeholder="NIM" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="jurusan" placeholder="Jurusan" class="w-full mb-4 p-2 rounded">
+            <input type="number" name="tahun_masuk" placeholder="Tahun Masuk" class="w-full mb-4 p-2 rounded">
+            <input type="number" name="tahun_lulus" placeholder="Tahun Lulus" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="no_telepon" placeholder="No Telepon" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="alamat_rumah" placeholder="Alamat Rumah" class="w-full mb-4 p-2 rounded">
+            <input type="number" step="0.01" name="ipk" placeholder="IPK" class="w-full mb-4 p-2 rounded">
+            <input type="url" name="linkedin" placeholder="LinkedIn" class="w-full mb-4 p-2 rounded">
+            <input type="text" name="instagram" placeholder="Instagram" class="w-full mb-4 p-2 rounded">
+            <input type="email" name="email_alternatif" placeholder="Email Alternatif" class="w-full mb-4 p-2 rounded">
+            <button type="submit"
+                class="bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600">Add</button>
+            <button type="button" onclick="closeAddModal()"
+                class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600">Cancel</button>
         </form>
     </div>
 </div>
@@ -108,15 +132,34 @@
 <script>
     async function showDetail(id) {
         try {
-            const response = await fetch(`/alumni/${id}`);
+            const response = await fetch(`/dashboard/member/alumni/${id}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
             const data = await response.json();
 
             if (response.ok) {
-                document.getElementById('viewNim').textContent = data.nim;
-                document.getElementById('viewNama').textContent = data.nama;
-                openModal('viewModal');
+                let details = `ID: ${data.id}\n`;
+                details += `Nama: ${data.nama}\n`;
+                details += `Email: ${data.email}\n`;
+                details += `Role: ${data.role}\n`;
+                details += `Status: ${data.status}\n`;
+                details += `NIM: ${data.profilAlumni?.nim || 'N/A'}\n`;
+                details += `Jurusan: ${data.profilAlumni?.jurusan || 'N/A'}\n`;
+                details += `Tahun Masuk: ${data.profilAlumni?.tahun_masuk || 'N/A'}\n`;
+                details += `Tahun Lulus: ${data.profilAlumni?.tahun_lulus || 'N/A'}\n`;
+                details += `No Telepon: ${data.profilAlumni?.no_telepon || 'N/A'}\n`;
+                details += `Alamat Rumah: ${data.profilAlumni?.alamat_rumah || 'N/A'}\n`;
+                details += `IPK: ${data.profilAlumni?.ipk || 'N/A'}\n`;
+                details += `LinkedIn: ${data.profilAlumni?.linkedin || 'N/A'}\n`;
+                details += `Instagram: ${data.profilAlumni?.instagram || 'N/A'}\n`;
+                details += `Email Alternatif: ${data.profilAlumni?.email_alternatif || 'N/A'}\n`;
+
+                alert(details);
             } else {
-                alert(data.error || 'Failed to fetch details.');
+                alert('Failed to fetch details.');
             }
         } catch (error) {
             console.error('Error fetching details:', error);
@@ -126,19 +169,32 @@
 
     async function showEditModal(id) {
         try {
-            const response = await fetch(`/alumni/${id}`);
+            const response = await fetch(`/dashboard/member/alumni/${id}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
             const data = await response.json();
 
             if (response.ok) {
-                document.getElementById('editNim').value = data.nim;
-                document.getElementById('editNama').value = data.nama;
-                document.getElementById('editForm').onsubmit = async function(e) {
-                    e.preventDefault();
-                    await updateAlumni(id);
-                };
+                const form = document.getElementById('editForm');
+                form.id.value = data.id;
+                form.nama.value = data.nama;
+                form.email.value = data.email;
+                form.nim.value = data.profilAlumni.nim;
+                form.jurusan.value = data.profilAlumni.jurusan;
+                form.tahun_masuk.value = data.profilAlumni.tahun_masuk;
+                form.tahun_lulus.value = data.profilAlumni.tahun_lulus;
+                form.no_telepon.value = data.profilAlumni.no_telepon;
+                form.alamat_rumah.value = data.profilAlumni.alamat_rumah;
+                form.ipk.value = data.profilAlumni.ipk;
+                form.linkedin.value = data.profilAlumni.linkedin;
+                form.instagram.value = data.profilAlumni.instagram;
+                form.email_alternatif.value = data.profilAlumni.email_alternatif;
                 openModal('editModal');
             } else {
-                alert(data.error || 'Failed to fetch data for edit.');
+                alert('Failed to fetch data for edit.');
             }
         } catch (error) {
             console.error('Error fetching data for edit:', error);
@@ -146,76 +202,26 @@
         }
     }
 
-    async function updateAlumni(id) {
-        try {
-            const formData = new FormData(document.getElementById('editForm'));
-            const response = await fetch(`/alumni/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData)),
-            });
+    async function deleteDetail(id) {
+        if (confirm('Are you sure you want to delete this record?')) {
+            try {
+                const response = await fetch(`/dashboard/member/alumni/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
 
-            if (response.ok) {
-                alert('Data updated successfully');
-                closeModal('editModal');
-                location.reload();
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Failed to update data.');
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete record.');
+                }
+            } catch (error) {
+                console.error('Error deleting record:', error);
+                alert('Failed to delete record.');
             }
-        } catch (error) {
-            console.error('Error updating data:', error);
-            alert('Failed to update data.');
-        }
-    }
-
-    document.getElementById('addForm').onsubmit = async function(e) {
-        e.preventDefault();
-        try {
-            const formData = new FormData(document.getElementById('addForm'));
-            const response = await fetch('/alumni', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData)),
-            });
-
-            if (response.ok) {
-                alert('Data added successfully');
-                closeModal('addModal');
-                location.reload();
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Failed to add data.');
-            }
-        } catch (error) {
-            console.error('Error adding data:', error);
-            alert('Failed to add data.');
-        }
-    };
-
-    function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
-    }
-
-    function showAddModal() {
-        openModal('addModal');
-    }
-
-    function deleteDetail(id) {
-        if (confirm('Are you sure you want to delete this item?')) {
-            alert(`Deleted ID: ${id}`);
         }
     }
 </script>

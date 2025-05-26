@@ -18,6 +18,7 @@ class ProfileController extends Controller
         $role = $request->input('role');
         $status = $request->input('status');
 
+        // Jika parameter dikirim manual (misal dari query string)
         if (!empty($id) && !empty($role) && !empty($status)) {
             $user = \App\Models\User::find($id);
             if (!$user) {
@@ -27,13 +28,19 @@ class ProfileController extends Controller
             return view('pages.Profile', compact('user', 'profileData', 'id', 'role', 'status'));
         }
 
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+        // Jika user sudah login, inject $id, $role, $status ke semua view
+        if (Auth::check()) {
+            $user = Auth::user();
+            $id = $user->id;
+            $role = $user->role;
+            $status = $user->status;
+            $profileData = $role === 'admin' ? $user->profilAdmin : $user->profilAlumni;
+            // Kirim variabel ke layout
+            return view('pages.Profile', compact('user', 'profileData', 'id', 'role', 'status'));
         }
 
-        $user = \App\Models\User::find(Auth::id());
-        $profileData = $user->role === 'admin' ? $user->profilAdmin : $user->profilAlumni;
-        return view('pages.Profile', compact('user', 'profileData'));
+        // Jika belum login
+        return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
     }
 
     /**
