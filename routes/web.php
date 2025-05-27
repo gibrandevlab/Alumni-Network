@@ -6,7 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\GroupChatController;
 use App\Http\Controllers\Dashboard\AlumniSettingController;
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Dashboard\UserSettingController;
+use App\Http\Controllers\Dashboard\AdminSettingController;
 use App\Http\Controllers\FormQ1Controllers;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ExportDataController;
@@ -38,7 +38,7 @@ Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
 // 4. Dashboard Controllers
 
 Route::middleware(['auth'])->group(function () {
-    // MemberSettingController Routes
+    // AlumniSettingController Routes
     Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
         Route::resource('alumni', AlumniSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
@@ -53,17 +53,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('alumni-export-all', [AlumniSettingController::class, 'exportAll'])->name('alumni.exportAll');
     });
 
-    // UserSettingController Routes
+    // AdminSettingController Routes
     Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
-        Route::resource('users', UserSettingController::class)
+        Route::resource('admin', AdminSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
             ->names([
-                'index' => 'users.index',
-                'show' => 'users.show',
-                'store' => 'users.store',
-                'update' => 'users.update',
-                'destroy' => 'users.destroy',
+                'index' => 'admin.index',
+                'show' => 'admin.show',
+                'store' => 'admin.store',
+                'update' => 'admin.update',
+                'destroy' => 'admin.destroy',
             ]);
+
+        Route::get('admin-export-all', [AdminSettingController::class, 'exportAll'])->name('admin.exportAll');
     });
 
     // DashboardController Routes

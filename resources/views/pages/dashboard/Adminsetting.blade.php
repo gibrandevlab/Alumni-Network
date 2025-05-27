@@ -1,7 +1,5 @@
 @extends('layouts.Dashboard.dashboard')
 
-@section('title', 'Manage Data Alumni - SITRA BSI')
-
 @section('content')
     <div class="min-h-screen flex flex-row bg-blue-50 text-black">
 
@@ -9,34 +7,34 @@
 
         <div class="flex-1 flex flex-col min-w-0 p-4 md:p-6 lg:p-8 overflow-x-auto ml-14 md:ml-64" id="mainContentainer">
             @php
-                $totalAlumni = $alumni ? $alumni->total() : 0;
-                $alumniItems = $alumni ? $alumni->getCollection() : collect();
-                $pendingCount = $alumniItems->where('status', 'pending')->count();
-                $approvedCount = $alumniItems->where('status', 'approved')->count();
-                $rejectedCount = $alumniItems->where('status', 'rejected')->count();
-                $responseRate = $totalAlumni > 0 ? round(($approvedCount / $totalAlumni) * 100, 2) : 0;
+                $totalAdmins = $admins ? $admins->total() : 0;
+                $adminItems = $admins ? $admins->getCollection() : collect();
+                $pendingCount = $adminItems->where('status', 'pending')->count();
+                $approvedCount = $adminItems->where('status', 'approved')->count();
+                $rejectedCount = $adminItems->where('status', 'rejected')->count();
+                $responseRate = $totalAdmins > 0 ? round(($approvedCount / $totalAdmins) * 100, 2) : 0;
             @endphp
 
             <header class="mb-6">
-                <h1 class="text-2xl md:text-3xl font-bold text-blue-900">Alumni Management Dashboard</h1>
-                <p class="text-blue-600 mt-2">Manage and monitor alumni data and statistics</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-blue-900">Admin Management Dashboard</h1>
+                <p class="text-blue-600 mt-2">Manage and monitor admin accounts and permissions</p>
             </header>
 
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
-                <!-- Total Alumni Card -->
+                <!-- Total Admins Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 md:w-6 md:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m3 5.197H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="ml-3 md:ml-4">
-                            <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $totalAlumni }}</p>
-                            <p class="text-xs md:text-sm text-gray-500">Total Alumni</p>
+                            <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $totalAdmins }}</p>
+                            <p class="text-xs md:text-sm text-gray-500">Total Admins</p>
                         </div>
                     </div>
                     <div class="mt-3 md:mt-4 h-1 bg-blue-200 rounded-full">
@@ -44,7 +42,7 @@
                     </div>
                 </div>
 
-                <!-- Awaiting Verification Card -->
+                <!-- Awaiting Approval Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -56,15 +54,15 @@
                         </div>
                         <div class="ml-3 md:ml-4">
                             <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $pendingCount }}</p>
-                            <p class="text-xs md:text-sm text-gray-500">Awaiting Verification</p>
+                            <p class="text-xs md:text-sm text-gray-500">Awaiting Approval</p>
                         </div>
                     </div>
                     <div class="mt-3 md:mt-4 h-1 bg-yellow-200 rounded-full">
-                        <div class="h-1 bg-yellow-500 rounded-full" style="width: {{ $totalAlumni > 0 ? ($pendingCount / $totalAlumni) * 100 : 0 }}%"></div>
+                        <div class="h-1 bg-yellow-500 rounded-full" style="width: {{ $totalAdmins > 0 ? ($pendingCount / $totalAdmins) * 100 : 0 }}%"></div>
                     </div>
                 </div>
 
-                <!-- Response Rate Card -->
+                <!-- Approval Rate Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -76,7 +74,7 @@
                         </div>
                         <div class="ml-3 md:ml-4">
                             <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $responseRate }}%</p>
-                            <p class="text-xs md:text-sm text-gray-500">Response Rate</p>
+                            <p class="text-xs md:text-sm text-gray-500">Approval Rate</p>
                         </div>
                     </div>
                     <div class="mt-3 md:mt-4 h-1 bg-blue-200 rounded-full">
@@ -84,7 +82,7 @@
                     </div>
                 </div>
 
-                <!-- Approved Alumni Card -->
+                <!-- Approved Admins Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -96,31 +94,31 @@
                         </div>
                         <div class="ml-3 md:ml-4">
                             <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $approvedCount }}</p>
-                            <p class="text-xs md:text-sm text-gray-500">Approved Alumni</p>
+                            <p class="text-xs md:text-sm text-gray-500">Approved Admins</p>
                         </div>
                     </div>
                     <div class="mt-3 md:mt-4 h-1 bg-green-200 rounded-full">
-                        <div class="h-1 bg-green-500 rounded-full" style="width: {{ $totalAlumni > 0 ? ($approvedCount / $totalAlumni) * 100 : 0 }}%"></div>
+                        <div class="h-1 bg-green-500 rounded-full" style="width: {{ $totalAdmins > 0 ? ($approvedCount / $totalAdmins) * 100 : 0 }}%"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Main Content Area -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 flex-1">
-                <!-- Alumni Management Table -->
+                <!-- Admin Management Table -->
                 <div class="lg:col-span-2 flex flex-col min-w-0">
                     <div class="bg-white rounded-xl shadow-sm border border-blue-200">
                         <!-- Header with improved responsive design -->
                         <div class="p-4 md:p-6 border-b border-blue-200">
                             <div class="flex flex-col space-y-4">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                    <h3 class="text-lg font-semibold text-blue-900">Alumni Management</h3>
+                                    <h3 class="text-lg font-semibold text-blue-900">Admin Management</h3>
                                     <button onclick="openCreateModal()"
                                             class="mt-2 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
-                                        Tambah Alumni
+                                        Tambah Admin
                                     </button>
                                 </div>
 
@@ -135,11 +133,11 @@
                                     </div>
 
                                     <div class="sm:w-48">
-                                        <select name="jurusan"
+                                        <select name="jabatan"
                                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            <option value="">Semua Jurusan</option>
-                                            @foreach($jurusanList ?? [] as $jurusan)
-                                                <option value="{{ $jurusan }}" {{ request('jurusan') == $jurusan ? 'selected' : '' }}>{{ $jurusan }}</option>
+                                            <option value="">Semua Jabatan</option>
+                                            @foreach($jabatanList ?? [] as $jabatan)
+                                                <option value="{{ $jabatan }}" {{ request('jabatan') == $jabatan ? 'selected' : '' }}>{{ $jabatan }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -150,7 +148,7 @@
                                             Filter
                                         </button>
 
-                                        @if(request('search') || request('jurusan'))
+                                        @if(request('search') || request('jabatan'))
                                             <a href="{{ url()->current() }}"
                                                class="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-lg hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">
                                                 Reset
@@ -166,40 +164,39 @@
                                 <thead class="bg-blue-50">
                                     <tr>
                                         <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">No</th>
-                                        <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">NIM</th>
                                         <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Nama</th>
-                                        <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Jurusan</th>
+                                        <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
+                                        <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Jabatan</th>
                                         <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Status</th>
                                         <th class="px-4 md:px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @if ($alumni && count($alumni) > 0)
-                                        @foreach ($alumni as $index => $alumniItem)
+                                    @if ($admins && count($admins) > 0)
+                                        @foreach ($admins as $index => $admin)
                                             <tr class="hover:bg-blue-50 transition-colors duration-150">
                                                 <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ ($alumni->currentPage() - 1) * $alumni->perPage() + $index + 1 }}
-                                                </td>
-                                                <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $alumniItem->profilAlumni->nim ?? '-' }}
+                                                    {{ ($admins->currentPage() - 1) * $admins->perPage() + $index + 1 }}
                                                 </td>
                                                 <td class="px-4 md:px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
                                                         <div class="flex-shrink-0 h-8 w-8">
                                                             <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                                                                 <span class="text-sm font-medium text-blue-700">
-                                                                    {{ substr($alumniItem->nama, 0, 1) }}
+                                                                    {{ substr($admin->nama, 0, 1) }}
                                                                 </span>
                                                             </div>
                                                         </div>
                                                         <div class="ml-3">
-                                                            <div class="text-sm font-medium text-gray-900">{{ $alumniItem->nama }}</div>
-                                                            <div class="text-sm text-gray-500">{{ $alumniItem->email }}</div>
+                                                            <div class="text-sm font-medium text-gray-900">{{ $admin->nama }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $alumniItem->profilAlumni->jurusan ?? '-' }}
+                                                    {{ $admin->email }}
+                                                </td>
+                                                <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $admin->profilAdmin->jabatan ?? '-' }}
                                                 </td>
                                                 <td class="px-4 md:px-6 py-4 whitespace-nowrap">
                                                     @php
@@ -208,17 +205,17 @@
                                                             'approved' => ['bg-green-100 text-green-800', 'bg-green-500'],
                                                             'rejected' => ['bg-red-100 text-red-800', 'bg-red-500'],
                                                         ];
-                                                        $config = $statusConfig[$alumniItem->status] ?? ['bg-gray-100 text-gray-800', 'bg-gray-500'];
+                                                        $config = $statusConfig[$admin->status] ?? ['bg-gray-100 text-gray-800', 'bg-gray-500'];
                                                     @endphp
                                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $config[0] }}">
                                                         <div class="w-1.5 h-1.5 {{ $config[1] }} rounded-full mr-1.5"></div>
-                                                        {{ ucfirst($alumniItem->status) }}
+                                                        {{ ucfirst($admin->status) }}
                                                     </span>
                                                 </td>
                                                 <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <div class="flex space-x-1">
                                                         <button type="button"
-                                                                onclick="openViewModal({{ $alumniItem->id }})"
+                                                                onclick="openViewModal({{ $admin->id }})"
                                                                 class="text-blue-600 hover:text-blue-900 p-2 rounded-md hover:bg-blue-50 transition-colors duration-150"
                                                                 title="Lihat Detail">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,7 +224,7 @@
                                                             </svg>
                                                         </button>
                                                         <button type="button"
-                                                                onclick="openEditModal({{ $alumniItem->id }})"
+                                                                onclick="openEditModal({{ $admin->id }})"
                                                                 class="text-yellow-600 hover:text-yellow-900 p-2 rounded-md hover:bg-yellow-50 transition-colors duration-150"
                                                                 title="Edit">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +232,7 @@
                                                             </svg>
                                                         </button>
                                                         <button type="button"
-                                                                onclick="openDeleteModal({{ $alumniItem->id }}, '{{ addslashes($alumniItem->nama) }}')"
+                                                                onclick="openDeleteModal({{ $admin->id }}, '{{ addslashes($admin->nama) }}')"
                                                                 class="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors duration-150"
                                                                 title="Hapus">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,10 +248,10 @@
                                             <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                                                 <div class="flex flex-col items-center">
                                                     <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m3 5.197H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                     </svg>
-                                                    <p class="text-lg font-medium">Tidak ada data alumni</p>
-                                                    <p class="text-sm">Belum ada alumni yang terdaftar dalam sistem</p>
+                                                    <p class="text-lg font-medium">Tidak ada data admin</p>
+                                                    <p class="text-sm">Belum ada admin yang terdaftar dalam sistem</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -264,9 +261,9 @@
                         </div>
 
                         <!-- Pagination -->
-                        @if ($alumni && $alumni->hasPages())
+                        @if ($admins && $admins->hasPages())
                             <div class="px-4 md:px-6 py-4 border-t border-blue-200">
-                                {{ $alumni->links() }}
+                                {{ $admins->links() }}
                             </div>
                         @endif
                     </div>
@@ -311,7 +308,7 @@
                             <h4 class="text-sm font-medium text-blue-900 mb-4">Quick Actions</h4>
                             <div class="space-y-2">
                                 <button type="button" onclick="exportAllData()" class="w-full text-left px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-md transition-colors duration-150">
-                                    Export All Alumni Data
+                                    Export All Admin Data
                                 </button>
                             </div>
                         </div>
@@ -326,7 +323,7 @@
         <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 max-w-4xl shadow-lg rounded-xl bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-blue-900">Tambah Alumni Baru</h3>
+                    <h3 class="text-xl font-semibold text-blue-900">Tambah Admin Baru</h3>
                     <button type="button" onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -357,49 +354,12 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">NIM</label>
-                            <input type="text" name="nim" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Jurusan</label>
-                            <select name="jurusan" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Pilih Jurusan</option>
-                                @foreach($jurusanList ?? [] as $jurusan)
-                                    <option value="{{ $jurusan }}">{{ $jurusan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Masuk</label>
-                            <input type="number" name="tahun_masuk" min="1900" max="{{ date('Y') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Lulus</label>
-                            <input type="number" name="tahun_lulus" min="1900" max="{{ date('Y') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">No. Telepon</label>
                             <input type="text" name="no_telepon" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">IPK</label>
-                            <input type="number" step="0.01" min="0" max="4" name="ipk" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Rumah</label>
-                            <textarea name="alamat_rumah" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">LinkedIn</label>
-                            <input type="url" name="linkedin" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
-                            <input type="text" name="instagram" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Alternatif</label>
-                            <input type="email" name="email_alternatif" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                            <input type="text" name="jabatan" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
@@ -420,7 +380,7 @@
         <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 max-w-4xl shadow-lg rounded-xl bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-blue-900">Detail Alumni</h3>
+                    <h3 class="text-xl font-semibold text-blue-900">Detail Admin</h3>
                     <button type="button" onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -441,7 +401,7 @@
         <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 max-w-4xl shadow-lg rounded-xl bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-blue-900">Edit Alumni</h3>
+                    <h3 class="text-xl font-semibold text-blue-900">Edit Admin</h3>
                     <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -478,10 +438,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mt-4">Hapus Alumni</h3>
+                <h3 class="text-lg font-medium text-gray-900 mt-4">Hapus Admin</h3>
                 <div class="mt-2 px-7 py-3">
                     <p class="text-sm text-gray-500">
-                        Apakah Anda yakin ingin menghapus alumni <span id="deleteAlumniName" class="font-semibold"></span>?
+                        Apakah Anda yakin ingin menghapus admin <span id="deleteAdminName" class="font-semibold"></span>?
                         Tindakan ini tidak dapat dibatalkan.
                     </p>
                 </div>
@@ -501,7 +461,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script>
-        let currentAlumniId = null;
+        let currentAdminId = null;
 
         // Create Modal Functions
         function openCreateModal() {
@@ -526,7 +486,7 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Menyimpan...';
 
-            fetch('{{ route('dashboard.member.alumni.store') }}', {
+            fetch('{{ route('dashboard.member.admin.store') }}', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -539,12 +499,12 @@
                     closeCreateModal();
                     location.reload();
                 } else {
-                    alert('Error creating alumni: ' + (data.message || 'Unknown error'));
+                    alert('Error creating admin: ' + (data.message || 'Unknown error'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error creating alumni');
+                alert('Error creating admin');
             })
             .finally(() => {
                 submitBtn.disabled = false;
@@ -553,15 +513,15 @@
         });
 
         // View Modal Functions
-        function openViewModal(alumniId) {
-            currentAlumniId = alumniId;
+        function openViewModal(adminId) {
+            currentAdminId = adminId;
             document.getElementById('viewModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            fetch(`{{ route('dashboard.member.alumni.show', ':id') }}`.replace(':id', alumniId))
+            fetch(`{{ route('dashboard.member.admin.show', ':id') }}`.replace(':id', adminId))
                 .then(response => response.json())
                 .then(data => {
-                    const profil = data.profil_alumni || {};
+                    const profil = data.profil_admin || {};
                     const content = `
                         <div class="bg-blue-50 rounded-lg p-6 mb-6">
                             <div class="flex items-center space-x-4">
@@ -585,20 +545,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">NIM</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.nim || '-'}</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${data.email || '-'}</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.jurusan || '-'}</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${data.nama || '-'}</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Masuk</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.tahun_masuk || '-'}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Lulus</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.tahun_lulus || '-'}</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${data.status || '-'}</p>
                                 </div>
                             </div>
 
@@ -608,27 +564,12 @@
                                     <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.no_telepon || '-'}</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">IPK</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.ipk || '-'}</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jabatan</label>
+                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.jabatan || '-'}</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.linkedin || '-'}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.instagram || '-'}</p>
-                                </div>
-                            </div>
-
-                            <div class="md:col-span-2 space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Rumah</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.alamat_rumah || '-'}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Alternatif</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${profil.email_alternatif || '-'}</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dibuat</label>
+                                    <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">${data.created_at ? new Date(data.created_at).toLocaleDateString('id-ID') : '-'}</p>
                                 </div>
                             </div>
                         </div>
@@ -647,16 +588,15 @@
         }
 
         // Edit Modal Functions
-        function openEditModal(alumniId) {
-            currentAlumniId = alumniId;
+        function openEditModal(adminId) {
+            currentAdminId = adminId;
             document.getElementById('editModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            fetch(`{{ route('dashboard.member.alumni.show', ':id') }}`.replace(':id', alumniId))
+            fetch(`{{ route('dashboard.member.admin.show', ':id') }}`.replace(':id', adminId))
                 .then(response => response.json())
                 .then(data => {
-                    const profil = data.profil_alumni || {};
-                    const jurusanOptions = `@foreach($jurusanList ?? [] as $jurusan)<option value="{{ $jurusan }}">{{ $jurusan }}</option>@endforeach`;
+                    const profil = data.profil_admin || {};
                     const content = `
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -684,55 +624,13 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">NIM</label>
-                                <input type="text" name="nim" value="${profil.nim || ''}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Jurusan</label>
-                                <select name="jurusan" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Pilih Jurusan</option>
-                                    ${jurusanOptions.replace(/value=\"(.+?)\"/g, (m, v) => `value=\"${v}\"${profil.jurusan === v ? ' selected' : ''}`)}
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Masuk</label>
-                                <input type="number" name="tahun_masuk" value="${profil.tahun_masuk || ''}" min="1900" max="{{ date('Y') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Lulus</label>
-                                <input type="number" name="tahun_lulus" value="${profil.tahun_lulus || ''}" min="1900" max="{{ date('Y') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">No. Telepon</label>
                                 <input type="text" name="no_telepon" value="${profil.no_telepon || ''}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">IPK</label>
-                                <input type="number" step="0.01" name="ipk" value="${profil.ipk || ''}" min="0" max="4"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Rumah</label>
-                                <textarea name="alamat_rumah" rows="3"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">${profil.alamat_rumah || ''}</textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">LinkedIn</label>
-                                <input type="url" name="linkedin" value="${profil.linkedin || ''}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
-                                <input type="text" name="instagram" value="${profil.instagram || ''}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Alternatif</label>
-                                <input type="email" name="email_alternatif" value="${profil.email_alternatif || ''}"
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                                <input type="text" name="jabatan" value="${profil.jabatan || ''}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
                         </div>
@@ -762,7 +660,7 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Menyimpan...';
 
-            fetch(`{{ route('dashboard.member.alumni.update', ':id') }}`.replace(':id', currentAlumniId), {
+            fetch(`{{ route('dashboard.member.admin.update', ':id') }}`.replace(':id', currentAdminId), {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -775,12 +673,12 @@
                     closeEditModal();
                     location.reload();
                 } else {
-                    alert('Error updating alumni data: ' + (data.message || 'Unknown error'));
+                    alert('Error updating admin data: ' + (data.message || 'Unknown error'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error updating alumni data');
+                alert('Error updating admin data');
             })
             .finally(() => {
                 submitBtn.disabled = false;
@@ -789,9 +687,9 @@
         });
 
         // Delete Modal Functions
-        function openDeleteModal(alumniId, alumniName) {
-            currentAlumniId = alumniId;
-            document.getElementById('deleteAlumniName').textContent = alumniName;
+        function openDeleteModal(adminId, adminName) {
+            currentAdminId = adminId;
+            document.getElementById('deleteAdminName').textContent = adminName;
             document.getElementById('deleteModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -808,7 +706,7 @@
             deleteBtn.disabled = true;
             deleteBtn.textContent = 'Menghapus...';
 
-            fetch(`{{ route('dashboard.member.alumni.destroy', ':id') }}`.replace(':id', currentAlumniId), {
+            fetch(`{{ route('dashboard.member.admin.destroy', ':id') }}`.replace(':id', currentAdminId), {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -821,12 +719,12 @@
                     closeDeleteModal();
                     location.reload();
                 } else {
-                    alert('Error deleting alumni: ' + (data.message || 'Unknown error'));
+                    alert('Error deleting admin: ' + (data.message || 'Unknown error'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error deleting alumni');
+                alert('Error deleting admin');
             })
             .finally(() => {
                 deleteBtn.disabled = false;
@@ -835,7 +733,7 @@
         }
 
         function exportAllData() {
-            window.location.href = "{{ route('dashboard.member.alumni.exportAll') }}";
+            window.location.href = "{{ route('dashboard.member.admin.exportAll') }}";
         }
 
         // Close modals when clicking outside

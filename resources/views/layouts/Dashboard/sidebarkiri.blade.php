@@ -49,7 +49,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/dashboard/member/alumni" class="flex items-center h-9 px-2 rounded hover:bg-blue-700">
+                            <a href="{{ route('dashboard.member.admin.index') }}" class="flex items-center h-9 px-2 rounded hover:bg-blue-700">
                                 <span class="text-sm">Admin</span>
                             </a>
                         </li>
