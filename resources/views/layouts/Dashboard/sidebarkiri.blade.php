@@ -105,7 +105,7 @@
                 <div class="flex items-center space-x-3">
                     <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/screencapture-127-0-0-1-8000-dashboard-member-setting-2025-01-16-13_36_51-KZjxpYL66biHRq0kVGXX7G7OpzJbLj.png" alt="Admin" class="w-8 h-8 rounded-full">
                     <div>
-                        <div class="text-sm font-semibold">Admin Name</div>
+                        <div class="text-sm font-semibold">{{ $nama_admin ?? '-' }}</div>
                         <a href="#" class="text-xs text-blue-300 hover:text-blue-100">Logout</a>
                     </div>
                 </div>
