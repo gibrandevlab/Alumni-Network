@@ -1,5 +1,7 @@
 @extends('layouts.Dashboard.dashboard')
 
+@section('title', 'Manage Data Admin - ALUMNET')
+
 @section('content')
     <div class="min-h-screen flex flex-row bg-blue-50 text-black">
 

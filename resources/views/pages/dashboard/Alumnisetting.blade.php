@@ -1,6 +1,6 @@
 @extends('layouts.Dashboard.dashboard')
 
-@section('title', 'Manage Data Alumni - SITRA BSI')
+@section('title', 'Manage Data Alumni - ALUMNET')
 
 @section('content')
     <div class="min-h-screen flex flex-row bg-blue-50 text-black">

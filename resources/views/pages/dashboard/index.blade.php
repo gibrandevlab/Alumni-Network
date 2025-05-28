@@ -1,6 +1,6 @@
 @extends('layouts.Dashboard.dashboard')
 
-@section('title', 'Admin - SITRA BSI')
+@section('title', 'Dashboard - ALUMNET')
 
 @section('content')
     @if ($peranPengguna == 'admin')
