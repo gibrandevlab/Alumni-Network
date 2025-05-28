@@ -167,6 +167,12 @@
 
     <div class="relative z-20 flex items-center justify-center min-h-screen p-4">
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="login-form">
+            <!-- Tombol Icon -->
+        <a href="/" class="absolute top-4 left-4 text-white hover:text-blue-200 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
             <!-- Logo -->
             <div class="text-center mb-6">
                 <img src="{{ asset('images/testing.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">

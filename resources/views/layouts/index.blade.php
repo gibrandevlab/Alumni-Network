@@ -611,14 +611,14 @@
                             <a href="{{ route('profile.index') }}" class="dropdown-item flex items-center gap-2" role="menuitem">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-profile"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4z"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                 <span>Profile</span>
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                                @csrf
-                                <button type="submit" class="dropdown-item danger flex items-center gap-2" role="menuitem">
+                            </a>                        
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <a href="{{ route('logout') }}" class="dropdown-item danger flex items-center gap-2" role="menuitem">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                                    <span>Logout</span>
-                                </button>
-                            </form>
+                                    <span>Keluar</span>
+                                </a>
                         </div>
                     </div>
                 @else

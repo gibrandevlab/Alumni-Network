@@ -183,13 +183,13 @@
               <label class="block text-gray-700">
                 9. Apakah Anda pernah mendapatkan dukungan dari institusi (layanan karier, pelatihan, atau jaringan alumni) yang membantu pengembangan karier atau usaha Anda? Jelaskan.
               </label>
-              <textarea name="dukungan_institusi" rows="3" placeholder="Tuliskan pengalaman Anda..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"></textarea>
+              <textarea name="dukungan_institusi" rows="3" placeholder="Tuliskan pengalaman Anda..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400" required></textarea>
             </div>
             <div class="mb-4">
               <label class="block text-gray-700">
                 10. Apa saran atau masukan yang dapat Anda berikan untuk meningkatkan relevansi kurikulum dan layanan institusi?
               </label>
-              <textarea name="saran_perbaikan_kerja" rows="3" placeholder="Saran dan masukan..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400"></textarea>
+              <textarea name="saran_perbaikan_kerja" rows="3" placeholder="Saran dan masukan..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400" required></textarea>
             </div>
           </div>
 
