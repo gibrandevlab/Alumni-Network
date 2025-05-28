@@ -183,14 +183,14 @@
             <form action="{{ route('login') }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-black text-sm">Email</label>
+                    <label class="text-white text-sm">Email</label>
                     <input type="email" name="email" placeholder="username@gmail.com"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-black text-sm">Password</label>
+                    <label class="text-white text-sm">Password</label>
                     <input type="password" name="password" placeholder="Password"
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
