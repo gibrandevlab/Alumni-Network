@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
+
         .floating-shape {
             position: absolute;
             background: linear-gradient(45deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.1));
@@ -23,10 +25,39 @@
             z-index: 0;
             animation: float 20s infinite;
         }
-        .shape-1 { width: 150px; height: 150px; top: 10%; left: 15%; animation-delay: -2s; }
-        .shape-2 { width: 200px; height: 200px; top: 60%; right: 15%; animation-delay: -5s; }
-        .shape-3 { width: 120px; height: 120px; top: 30%; right: 25%; animation-delay: -7s; }
-        .shape-4 { width: 180px; height: 180px; bottom: 20%; left: 25%; animation-delay: -11s; }
+
+        .shape-1 {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            left: 15%;
+            animation-delay: -2s;
+        }
+
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: -5s;
+        }
+
+        .shape-3 {
+            width: 120px;
+            height: 120px;
+            top: 30%;
+            right: 25%;
+            animation-delay: -7s;
+        }
+
+        .shape-4 {
+            width: 180px;
+            height: 180px;
+            bottom: 20%;
+            left: 25%;
+            animation-delay: -11s;
+        }
+
         .curved-shape {
             position: absolute;
             width: 100px;
@@ -36,20 +67,64 @@
             filter: blur(8px);
             animation: floatCurved 15s infinite;
         }
-        .curved-1 { top: 20%; right: 30%; transform: rotate(45deg); animation-delay: -3s; }
-        .curved-2 { bottom: 30%; left: 20%; transform: rotate(-30deg); animation-delay: -8s; }
+
+        .curved-1 {
+            top: 20%;
+            right: 30%;
+            transform: rotate(45deg);
+            animation-delay: -3s;
+        }
+
+        .curved-2 {
+            bottom: 30%;
+            left: 20%;
+            transform: rotate(-30deg);
+            animation-delay: -8s;
+        }
+
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(20px, -20px) rotate(90deg); }
-            50% { transform: translate(-10px, 20px) rotate(180deg); }
-            75% { transform: translate(-20px, -10px) rotate(270deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(20px, -20px) rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-10px, 20px) rotate(180deg);
+            }
+
+            75% {
+                transform: translate(-20px, -10px) rotate(270deg);
+            }
         }
+
         @keyframes floatCurved {
-            0%, 100% { transform: translate(0, 0) rotate(45deg); }
-            50% { transform: translate(-20px, 20px) rotate(60deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(45deg);
+            }
+
+            50% {
+                transform: translate(-20px, 20px) rotate(60deg);
+            }
         }
-        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .social-button {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 8px;
@@ -59,12 +134,14 @@
             justify-content: center;
             transition: all 0.3s ease;
         }
+
         .social-button:hover {
             background: rgba(255, 255, 255, 1);
             transform: translateY(-2px);
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-800 relative overflow-hidden">
     <!-- Floating Shapes -->
     <div class="floating-shape shape-1"></div>
@@ -93,11 +170,11 @@
     <div class="relative z-20 flex items-center justify-center min-h-screen p-4">
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="register-form">
             <!-- Tombol Icon -->
-        <a href="/" class="absolute top-4 left-4 text-white hover:text-blue-200 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-        </a>
+            <a href="/" class="absolute top-4 left-4 text-white hover:text-blue-200 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
             <!-- Logo -->
             <div class="text-center mb-6">
                 <img src="{{ asset('images/alumnet-logo-white-fix.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
@@ -111,7 +188,7 @@
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                     @error('nama')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="space-y-2">
@@ -120,23 +197,39 @@
                         class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required>
                     @error('email')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="space-y-2">
                     <label class="text-white text-sm">Password</label>
-                    <input type="password" name="password" placeholder="Password"
-                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required>
+                    <div class="relative">
+                        <input type="password" name="password" placeholder="Password"
+                            class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-12"
+                            id="register-password" required>
+                        <button type="button" tabindex="-1" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900" onclick="togglePasswordVisibility('register-password', this)">
+                            <svg id="register-password-eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                     @error('password')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="space-y-2">
                     <label class="text-white text-sm">Konfirmasi Password</label>
-                    <input type="password" name="password_confirmation" placeholder="Konfirmasi Password"
-                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required>
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" placeholder="Konfirmasi Password"
+                            class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-12"
+                            id="register-password-confirm" required>
+                        <button type="button" tabindex="-1" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900" onclick="togglePasswordVisibility('register-password-confirm', this)">
+                            <svg id="register-password-confirm-eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit"
                     class="w-full bg-blue-900 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-800 transition duration-300">
@@ -170,6 +263,19 @@
             const registerForm = document.getElementById('register-form');
             observer.observe(registerForm);
         });
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const svg = btn.querySelector('svg');
+            if (input.type === 'password') {
+                input.type = 'text';
+                svg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-3.95m3.671-2.568A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.965 9.965 0 01-4.293 5.032M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />`;
+            } else {
+                input.type = 'password';
+                svg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
+        }
     </script>
 </body>
+
 </html>

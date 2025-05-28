@@ -180,8 +180,8 @@
         </div>
 
         <div class="flex justify-between items-center mt-6">
-          <button type="button" onclick="previousStep()"
-                  class="bg-gray-300 px-4 py-2 rounded-lg text-gray-600">Kembali</button>
+          <a href="/pengisian-tracer-study/Tracer-Study-1" type="button" onclick="previousStep()"
+                  class="bg-gray-300 px-4 py-2 rounded-lg text-gray-600">Kembali</a>
           <button type="button" onclick="nextStep()"
                   class="bg-purple-500 px-4 py-2 rounded-lg text-white">Berikutnya</button>
         </div>

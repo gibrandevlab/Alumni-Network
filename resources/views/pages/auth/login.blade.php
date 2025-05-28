@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -82,24 +83,32 @@
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate(0, 0) rotate(0deg);
             }
+
             25% {
                 transform: translate(20px, -20px) rotate(90deg);
             }
+
             50% {
                 transform: translate(-10px, 20px) rotate(180deg);
             }
+
             75% {
                 transform: translate(-20px, -10px) rotate(270deg);
             }
         }
 
         @keyframes floatCurved {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate(0, 0) rotate(45deg);
             }
+
             50% {
                 transform: translate(-20px, 20px) rotate(60deg);
             }
@@ -168,11 +177,11 @@
     <div class="relative z-20 flex items-center justify-center min-h-screen p-4">
         <div class="glass-effect p-8 w-full max-w-md fade-in" id="login-form">
             <!-- Tombol Icon -->
-        <a href="/" class="absolute top-4 left-4 text-white hover:text-blue-200 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-        </a>
+            <a href="/" class="absolute top-4 left-4 text-white hover:text-blue-200 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
             <!-- Logo -->
             <div class="text-center mb-6">
                 <img src="{{ asset('images/testing.png') }}" alt="Alumni Network Logo" class="mx-auto h-12">
@@ -191,9 +200,17 @@
 
                 <div class="space-y-2">
                     <label class="text-white text-sm">Password</label>
-                    <input type="password" name="password" placeholder="Password"
-                        class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required>
+                    <div class="relative">
+                        <input type="password" name="password" placeholder="Password"
+                            class="w-full px-4 py-2 rounded-lg bg-white/90 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-12"
+                            id="login-password" required>
+                        <button type="button" tabindex="-1" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900" onclick="togglePasswordVisibility('login-password', this)">
+                            <svg id="login-password-eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="text-right">
@@ -243,6 +260,19 @@
             const loginForm = document.getElementById('login-form');
             observer.observe(loginForm);
         });
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const svg = btn.querySelector('svg');
+            if (input.type === 'password') {
+                input.type = 'text';
+                svg.innerHTML = `<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-3.95m3.671-2.568A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.965 9.965 0 01-4.293 5.032M15 12a3 3 0 11-6 0 3 3 0 016 0z\" /><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 3l18 18\" />`;
+            } else {
+                input.type = 'password';
+                svg.innerHTML = `<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 12a3 3 0 11-6 0 3 3 0 016 0z\" /><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z\" />`;
+            }
+        }
     </script>
 </body>
+
 </html>
