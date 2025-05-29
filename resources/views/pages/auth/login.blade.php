@@ -163,6 +163,17 @@
     </div>
     @endif
 
+    @if (session('error'))
+    <div class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-4 rounded-b-lg shadow-md z-50 w-auto max-w-md">
+        <div class="flex justify-between items-center">
+            <span>{{ session('error') }}</span>
+            <button class="ml-4 text-white focus:outline-none" onclick="this.parentElement.parentElement.style.display='none'">
+                &times;
+            </button>
+        </div>
+    </div>
+    @endif
+
     @if (session('success'))
     <div class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-600 text-white p-4 rounded-b-lg shadow-md z-50 w-auto max-w-md">
         <div class="flex justify-between items-center">
