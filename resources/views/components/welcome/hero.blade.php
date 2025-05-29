@@ -1,5 +1,5 @@
 <div class="flex flex-wrap bg-cover bg-no-repeat relative" id="home"
- style="background-image: none; background-size: cover; background-position: center;">
+    style="background-image: none; background-size: cover; background-position: center;">
     <div class="w-full sm:w-10/12 md:w-8/12 mb-10 relative z-10">
         <div class="container mx-auto min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-10">
             <header class="container px-4 lg:flex items-center h-full lg:mt-0">
@@ -11,9 +11,15 @@
                     <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 lg:mb-10 text-white">
                         Ayo, Sukseskan Alumni Network Universitas BSI
                     </p>
-                    <button class="bg-white text-black text-sm sm:text-base md:text-lg font-medium px-4 sm:px-6 py-2 sm:py-3 rounded shadow">
-                        Mulai Survey
-                    </button>
+                    @auth
+                        <a href="/pengisian-tracer-study" class="inline-block px-4 md:px-6 py-2 md:py-3 text-base md:text-lg bg-[#003194] text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                            Mulai Survey
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-block px-4 md:px-6 py-2 md:py-3 text-base md:text-lg bg-[#003194] text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                            Mulai Survey
+                        </a>
+                    @endauth
                 </div>
             </header>
         </div>

@@ -54,10 +54,15 @@
             </ul>
             <div class="mt-6 flex justify-center gap-4">
                 <!-- Button Mulai Survey -->
-                <a href="/pengisian-tracer-study"
-                    class="inline-block px-4 md:px-6 py-2 md:py-3 text-base md:text-lg bg-[#003194] text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
-                    Mulai Survey
-                </a>
+                @auth
+                        <a href="/pengisian-tracer-study" class="inline-block px-4 md:px-6 py-2 md:py-3 text-base md:text-lg bg-[#003194] text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                            Mulai Survey
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-block px-4 md:px-6 py-2 md:py-3 text-base md:text-lg bg-[#003194] text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                            Mulai Survey
+                        </a>
+                    @endauth
 
                 <!-- Button Baca Panduan -->
                 <a href="/panduan"
