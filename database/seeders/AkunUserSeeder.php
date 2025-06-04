@@ -13,6 +13,7 @@ use App\Models\PendaftaranEvent;
 use App\Models\PembayaranEvent;
 use App\Models\Message;
 use App\Models\EventKuesioner;
+use App\Models\PertanyaanKuesioner;
 
 class AkunUserSeeder extends Seeder
 {
@@ -74,21 +75,6 @@ class AkunUserSeeder extends Seeder
             'maksimal_peserta' => 100,
         ]);
 
-        // Seed PendaftaranEvent
-        $pendaftaran = PendaftaranEvent::create([
-            'event_id' => $event->id,
-            'user_id' => User::where('role', 'alumni')->first()->id,
-            'status' => 'menunggu',
-        ]);
-
-        // Seed PembayaranEvent
-        PembayaranEvent::create([
-            'pendaftaran_event_id' => $pendaftaran->id,
-            'status_pembayaran' => 'berhasil',
-            'midtrans_transaction_id' => 'MID1234567890',
-            'jumlah' => 50000,
-            'waktu_pembayaran' => now(),
-        ]);
 
         // Seed Messages
         Message::create([
@@ -114,5 +100,147 @@ class AkunUserSeeder extends Seeder
             'jawaban' => json_encode(['question1' => 'answer1', 'question2' => 'answer2']),
             'user_id' => User::where('role', 'alumni')->first()->id,
         ]);
+
+        // Seed PertanyaanKuesioner (46 pertanyaan)
+        $eventKuesionerId = EventKuesioner::first()->id;
+        // Umum
+        PertanyaanKuesioner::create([
+            'event_kuesioner_id' => $eventKuesionerId,
+            'kategori' => 'umum',
+            'tipe' => 'pilihan',
+            'urutan' => 1,
+            'pertanyaan' => 'Saat ini, aktivitas utama Anda adalah?',
+            'skala' => json_encode(["Bekerja", "Melanjutkan Pendidikan", "Lainnya"]),
+        ]);
+        // Bekerja - Likert (P2-P11)
+        $bekerjaLikert = [
+            'Pendidikan di universitas memberikan pengetahuan teknis yang relevan dengan pekerjaan saya saat ini.',
+            'Keterampilan non-teknis (presentasi, kerja tim) dari perkuliahan bermanfaat dalam pekerjaan.',
+            'Jaringan alumni/koneksi universitas membantu karir saya.',
+            'Kurikulum sesuai dengan tuntutan industri terkini.',
+            'Dukungan karier dari universitas (job fair, konseling) efektif.',
+            'Praktikum/magang mempersiapkan saya untuk lingkungan kerja.',
+            'Saya mampu bersaing di dunia kerja berkat kompetensi dari kampus.',
+            'Etika profesional yang diajarkan relevan dengan budaya perusahaan.',
+            'Fasilitas penunjang pembelajaran (lab, perpustakaan) memadai.',
+            'Pengalaman kuliah berkontribusi signifikan terhadap kesuksesan karir.'
+        ];
+        foreach ($bekerjaLikert as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'bekerja',
+                'tipe' => 'likert',
+                'urutan' => $i+2,
+                'pertanyaan' => $q,
+                'skala' => json_encode([1,2,3,4,5]),
+            ]);
+        }
+        // Bekerja - Esai (P11-P15)
+        $bekerjaEsai = [
+            'Deskripsikan satu keterampilan spesifik dari perkuliahan yang paling berguna di pekerjaan.',
+            'Aspek apa yang kurang dari pendidikan Anda untuk relevansi dunia kerja?',
+            'Ceritakan pengalaman konkret menggunakan jaringan alumni (jika ada).',
+            'Saran untuk universitas dalam mempersiapkan mahasiswa menghadapi dunia kerja.',
+            'Rencana pengembangan karir 5 tahun ke depan dan peran kampus.'
+        ];
+        foreach ($bekerjaEsai as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'bekerja',
+                'tipe' => 'esai',
+                'urutan' => $i+12,
+                'pertanyaan' => $q,
+                'skala' => null,
+            ]);
+        }
+        // Pendidikan - Likert (P2-P11)
+        $pendidikanLikert = [
+            'Pendidikan sebelumnya memberikan fondasi akademik kuat untuk studi lanjut.',
+            'Metode penelitian (skripsi/tesis) memadai untuk tuntutan S2/S3.',
+            'Bimbingan dosen mempersiapkan saya untuk studi lanjut.',
+            'Akses jurnal ilmiah dan perpustakaan mendukung riset.',
+            'Lingkungan akademik kampus memotivasi studi lanjut.',
+            'Kurikulum mendorong pengembangan pola pikir kritis.',
+            'Kolaborasi riset antar fakultas mudah diakses.',
+            'Saya mendapat rekomendasi kuat dari dosen untuk pendaftaran.',
+            'Fasilitas riset (laboratorium) memenuhi standar.',
+            'Pengalaman organisasi mengembangkan soft skill untuk studi lanjut.'
+        ];
+        $likertSkala = [
+            ["label" => "Sangat Tidak Setuju", "value" => 1],
+            ["label" => "Tidak Setuju", "value" => 2],
+            ["label" => "Netral", "value" => 3],
+            ["label" => "Setuju", "value" => 4],
+            ["label" => "Sangat Setuju", "value" => 5],
+        ];
+        foreach ($pendidikanLikert as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'pendidikan',
+                'tipe' => 'likert',
+                'urutan' => $i+2,
+                'pertanyaan' => $q,
+                'skala' => json_encode($likertSkala),
+            ]);
+        }
+        // Pendidikan - Esai (P11-P15)
+        $pendidikanEsai = [
+            'Deskripsikan topik riset saat ini dan kaitannya dengan bidang sebelumnya.',
+            'Kendala terbesar dalam transisi dari S1 ke S2/S3.',
+            'Peran dosen pembimbing yang paling berkesan.',
+            'Sarana akademik apa yang belum disediakan kampus tetapi krusial?',
+            'Harapan untuk kolaborasi riset dengan institusi studi lanjut.'
+        ];
+        foreach ($pendidikanEsai as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'pendidikan',
+                'tipe' => 'esai',
+                'urutan' => $i+12,
+                'pertanyaan' => $q,
+                'skala' => null,
+            ]);
+        }
+        // Lainnya - Likert (P2-P11)
+        $lainnyaLikert = [
+            'Fleksibilitas kurikulum memungkinkan eksplorasi minat non-akademik.',
+            'Saya mendapat dukungan untuk pengembangan diri (wirausaha/sosial).',
+            'Keterampilan hidup (problem solving) berguna dalam aktivitas saat ini.',
+            'Universitas memberi ruang untuk membangun identitas diri.',
+            'Jaringan alumni bermanfaat untuk aktivitas non-konvensional.',
+            'Layanan kampus (inkubator bisnis) mudah diakses.',
+            'Sistem perkuliahan mendorong kemandirian menentukan jalur pasca-lulus.',
+            'Saya puas dengan pengalaman organisasi ekstrakurikuler.',
+            'Dukungan untuk karir alternatif (freelance/seni) memadai.',
+            'Pendidikan membantu saya memahami potensi diri secara holistik.'
+        ];
+        foreach ($lainnyaLikert as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'lainnya',
+                'tipe' => 'likert',
+                'urutan' => $i+2,
+                'pertanyaan' => $q,
+                'skala' => json_encode([1,2,3,4,5]),
+            ]);
+        }
+        // Lainnya - Esai (P11-P15)
+        $lainnyaEsai = [
+            'Deskripsikan aktivitas utama saat ini dan kaitannya dengan pengalaman kuliah.',
+            'Peluang/tantangan terbesar dalam menjalani pilihan ini.',
+            'Peran universitas yang diharapkan untuk dukungan jalur non-tradisional.',
+            'Keterampilan unik dari perkuliahan yang paling berguna.',
+            'Saran untuk membuat kampus lebih inklusif terhadap berbagai tujuan karir.'
+        ];
+        foreach ($lainnyaEsai as $i => $q) {
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $eventKuesionerId,
+                'kategori' => 'lainnya',
+                'tipe' => 'esai',
+                'urutan' => $i+12,
+                'pertanyaan' => $q,
+                'skala' => null,
+            ]);
+        }
     }
 }

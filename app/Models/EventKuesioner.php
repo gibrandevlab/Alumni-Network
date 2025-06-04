@@ -25,5 +25,12 @@ class EventKuesioner extends Model
         'tahun_mulai',
         'tahun_akhir',
         'tahun_lulusan',
+        'target_peserta',
     ];
+
+    // Relasi: EventKuesioner hasMany PertanyaanKuesioner
+    public function pertanyaan()
+    {
+        return $this->hasMany(\App\Models\PertanyaanKuesioner::class, 'event_kuesioner_id');
+    }
 }

@@ -81,6 +81,17 @@
                             <span class="ml-2 text-sm tracking-wide truncate">Download Data Kuesioner</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('dashboard.kuesioner.index') }}"
+                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
+                            <span class="inline-flex justify-center items-center ml-4">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0a2 2 0 002 2h2a2 2 0 002-2m-6 0V9a2 2 0 012-2h2a2 2 0 012 2v8"></path>
+                                </svg>
+                            </span>
+                            <span class="ml-2 text-sm tracking-wide truncate">Manage Kuesioner</span>
+                        </a>
+                    </li>
                     <li class="px-5 hidden md:block">
                         <div class="flex flex-row items-center h-8">
                             <div class="text-sm font-light tracking-wide text-blue-100 uppercase">Settings</div>

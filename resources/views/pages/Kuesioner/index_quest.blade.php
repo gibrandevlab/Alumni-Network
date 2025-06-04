@@ -50,6 +50,10 @@
 
 @endsection
 
+@if (request()->routeIs('kuesioner.index'))
+    <script>window.location.href = '{{ route('kuesioner.index') }}';</script>
+@endif
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const smoothScrollLinks = document.querySelectorAll("a[href^='#']");

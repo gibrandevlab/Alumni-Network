@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Dashboard\EventController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\EventUserController;
+use App\Http\Controllers\KuesionerController;
 use Illuminate\Support\Facades\Route;
 
 // 1. HomepageController
@@ -22,18 +23,21 @@ Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
 // 2. Routes Menggunakan Closure (Tanpa Controller)
 Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'))->name('dashboard.partisipasi-alumni');
 Route::get('/panduan', fn() => view('pages.panduan'))->name('panduan.index');
-Route::get('/pengisian-tracer-study', fn() => view('pages.Kuesioner.index_quest'))->name('kuesioner.index');
-Route::get('/pengisian-tracer-study/Tracer-Study-1', fn() => view('pages.Kuesioner.Tracer-study-1'))->name('kuesioner.tracer-study-1');
 
-// 3. FormQ1Controllers
-Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1', [FormQ1Controllers::class, 'index'])
-    ->name('kuesioner.tracer-study-1.index');
-Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'index_Public'])
-    ->name('kuesioner.tracer-study-1.index_public');
-Route::post('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'store_public'])
-    ->name('kuesioner.tracer-study-1.store_public');
-Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])
-    ->name('alumni.searchByNim');
+// 3. Hapus route lama kuesioner
+// Route::get('/pengisian-tracer-study', fn() => view('pages.Kuesioner.index_quest'))->name('kuesioner.index');
+// Route::get('/pengisian-tracer-study/Tracer-Study-1', fn() => view('pages.Kuesioner.Tracer-study-1'))->name('kuesioner.tracer-study-1');
+// Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1', [FormQ1Controllers::class, 'index'])->name('kuesioner.tracer-study-1.index');
+// Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'index_Public'])->name('kuesioner.tracer-study-1.index_public');
+// Route::post('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'store_public'])->name('kuesioner.tracer-study-1.store_public');
+// Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])->name('alumni.searchByNim');
+
+// Route dinamis baru untuk sistem kuesioner
+Route::prefix('pengisian-tracer-study')->group(function () {
+    Route::get('/', [KuesionerController::class, 'index'])->name('kuesioner.index');
+    Route::get('/{event_id}/form', [KuesionerController::class, 'showForm'])->name('kuesioner.form');
+    Route::post('/{event_id}/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
+});
 
 // 4. Dashboard Controllers
 
@@ -81,6 +85,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/event-user/daftar/{eventId}', [EventUserController::class, 'daftar'])->name('event.user.daftar');
     Route::get('/event-user/daftar/{eventId}', function ($eventId) {
         return redirect()->route('event.user.order', $eventId);
+    });
+
+    // Kuesioner Event Management
+    Route::prefix('dashboard/kuesioner')->name('dashboard.kuesioner.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])->name('destroy');
+        // CRUD Pertanyaan Kuesioner per Event
+        Route::get('/{event_id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanIndex'])->name('pertanyaan.index');
+        Route::post('/{event_id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])->name('pertanyaan.store');
+        Route::put('/{event_id}/pertanyaan/{pertanyaan_id}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])->name('pertanyaan.update');
+        Route::delete('/{event_id}/pertanyaan/{pertanyaan_id}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])->name('pertanyaan.destroy');
+        Route::get('/{event_id}/download-respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'downloadRespon'])->name('downloadRespon');
     });
 });
 
