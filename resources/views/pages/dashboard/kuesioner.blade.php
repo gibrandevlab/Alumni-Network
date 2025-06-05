@@ -72,6 +72,13 @@
                                             </svg>
                                             Edit Pertanyaan
                                         </a>
+                                        <!-- Ganti link edit event agar tidak pakai route, tapi pakai JS/modal -->
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 edit-event-btn" data-event='@json($event)'>
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Edit Event
+                                        </a>
                                         <div class="border-t border-gray-100"></div>
                                         <button onclick="confirmDelete({{ $event->id }})" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,8 +142,7 @@
                     <!-- Card Footer -->
                     <div class="p-6 pt-0">
                         <div class="flex gap-2 w-full">
-                            <a href="{{ route('dashboard.kuesioner.edit', $event->id) }}"
-                               class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                            <a href="#" class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 edit-event-btn" data-event='@json($event)'>
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
@@ -153,9 +159,9 @@
                     </div>
 
                     <!-- Hidden Delete Form -->
-                    <form id="delete-form-{{ $event->id }}" action="{{ route('dashboard.kuesioner.destroy', $event->id) }}" method="POST" class="hidden">
+                    <form id="delete-form-{{ $event->id }}" action="{{ route('dashboard.kuesioner.destroy') }}" method="POST" class="hidden">
                         @csrf
-                        @method('DELETE')
+                        <input type="hidden" name="event_id" value="{{ $event->id }}">
                     </form>
                 </div>
             @empty
@@ -168,7 +174,7 @@
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada event</h3>
                     <p class="text-gray-600 mb-6">Mulai dengan membuat event kuesioner pertama Anda</p>
-                    <a href="{{ route('dashboard.kuesioner.create') }}"
+                    <a href="#" id="btn-tambah-kuesioner"
                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
                         Tambah Event Baru
                     </a>
@@ -180,7 +186,7 @@
 
 <!-- Modal Pop Up Form Tambah Event Kuesioner -->
 <div id="modal-tambah-kuesioner" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-8 relative">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative" style="max-height:90vh; overflow-y:auto;">
         <button onclick="closeModal('modal-tambah-kuesioner')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -218,6 +224,30 @@
                 <label class="block text-sm font-medium mb-1">Foto (opsional)</label>
                 <input type="file" name="foto" class="w-full border rounded px-3 py-2">
             </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Pertanyaan Wajib (Kategori Umum)</label>
+                <input type="hidden" name="kategori_umum" value="umum">
+                <input type="hidden" name="urutan_umum" value="1">
+                <div class="mb-3">
+                    <label class="block mb-1 font-medium">Tipe Pertanyaan</label>
+                    <select name="tipe_umum" id="tipe_umum" class="w-full border rounded px-3 py-2" required>
+                        <option value="pilihan">Pilihan (Pilihan Ganda)</option>
+                        <option value="likert">Likert</option>
+                        <option value="esai">Esai</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="block mb-1 font-medium">Pertanyaan <span class="text-red-500">*</span></label>
+                    <input type="text" name="pertanyaan_umum" class="w-full border rounded px-3 py-2" required placeholder="Contoh: Saat ini, aktivitas utama Anda adalah?">
+                </div>
+                <div class="mb-3" id="skalaUmumWrapper">
+                    <label class="block mb-1 font-medium">Skala/Pilihan (untuk tipe pilihan/likert)</label>
+                    <div id="skalaUmumContainer" class="space-y-2"></div>
+                    <button type="button" id="btnTambahSkalaUmum" class="mt-2 px-2 py-1 bg-gray-200 rounded text-sm">Tambah Pilihan Skala</button>
+                    <input type="hidden" name="skala_umum" id="inputSkalaUmum">
+                    <div class="text-xs text-gray-500 mt-1">Contoh untuk Pilihan: Bekerja, Melanjutkan Pendidikan, Lainnya<br>Contoh untuk Likert: Sangat Tidak Setuju, Tidak Setuju, Netral, Setuju, Sangat Setuju</div>
+                </div>
+            </div>
             <div class="flex justify-end gap-2">
                 <button type="button" onclick="closeModal('modal-tambah-kuesioner')" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
@@ -235,7 +265,7 @@
             </svg>
         </button>
         <h2 class="text-xl font-bold mb-4">Edit Event Kuesioner</h2>
-        <form id="form-edit-event" method="POST">
+        <form id="form-edit-event" method="POST" action="{{ route('dashboard.kuesioner.update') }}">
             @csrf
             @method('PUT')
             <input type="hidden" name="event_id" id="edit-event-id">
@@ -274,17 +304,31 @@
 
 <!-- Modal Edit Pertanyaan Kuesioner (untuk tombol Edit Event di dropdown) -->
 <div id="modal-edit-pertanyaan" class="fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-40 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8 relative">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8 relative overflow-y-auto" style="max-height:90vh;">
         <button onclick="closeModal('modal-edit-pertanyaan')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
         <h2 class="text-xl font-bold mb-4">Edit Pertanyaan Kuesioner</h2>
-        <div id="pertanyaan-form-container">
-            <!-- Dynamic form pertanyaan akan di-load via AJAX atau JS -->
-            <div class="text-gray-500 text-center">Memuat data pertanyaan...</div>
-        </div>
+        <form id="form-edit-pertanyaan" method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.update') }}">
+            @csrf
+            <div class="mb-4">
+                <div class="flex gap-2 mb-4">
+                    <button type="button" class="tab-kategori px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold" data-kategori="umum">Umum</button>
+                    <button type="button" class="tab-kategori px-3 py-1 rounded bg-gray-100 text-gray-700" data-kategori="bekerja">Bekerja</button>
+                    <button type="button" class="tab-kategori px-3 py-1 rounded bg-gray-100 text-gray-700" data-kategori="pendidikan">Pendidikan</button>
+                    <button type="button" class="tab-kategori px-3 py-1 rounded bg-gray-100 text-gray-700" data-kategori="lainnya">Lainnya</button>
+                </div>
+            </div>
+            <div id="pertanyaan-form-container">
+                <div class="text-gray-500 text-center">Memuat data pertanyaan...</div>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+                <button type="button" onclick="closeModal('modal-edit-pertanyaan')" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan Semua</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -378,12 +422,140 @@
                     if (data.length === 0) {
                         container.innerHTML = '<div class="text-center text-gray-500">Belum ada pertanyaan. Silakan tambahkan pertanyaan baru.</div>';
                     } else {
-                        let html = '<div class="space-y-4">';
+                        // Kelompokkan pertanyaan per kategori
+                        const kategoriMap = {umum: [], bekerja: [], pendidikan: [], lainnya: []};
                         data.forEach((q, i) => {
-                            html += `<div class='border rounded p-3'><div class='font-semibold mb-1'>${i+1}. ${q.pertanyaan}</div><div class='text-xs text-gray-500'>Kategori: ${q.kategori} | Tipe: ${q.tipe} | Urutan: ${q.urutan}</div></div>`;
+                            kategoriMap[q.kategori]?.push({...q, idx: i});
                         });
-                        html += '</div>';
+                        let html = '';
+                        Object.keys(kategoriMap).forEach(kat => {
+                            html += `<div class='tab-content' id='tab-${kat}' style='${kat==='umum' ? '' : 'display:none;'}'>`;
+                            html += `<button type='button' class='tambah-pertanyaan-btn mb-3 px-3 py-1 bg-green-500 text-white rounded' data-kategori='${kat}'>+ Tambah Pertanyaan</button>`;
+                            kategoriMap[kat].forEach((q, j) => {
+                                const i = q.idx;
+                                html += `
+                                <div class='border rounded p-3 mb-3 pertanyaan-item' data-kategori='${kat}' data-idx='${i}'>
+                                    <input type='hidden' name='pertanyaan[${i}][id]' value='${q.id}'>
+                                    <div class='flex justify-between items-center mb-2'>
+                                        <span class='font-semibold'>Pertanyaan #${j+1}</span>
+                                        <button type='button' class='hapus-pertanyaan-btn text-red-500 text-xs' data-idx='${i}' title='Hapus pertanyaan'>Hapus</button>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Kategori</label>
+                                        <select name='pertanyaan[${i}][kategori]' class='w-full border rounded px-2 py-1'>
+                                            <option value='umum' ${q.kategori==='umum'?'selected':''}>Umum</option>
+                                            <option value='bekerja' ${q.kategori==='bekerja'?'selected':''}>Bekerja</option>
+                                            <option value='pendidikan' ${q.kategori==='pendidikan'?'selected':''}>Pendidikan</option>
+                                            <option value='lainnya' ${q.kategori==='lainnya'?'selected':''}>Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Tipe</label>
+                                        <select name='pertanyaan[${i}][tipe]' class='w-full border rounded px-2 py-1 tipe-select' data-index='${i}'>
+                                            <option value='pilihan' ${q.tipe==='pilihan'?'selected':''}>Pilihan</option>
+                                            <option value='likert' ${q.tipe==='likert'?'selected':''}>Likert</option>
+                                            <option value='esai' ${q.tipe==='esai'?'selected':''}>Esai</option>
+                                        </select>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Urutan</label>
+                                        <input type='number' name='pertanyaan[${i}][urutan]' value='${q.urutan}' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Pertanyaan</label>
+                                        <input type='text' name='pertanyaan[${i}][pertanyaan]' value='${q.pertanyaan.replace(/'/g, "&#39;")}' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                    <div class='mb-2 skala-container' id='skala-container-${i}' style='${q.tipe==='esai'?'display:none':''}'>
+                                        <label class='block text-xs font-medium mb-1'>Skala/Pilihan (pisahkan dengan koma)</label>
+                                        <input type='text' name='pertanyaan[${i}][skala]' value='${q.skala ? (Array.isArray(q.skala) ? q.skala.join(",") : (typeof q.skala === 'string' ? q.skala : Object.values(q.skala).join(","))) : ''}' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                </div>`;
+                            });
+                            html += '</div>';
+                        });
                         container.innerHTML = html;
+                        // Tab switching logic
+                        document.querySelectorAll('.tab-kategori').forEach(tab => {
+                            tab.onclick = function() {
+                                document.querySelectorAll('.tab-kategori').forEach(t => t.classList.remove('bg-blue-100', 'text-blue-700', 'font-semibold'));
+                                this.classList.add('bg-blue-100', 'text-blue-700', 'font-semibold');
+                                const kat = this.dataset.kategori;
+                                document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+                                document.getElementById('tab-' + kat).style.display = '';
+                            };
+                        });
+                        // Tampilkan/hidden skala sesuai tipe
+                        document.querySelectorAll('.tipe-select').forEach(sel => {
+                            sel.addEventListener('change', function() {
+                                const idx = this.dataset.index;
+                                const val = this.value;
+                                const skalaDiv = document.getElementById('skala-container-' + idx);
+                                if(val === 'esai') {
+                                    skalaDiv.style.display = 'none';
+                                } else {
+                                    skalaDiv.style.display = '';
+                                }
+                            });
+                        });
+                        // Tambah pertanyaan per kategori
+                        document.querySelectorAll('.tambah-pertanyaan-btn').forEach(btn => {
+                            btn.onclick = function() {
+                                const kat = this.dataset.kategori;
+                                const tabDiv = document.getElementById('tab-' + kat);
+                                const idx = Date.now() + Math.floor(Math.random()*1000); // unique index
+                                const count = tabDiv.querySelectorAll('.pertanyaan-item').length + 1;
+                                const html = `
+                                <div class='border rounded p-3 mb-3 pertanyaan-item' data-kategori='${kat}' data-idx='${idx}'>
+                                    <div class='flex justify-between items-center mb-2'>
+                                        <span class='font-semibold'>Pertanyaan #${count}</span>
+                                        <button type='button' class='hapus-pertanyaan-btn text-red-500 text-xs' data-idx='${idx}' title='Hapus pertanyaan'>Hapus</button>
+                                    </div>
+                                    <input type='hidden' name='pertanyaan[${idx}][id]' value=''>
+                                    <input type='hidden' name='pertanyaan[${idx}][kategori]' value='${kat}'>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Tipe</label>
+                                        <select name='pertanyaan[${idx}][tipe]' class='w-full border rounded px-2 py-1 tipe-select' data-index='${idx}'>
+                                            <option value='pilihan'>Pilihan</option>
+                                            <option value='likert'>Likert</option>
+                                            <option value='esai'>Esai</option>
+                                        </select>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Urutan</label>
+                                        <input type='number' name='pertanyaan[${idx}][urutan]' value='${count}' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                    <div class='mb-2'>
+                                        <label class='block text-xs font-medium mb-1'>Pertanyaan</label>
+                                        <input type='text' name='pertanyaan[${idx}][pertanyaan]' value='' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                    <div class='mb-2 skala-container' id='skala-container-${idx}'>
+                                        <label class='block text-xs font-medium mb-1'>Skala/Pilihan (pisahkan dengan koma)</label>
+                                        <input type='text' name='pertanyaan[${idx}][skala]' value='' class='w-full border rounded px-2 py-1'>
+                                    </div>
+                                </div>`;
+                                tabDiv.insertAdjacentHTML('beforeend', html);
+                                // Add event for tipe-select
+                                tabDiv.querySelector(`.tipe-select[data-index='${idx}']`).addEventListener('change', function() {
+                                    const val = this.value;
+                                    const skalaDiv = document.getElementById('skala-container-' + idx);
+                                    if(val === 'esai') {
+                                        skalaDiv.style.display = 'none';
+                                    } else {
+                                        skalaDiv.style.display = '';
+                                    }
+                                });
+                                // Add event for hapus
+                                tabDiv.querySelector(`.hapus-pertanyaan-btn[data-idx='${idx}']`).addEventListener('click', function() {
+                                    this.closest('.pertanyaan-item').remove();
+                                });
+                            };
+                        });
+                        // Hapus pertanyaan
+                        document.querySelectorAll('.hapus-pertanyaan-btn').forEach(btn => {
+                            btn.onclick = function() {
+                                this.closest('.pertanyaan-item').remove();
+                            };
+                        });
                     }
                 });
             document.getElementById('modal-edit-pertanyaan').classList.remove('hidden');
@@ -396,6 +568,29 @@
             const eventId = this.dataset.eventId;
             window.location.href = `/dashboard/kuesioner/${eventId}/download-respon`;
         });
+    });
+
+    // Dinamis tampilkan/hide skala berdasarkan tipe
+    document.getElementById('tipe_umum').addEventListener('change', function() {
+        const val = this.value;
+        document.getElementById('skalaUmumWrapper').style.display = (val === 'esai') ? 'none' : '';
+    });
+    // Tambah pilihan skala untuk pertanyaan wajib
+    document.getElementById('btnTambahSkalaUmum').addEventListener('click', function() {
+        const container = document.getElementById('skalaUmumContainer');
+        const idx = Date.now();
+        const html = `
+        <div class='flex gap-2 skala-item' data-idx='${idx}'>
+            <input type='text' name='skala_umum[${idx}]' class='w-full border rounded px-2 py-1' placeholder='Masukkan pilihan skala'>
+            <button type='button' class='hapus-skala-btn text-red-500 text-xs' title='Hapus pilihan'>Hapus</button>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+    });
+    // Hapus pilihan skala
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('hapus-skala-btn')) {
+            e.target.closest('.skala-item').remove();
+        }
     });
 </script>
 

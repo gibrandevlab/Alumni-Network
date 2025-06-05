@@ -53,36 +53,78 @@ class KuesionerEventController extends Controller
             'judul_event' => 'required',
             'tahun_mulai' => 'required|integer',
             'tahun_akhir' => 'required|integer',
+            'tahun_lulusan' => 'required|integer',
             'deskripsi_event' => 'required',
+            'target_peserta' => 'nullable|string',
+            'foto' => 'nullable|image|max:2048',
+            // Pertanyaan umum
+            'kategori_umum' => 'required|in:umum',
+            'tipe_umum' => 'required',
+            'urutan_umum' => 'required|integer',
+            'pertanyaan_umum' => 'required',
+            // skala_umum boleh kosong/null
         ]);
-        EventKuesioner::create($request->only(['judul_event','tahun_mulai','tahun_akhir','deskripsi_event']));
-        return redirect()->route('dashboard.kuesioner.index')->with('success', 'Event berhasil ditambahkan.');
+
+        \DB::beginTransaction();
+        try {
+            // Simpan event
+            $eventData = $request->only(['judul_event','tahun_mulai','tahun_akhir','tahun_lulusan','deskripsi_event','target_peserta']);
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('images'), $fileName);
+                $eventData['foto'] = '/images/' . $fileName;
+            }
+            $event = EventKuesioner::create($eventData);
+
+            // Simpan pertanyaan umum
+            $skala = $request->input('skala_umum');
+            $tipe = $request->input('tipe_umum');
+            if ($tipe === 'esai') {
+                $skalaVal = null;
+            } else {
+                // Jika string json, decode
+                if (is_string($skala)) {
+                    $skalaVal = json_decode($skala, true);
+                } else {
+                    $skalaVal = $skala;
+                }
+            }
+            PertanyaanKuesioner::create([
+                'event_kuesioner_id' => $event->id,
+                'kategori' => 'umum',
+                'tipe' => $tipe,
+                'urutan' => $request->input('urutan_umum', 1),
+                'pertanyaan' => $request->input('pertanyaan_umum'),
+                'skala' => $skalaVal,
+            ]);
+            \DB::commit();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 
-    public function edit($id)
-    {
-        $event = EventKuesioner::findOrFail($id);
-        return view('pages.dashboard.kuesioner.edit', compact('event'));
-    }
-
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $request->validate([
+            'event_id' => 'required|integer',
             'judul_event' => 'required',
             'tahun_mulai' => 'required|integer',
             'tahun_akhir' => 'required|integer',
             'deskripsi_event' => 'required',
         ]);
-        $event = EventKuesioner::findOrFail($id);
-        $event->update($request->only(['judul_event','tahun_mulai','tahun_akhir','deskripsi_event']));
-        return redirect()->route('dashboard.kuesioner.index')->with('success', 'Event berhasil diupdate.');
+        $event = EventKuesioner::findOrFail($request->event_id);
+        $event->update($request->only(['judul_event','tahun_mulai','tahun_akhir','deskripsi_event','target_peserta','foto','tahun_lulusan']));
+        return response()->json(['success' => true]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $event = EventKuesioner::findOrFail($id);
+        $event = EventKuesioner::findOrFail($request->event_id);
         $event->delete();
-        return redirect()->route('dashboard.kuesioner.index')->with('success', 'Event berhasil dihapus.');
+        return response()->json(['success' => true]);
     }
 
     // CRUD Pertanyaan Kuesioner per Event
@@ -93,35 +135,70 @@ class KuesionerEventController extends Controller
         return response()->json($pertanyaans);
     }
 
-    public function pertanyaanStore(Request $request, $event_id)
+    public function pertanyaanStore(Request $request)
     {
         $request->validate([
+            'event_kuesioner_id' => 'required|integer',
             'kategori' => 'required',
             'tipe' => 'required',
             'urutan' => 'required|integer',
             'pertanyaan' => 'required',
         ]);
-        $pertanyaan = PertanyaanKuesioner::create([
-            'event_kuesioner_id' => $event_id,
-            'kategori' => $request->kategori,
-            'tipe' => $request->tipe,
-            'urutan' => $request->urutan,
-            'pertanyaan' => $request->pertanyaan,
-            'skala' => $request->skala ?? null,
-        ]);
+        $data = $request->only(['event_kuesioner_id','kategori','tipe','urutan','pertanyaan']);
+        // Handle skala
+        if ($request->tipe === 'esai') {
+            $data['skala'] = null;
+        } else {
+            $skala = $request->input('skala');
+            if (is_array($skala)) {
+                $data['skala'] = $skala;
+            } elseif (is_string($skala)) {
+                // Pisahkan dengan koma, trim spasi
+                $data['skala'] = array_map('trim', explode(',', $skala));
+            } else {
+                $data['skala'] = [];
+            }
+        }
+        $pertanyaan = PertanyaanKuesioner::create($data);
         return response()->json($pertanyaan, 201);
     }
 
-    public function pertanyaanUpdate(Request $request, $event_id, $pertanyaan_id)
+    public function pertanyaanUpdate(Request $request)
     {
-        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $event_id)->findOrFail($pertanyaan_id);
-        $pertanyaan->update($request->only(['kategori','tipe','urutan','pertanyaan','skala']));
-        return response()->json($pertanyaan);
+        $request->validate([
+            'pertanyaan_id' => 'required|integer',
+            'event_kuesioner_id' => 'required|integer',
+            'kategori' => 'required',
+            'tipe' => 'required',
+            'urutan' => 'required|integer',
+            'pertanyaan' => 'required',
+        ]);
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $request->event_kuesioner_id)->findOrFail($request->pertanyaan_id);
+        $data = $request->only(['kategori','tipe','urutan','pertanyaan']);
+        // Handle skala
+        if ($request->tipe === 'esai') {
+            $data['skala'] = null;
+        } else {
+            $skala = $request->input('skala');
+            if (is_array($skala)) {
+                $data['skala'] = $skala;
+            } elseif (is_string($skala)) {
+                $data['skala'] = array_map('trim', explode(',', $skala));
+            } else {
+                $data['skala'] = [];
+            }
+        }
+        $pertanyaan->update($data);
+        return response()->json(['success' => true]);
     }
 
-    public function pertanyaanDestroy($event_id, $pertanyaan_id)
+    public function pertanyaanDestroy(Request $request)
     {
-        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $event_id)->findOrFail($pertanyaan_id);
+        $request->validate([
+            'pertanyaan_id' => 'required|integer',
+            'event_kuesioner_id' => 'required|integer',
+        ]);
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $request->event_kuesioner_id)->findOrFail($request->pertanyaan_id);
         $pertanyaan->delete();
         return response()->json(['success' => true]);
     }
