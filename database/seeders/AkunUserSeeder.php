@@ -92,6 +92,7 @@ class AkunUserSeeder extends Seeder
             'tahun_mulai' => 2020,
             'tahun_akhir' => 2025,
             'tahun_lulusan' => 2019,
+            'status' => 'aktif',
         ]);
 
         // Seed ResponKuesioner

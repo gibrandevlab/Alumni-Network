@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('judul_event', 255);
             $table->text('deskripsi_event');
+            $table->text('status');
             $table->string('foto')->nullable(); // Foto bersifat opsional
             $table->year('tahun_mulai');        // Tahun mulai event
             $table->year('tahun_akhir');        // Tahun akhir event

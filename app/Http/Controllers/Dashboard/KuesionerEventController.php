@@ -5,236 +5,277 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\EventKuesioner;
+use App\Models\PertanyaanKuesioner;
 use App\Models\ResponKuesioner;
 use App\Models\User;
-use App\Models\PertanyaanKuesioner;
 use App\Exports\ResponKuesionerExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class KuesionerEventController extends Controller
 {
     public function index()
     {
-        $events = EventKuesioner::orderByDesc('created_at')->get();
-        foreach ($events as $event) {
-            // Status logic
-            $status = $event->status ?? 'active';
-            $statusConfig = [
-                'active' => ['class' => 'bg-green-100 text-green-800 border-green-200', 'text' => 'Aktif'],
-                'completed' => ['class' => 'bg-blue-100 text-blue-800 border-blue-200', 'text' => 'Selesai'],
-                'draft' => ['class' => 'bg-gray-100 text-gray-800 border-gray-200', 'text' => 'Draft']
-            ];
-            $currentStatus = $statusConfig[$status] ?? $statusConfig['draft'];
-            $event->status_class = $currentStatus['class'];
-            $event->status_text = $currentStatus['text'];
-
-            // Progress logic
-            if ($event->target_peserta === 'alumni') {
-                $event->target = User::where('role', 'alumni')->where('status', 'approved')->count();
-                $event->responses = ResponKuesioner::where('event_kuesioner_id', $event->id)->distinct('user_id')->count('user_id');
-                $event->progress = $event->target > 0 ? min(($event->responses / $event->target) * 100, 100) : 0;
-            } else {
-                $event->target = null;
-                $event->responses = null;
-                $event->progress = null;
-            }
+        if (request()->ajax()) {
+            $events = EventKuesioner::withCount('respon')->orderBy('created_at', 'desc')->get();
+            return response()->json(['data' => $events]);
         }
-        return view('pages.dashboard.kuesioner', compact('events'));
-    }
 
-    public function create()
-    {
-        return view('pages.dashboard.create');
+        return view('pages.dashboard.kuesioner');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'judul_event' => 'required',
-            'tahun_mulai' => 'required|integer',
-            'tahun_akhir' => 'required|integer',
-            'tahun_lulusan' => 'required|integer',
-            'deskripsi_event' => 'required',
-            'target_peserta' => 'nullable|string',
-            'foto' => 'nullable|image|max:2048',
-            // Pertanyaan umum
-            'kategori_umum' => 'required|in:umum',
-            'tipe_umum' => 'required',
-            'urutan_umum' => 'required|integer',
-            'pertanyaan_umum' => 'required',
-            // skala_umum boleh kosong/null
+            'judul_event'     => 'required|string|max:255',
+            'deskripsi_event' => 'nullable|string',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'target_peserta'  => 'required|in:alumni,mahasiswa,umum',
+            'tahun_lulusan'   => 'nullable|integer',
+            'status'          => 'required|in:draft,active,completed',
         ]);
 
-        \DB::beginTransaction();
-        try {
-            // Simpan event
-            $eventData = $request->only(['judul_event','tahun_mulai','tahun_akhir','tahun_lulusan','deskripsi_event','target_peserta']);
-            if ($request->hasFile('foto')) {
-                $file = $request->file('foto');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('images'), $fileName);
-                $eventData['foto'] = '/images/' . $fileName;
-            }
-            $event = EventKuesioner::create($eventData);
+        $data = $request->only([
+            'judul_event', 'deskripsi_event',
+            'tanggal_mulai', 'tanggal_selesai',
+            'target_peserta', 'tahun_lulusan', 'status'
+        ]);
 
-            // Simpan pertanyaan umum
-            $skala = $request->input('skala_umum');
-            $tipe = $request->input('tipe_umum');
-            if ($tipe === 'esai') {
-                $skalaVal = null;
-            } else {
-                // Jika string json, decode
-                if (is_string($skala)) {
-                    $skalaVal = json_decode($skala, true);
-                } else {
-                    $skalaVal = $skala;
-                }
-            }
-            PertanyaanKuesioner::create([
-                'event_kuesioner_id' => $event->id,
-                'kategori' => 'umum',
-                'tipe' => $tipe,
-                'urutan' => $request->input('urutan_umum', 1),
-                'pertanyaan' => $request->input('pertanyaan_umum'),
-                'skala' => $skalaVal,
-            ]);
-            \DB::commit();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-        }
+        $data['created_by'] = Auth::id();
+        $event = EventKuesioner::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event kuesioner berhasil dibuat.'
+        ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $eventId)
     {
+        $event = EventKuesioner::findOrFail($eventId);
+
         $request->validate([
-            'event_id' => 'required|integer',
-            'judul_event' => 'required',
-            'tahun_mulai' => 'required|integer',
-            'tahun_akhir' => 'required|integer',
-            'deskripsi_event' => 'required',
+            'judul_event'     => 'required|string|max:255',
+            'deskripsi_event' => 'nullable|string',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'target_peserta'  => 'required|in:alumni,mahasiswa,umum',
+            'tahun_lulusan'   => 'nullable|integer',
+            'status'          => 'required|in:draft,active,completed',
         ]);
-        $event = EventKuesioner::findOrFail($request->event_id);
-        $event->update($request->only(['judul_event','tahun_mulai','tahun_akhir','deskripsi_event','target_peserta','foto','tahun_lulusan']));
-        return response()->json(['success' => true]);
+
+        $event->update($request->only([
+            'judul_event', 'deskripsi_event',
+            'tanggal_mulai', 'tanggal_selesai',
+            'target_peserta', 'tahun_lulusan', 'status'
+        ]));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event kuesioner berhasil diperbarui.'
+        ]);
     }
 
-    public function destroy(Request $request)
+    public function destroy($eventId)
     {
-        $event = EventKuesioner::findOrFail($request->event_id);
+        $event = EventKuesioner::findOrFail($eventId);
+        $event->pertanyaan()->delete();
+        ResponKuesioner::where('event_kuesioner_id', $eventId)->delete();
         $event->delete();
-        return response()->json(['success' => true]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event kuesioner berhasil dihapus.'
+        ]);
     }
 
-    // CRUD Pertanyaan Kuesioner per Event
-    public function pertanyaanIndex($event_id)
-    {
-        $event = EventKuesioner::findOrFail($event_id);
-        $pertanyaans = $event->pertanyaan()->orderBy('urutan')->get();
-        return response()->json($pertanyaans);
-    }
-
-    public function pertanyaanStore(Request $request)
+    public function pertanyaanStore(Request $request, $eventId)
     {
         $request->validate([
-            'event_kuesioner_id' => 'required|integer',
-            'kategori' => 'required',
-            'tipe' => 'required',
-            'urutan' => 'required|integer',
-            'pertanyaan' => 'required',
+            'kategori'   => 'required|string',
+            'tipe'       => 'required|in:esai,pilihan_ganda,skala',
+            'urutan'     => 'nullable|integer',
+            'pertanyaan' => 'required|string',
+            'skala'      => 'nullable|array',
         ]);
-        $data = $request->only(['event_kuesioner_id','kategori','tipe','urutan','pertanyaan']);
-        // Handle skala
-        if ($request->tipe === 'esai') {
-            $data['skala'] = null;
-        } else {
-            $skala = $request->input('skala');
-            if (is_array($skala)) {
-                $data['skala'] = $skala;
-            } elseif (is_string($skala)) {
-                // Pisahkan dengan koma, trim spasi
-                $data['skala'] = array_map('trim', explode(',', $skala));
-            } else {
-                $data['skala'] = [];
-            }
-        }
-        $pertanyaan = PertanyaanKuesioner::create($data);
-        return response()->json($pertanyaan, 201);
+
+        $data = $request->only(['kategori', 'tipe', 'urutan', 'pertanyaan', 'skala']);
+        $data['event_kuesioner_id'] = $eventId;
+
+        PertanyaanKuesioner::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pertanyaan berhasil ditambahkan.'
+        ], 201);
     }
 
-    public function pertanyaanUpdate(Request $request)
+    public function pertanyaanUpdate(Request $request, $eventId, $pertanyaanId)
     {
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                          ->where('id', $pertanyaanId)
+                                          ->firstOrFail();
+
         $request->validate([
-            'pertanyaan_id' => 'required|integer',
-            'event_kuesioner_id' => 'required|integer',
-            'kategori' => 'required',
-            'tipe' => 'required',
-            'urutan' => 'required|integer',
-            'pertanyaan' => 'required',
+            'kategori'   => 'required|string',
+            'tipe'       => 'required|in:esai,pilihan_ganda,skala',
+            'urutan'     => 'nullable|integer',
+            'pertanyaan' => 'required|string',
+            'skala'      => 'nullable|array',
         ]);
-        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $request->event_kuesioner_id)->findOrFail($request->pertanyaan_id);
-        $data = $request->only(['kategori','tipe','urutan','pertanyaan']);
-        // Handle skala
-        if ($request->tipe === 'esai') {
-            $data['skala'] = null;
-        } else {
-            $skala = $request->input('skala');
-            if (is_array($skala)) {
-                $data['skala'] = $skala;
-            } elseif (is_string($skala)) {
-                $data['skala'] = array_map('trim', explode(',', $skala));
-            } else {
-                $data['skala'] = [];
-            }
-        }
-        $pertanyaan->update($data);
-        return response()->json(['success' => true]);
+
+        $pertanyaan->update($request->only(['kategori', 'tipe', 'urutan', 'pertanyaan', 'skala']));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pertanyaan berhasil diperbarui.'
+        ], 200);
     }
 
-    public function pertanyaanDestroy(Request $request)
+    public function pertanyaanDestroy($eventId, $pertanyaanId)
     {
-        $request->validate([
-            'pertanyaan_id' => 'required|integer',
-            'event_kuesioner_id' => 'required|integer',
-        ]);
-        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $request->event_kuesioner_id)->findOrFail($request->pertanyaan_id);
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                          ->where('id', $pertanyaanId)
+                                          ->firstOrFail();
         $pertanyaan->delete();
-        return response()->json(['success' => true]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pertanyaan berhasil dihapus.'
+        ], 200);
     }
 
-    // Download Respon Kuesioner (Excel)
-    public function downloadRespon($event_id)
+    public function pertanyaanList($eventId)
     {
-        $event = EventKuesioner::findOrFail($event_id);
-        $respon = \App\Models\ResponKuesioner::where('event_kuesioner_id', $event_id)->get();
-        if ($respon->isEmpty()) {
-            return back()->with('error', 'Belum ada respon kuesioner.');
-        }
-        // Normalisasi jawaban JSON ke array
+        $pertanyaans = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                          ->orderBy('urutan', 'asc')
+                                          ->get();
+
+        return response()->json([
+            'data' => $pertanyaans
+        ]);
+    }
+
+    public function downloadRespon($eventId)
+    {
+        $event = EventKuesioner::findOrFail($eventId);
+        $responList = ResponKuesioner::where('event_kuesioner_id', $eventId)
+                                     ->orderBy('created_at', 'desc')
+                                     ->get();
+
+        $header = ['Nama Pengisi', 'Email', 'Waktu Isi'];
+        $allPertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                            ->orderBy('urutan')
+                                            ->pluck('pertanyaan')
+                                            ->toArray();
+        $header = array_merge($header, $allPertanyaan);
+
         $rows = [];
-        foreach ($respon as $r) {
-            $jawaban = json_decode($r->jawaban, true);
-            $row = ['user_id' => $r->user_id];
-            foreach ($jawaban as $kategori => $isi) {
-                if (is_array($isi)) {
-                    foreach ($isi as $key => $val) {
-                        if (is_array($val)) {
-                            foreach ($val as $k => $v) {
-                                $row[$kategori.'_'.$key.'_'.$k] = $v;
-                            }
-                        } else {
-                            $row[$kategori.'_'.$key] = $val;
-                        }
-                    }
-                } else {
-                    $row[$kategori] = $isi;
-                }
+        foreach ($responList as $r) {
+            $row = [];
+            $row[] = $r->user ? $r->user->name : '-';
+            $row[] = $r->user ? $r->user->email : $r->guest_email;
+            $row[] = Carbon::parse($r->created_at)->format('Y-m-d H:i:s');
+
+            $jawabanSet = json_decode($r->jawaban, true);
+            foreach ($allPertanyaan as $idx => $pert) {
+                $jawab = $jawabanSet[$idx] ?? '-';
+                $row[] = $jawab;
             }
+
             $rows[] = $row;
         }
-        // Export ke Excel
-        $filename = 'respon_kuesioner_event_'.$event_id.'.xlsx';
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ResponKuesionerExport($rows), $filename);
+
+        $filename = 'respon_kuesioner_event_' . $eventId . '.xlsx';
+        return Excel::download(new ResponKuesionerExport([$header, ...$rows]), $filename);
+    }
+
+    public function responCreate($eventId)
+    {
+        $event = EventKuesioner::findOrFail($eventId);
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                          ->orderBy('urutan')
+                                          ->get();
+
+        return view('dashboard.kuesioner.respon_create', [
+            'event'      => $event,
+            'pertanyaan' => $pertanyaan
+        ]);
+    }
+
+    public function responStore(Request $request, $eventId)
+    {
+        $event = EventKuesioner::findOrFail($eventId);
+        $pertanyaan = PertanyaanKuesioner::where('event_kuesioner_id', $eventId)
+                                          ->orderBy('urutan')
+                                          ->get();
+
+        $rules = [];
+        foreach ($pertanyaan as $p) {
+            $rules["jawaban.{$p->id}"] = 'required';
+        }
+
+        if (!Auth::check()) {
+            $rules['guest_email'] = 'required|email';
+        }
+
+        $request->validate($rules);
+
+        $respon = new ResponKuesioner();
+        $respon->event_kuesioner_id = $eventId;
+        $respon->user_id = Auth::check() ? Auth::id() : null;
+        $respon->guest_email = Auth::check() ? null : $request->input('guest_email');
+
+        $jawabanData = [];
+        foreach ($pertanyaan as $p) {
+            $jawabanData[$p->id] = $request->input("jawaban.{$p->id}");
+        }
+
+        $respon->jawaban = json_encode($jawabanData);
+        $respon->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Respon kuesioner berhasil tersimpan.',
+            'respon_id' => $respon->id
+        ]);
+    }
+
+    public function responShow($eventId, $responId)
+    {
+        $event = EventKuesioner::findOrFail($eventId);
+        $respon = ResponKuesioner::where('event_kuesioner_id', $eventId)
+                                 ->where('id', $responId)
+                                 ->firstOrFail();
+
+        return view('dashboard.kuesioner.respon_show', [
+            'event'  => $event,
+            'respon' => $respon
+        ]);
+    }
+
+    public function responDetail($eventId, $responId)
+    {
+        $respon = ResponKuesioner::where('event_kuesioner_id', $eventId)
+                                 ->where('id', $responId)
+                                 ->firstOrFail();
+
+        $jawabanData = json_decode($respon->jawaban, true);
+        $detail = [];
+        foreach ($jawabanData as $pertanyaanId => $jawab) {
+            $pert = PertanyaanKuesioner::find($pertanyaanId);
+            if ($pert) {
+                $detail[] = [
+                    'pertanyaan' => $pert->pertanyaan,
+                    'jawaban'    => $jawab
+                ];
+            }
+        }
+
+        return response()->json([
+            'data' => $detail
+        ]);
     }
 }
