@@ -233,31 +233,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Password Section -->
-                                <div class="mb-8" id="password-section">
-                                    <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Change
-                                        Password</h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New
-                                                Password</label>
-                                            <input type="password" id="password" name="password"
-                                                autocomplete="new-password"
-                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                        </div>
-                                        <div>
-                                            <label for="password_confirmation"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Confirm New
-                                                Password</label>
-                                            <input type="password" id="password_confirmation" name="password_confirmation"
-                                                autocomplete="new-password"
-                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-2">Leave blank if you do not want to change the
-                                        password.</p>
-                                </div>
-
                                 <!-- Form Fields -->
                                 <div class="space-y-6">
                                     <!-- Basic Information Section -->
@@ -286,7 +261,7 @@
                                                     <label for="nim"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Student ID
                                                         (NIM)</label>
-                                                    <input type="text" id="nim" name="nim" required
+                                                    <input type="number" id="nim" name="nim" placeholder="Masukkan NIM" required
                                                         value="{{ old('nim', $profileData->nim ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -295,7 +270,7 @@
                                                     <label for="no_telepon"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Phone
                                                         Number</label>
-                                                    <input type="tel" id="no_telepon" name="no_telepon" required
+                                                    <input type="number" id="no_telepon" name="no_telepon" placeholder="Masukan No. Telepon" required
                                                         value="{{ old('no_telepon', $profileData->no_telepon ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -304,7 +279,7 @@
                                                     <label for="no_telepon"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Phone
                                                         Number</label>
-                                                    <input type="tel" id="no_telepon" name="no_telepon" required
+                                                    <input type="tel" id="no_telepon" name="no_telepon" placeholder="Masukan No. Telepon" required
                                                         value="{{ old('no_telepon', $profileData->no_telepon ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -312,7 +287,7 @@
                                                 <div>
                                                     <label for="jabatan"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Position</label>
-                                                    <input type="text" id="jabatan" name="jabatan" required
+                                                    <input type="text" id="jabatan" name="jabatan" placeholder="Masukan Jabatan" required
                                                         value="{{ old('jabatan', $profileData->jabatan ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -330,7 +305,7 @@
                                                 <div>
                                                     <label for="jurusan"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Major/Department</label>
-                                                    <input type="text" id="jurusan" name="jurusan" required
+                                                    <input type="text" id="jurusan" name="jurusan" placeholder="Masukan Jurusan" required
                                                         value="{{ old('jurusan', $profileData->jurusan ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -338,7 +313,7 @@
                                                 <div>
                                                     <label for="ipk"
                                                         class="block text-sm font-medium text-gray-700 mb-1">GPA</label>
-                                                    <input type="number" id="ipk" name="ipk" step="0.01"
+                                                    <input type="number" id="ipk" name="ipk" step="0.01" placeholder="Masukan IPK"
                                                         min="0" max="4" required
                                                         value="{{ old('ipk', $profileData->ipk ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
@@ -348,7 +323,7 @@
                                                     <label for="tahun_masuk"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Entry
                                                         Year</label>
-                                                    <input type="number" id="tahun_masuk" name="tahun_masuk" required
+                                                    <input type="number" id="tahun_masuk" name="tahun_masuk" placeholder="Masukan Tahun Masuk" required
                                                         value="{{ old('tahun_masuk', $profileData->tahun_masuk ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -357,7 +332,7 @@
                                                     <label for="tahun_lulus"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Graduation
                                                         Year</label>
-                                                    <input type="number" id="tahun_lulus" name="tahun_lulus" required
+                                                    <input type="number" id="tahun_lulus" name="tahun_lulus" placeholder="Masukan Tahun Lulus" required
                                                         value="{{ old('tahun_lulus', $profileData->tahun_lulus ?? '') }}"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                                 </div>
@@ -374,7 +349,7 @@
                                                     <label for="alamat_rumah"
                                                         class="block text-sm font-medium text-gray-700 mb-1">Home
                                                         Address</label>
-                                                    <textarea id="alamat_rumah" name="alamat_rumah" required rows="3"
+                                                    <textarea id="alamat_rumah" name="alamat_rumah" placeholder="Masukan Alamat Rumah" required rows="3"
                                                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">{{ old('alamat_rumah', $profileData->alamat_rumah ?? '') }}</textarea>
                                                 </div>
 
@@ -444,6 +419,31 @@
                                             </div>
                                         </div>
                                     @endif
+
+                                    <!-- Password Section -->
+                                <div class="mb-8" id="password-section">
+                                    <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Change
+                                        Password</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New
+                                                Password</label>
+                                            <input type="password" id="password" name="password"
+                                                autocomplete="new-password"
+                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                        </div>
+                                        <div>
+                                            <label for="password_confirmation"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Confirm New
+                                                Password</label>
+                                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                                autocomplete="new-password"
+                                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">Leave blank if you do not want to change the
+                                        password.</p>
+                                </div>
 
                                     <!-- Submit Button -->
                                     <div class="pt-5 border-t border-gray-200">
