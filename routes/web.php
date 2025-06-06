@@ -86,20 +86,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/event-user/daftar/{eventId}', function ($eventId) {
         return redirect()->route('event.user.order', $eventId);
     });
-
-    // Kuesioner Event Management (semua aksi selain index pakai POST, satu halaman index)
-    Route::prefix('dashboard/kuesioner')->name('dashboard.kuesioner.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'index'])->name('index');
-        Route::post('/create', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])->name('store');
-        Route::post('/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])->name('update');
-        Route::post('/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])->name('destroy');
-        // CRUD Pertanyaan Kuesioner per Event (semua POST, satu halaman)
-        Route::post('/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])->name('pertanyaan.store');
-        Route::post('/pertanyaan/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])->name('pertanyaan.update');
-        Route::post('/pertanyaan/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])->name('pertanyaan.destroy');
-        Route::get('/{event_id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanIndex'])->name('pertanyaan.index');
-        Route::get('/{eventId}/download-respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'downloadRespon'])->name('downloadRespon');
-    });
 });
 
 // EventController
@@ -165,17 +151,17 @@ Route::middleware(['auth'])
         // 2) CRUD Event Kuesioner
         Route::post('/create', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])
             ->name('store');
-        Route::put('/{eventId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])
+        Route::post('/{eventId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])
             ->name('update');
-        Route::delete('/{eventId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])
+        Route::post('/{eventId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])
             ->name('destroy');
 
         // 3) CRUD Pertanyaan Kuesioner
         Route::post('/{eventId}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])
             ->name('pertanyaan.store');
-        Route::put('/{eventId}/pertanyaan/{pertanyaanId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])
+        Route::post('/{eventId}/pertanyaan/{pertanyaanId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])
             ->name('pertanyaan.update');
-        Route::delete('/{eventId}/pertanyaan/{pertanyaanId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])
+        Route::post('/{eventId}/pertanyaan/{pertanyaanId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])
             ->name('pertanyaan.destroy');
         Route::get('/{eventId}/pertanyaan-list', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanList'])
             ->name('pertanyaan.list');

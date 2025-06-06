@@ -128,7 +128,8 @@
     </div>
 
     <!-- Modal Tambah/Edit Event -->
-    <div id="modal-event" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+    <div id="modal-event" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+        style="display:none">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modal-event')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +199,8 @@
     </div>
 
     <!-- Modal Kelola Pertanyaan -->
-    <div id="modal-pertanyaan" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+    <div id="modal-pertanyaan" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+        style="display:none">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modal-pertanyaan')"
                 class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
@@ -245,8 +247,8 @@
     </div>
 
     <!-- Modal Tambah/Edit Pertanyaan -->
-    <div id="modal-form-pertanyaan"
-        class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-40 hidden">
+    <div id="modal-form-pertanyaan" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-40"
+        style="display:none">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modal-form-pertanyaan')"
                 class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
@@ -315,7 +317,8 @@
     </div>
 
     <!-- Modal Isi Respon -->
-    <div id="modal-respon" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+    <div id="modal-respon" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+        style="display:none">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modal-respon')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -351,17 +354,22 @@
     @push('scripts')
         <script>
             // Global variables
+            let allEvents = [];
+            let filteredEvents = [];
             let currentEventId = null;
             let currentPertanyaanId = null;
             let isEditMode = false;
-            let allEvents = [];
-            let filteredEvents = [];
 
             // CSRF Token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                '{{ csrf_token() }}';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
             // Utility functions
+            function normalizeStatus(status) {
+                if (status === 'aktif') return 'active';
+                if (status === 'selesai') return 'completed';
+                return status;
+            }
+
             function showNotification(message, type = 'success') {
                 const notificationArea = document.getElementById('notification-area');
                 const notificationMessage = document.getElementById('notification-message');
@@ -378,11 +386,11 @@
             }
 
             function closeModal(modalId) {
-                document.getElementById(modalId).classList.add('hidden');
+                document.getElementById(modalId).style.display = 'none';
             }
 
             function openModal(modalId) {
-                document.getElementById(modalId).classList.remove('hidden');
+                document.getElementById(modalId).style.display = 'flex';
             }
 
             function showLoading() {
@@ -393,6 +401,129 @@
 
             function hideLoading() {
                 document.getElementById('loading-state').classList.add('hidden');
+            }
+
+            // Global functions for inline event handlers
+            window.toggleDropdown = function(eventId) {
+                const dropdown = document.getElementById(`dropdown-${eventId}`);
+                const allDropdowns = document.querySelectorAll('.dropdown-menu');
+
+                // Close all other dropdowns
+                allDropdowns.forEach(menu => {
+                    if (menu.id !== `dropdown-${eventId}`) {
+                        menu.classList.add('hidden');
+                    }
+                });
+
+                // Toggle current dropdown
+                dropdown.classList.toggle('hidden');
+            }
+
+            window.editEvent = async function(eventId) {
+                try {
+                    isEditMode = true;
+                    currentEventId = eventId;
+                    document.getElementById('modal-event-title').textContent = 'Edit Event';
+                    document.getElementById('event-id').value = eventId;
+
+                    // Find event in current data
+                    const event = allEvents.find(e => e.id === eventId);
+                    if (!event) {
+                        throw new Error('Event not found');
+                    }
+
+                    // Populate form
+                    document.getElementById('judul-event').value = event.judul_event;
+                    document.getElementById('deskripsi-event').value = event.deskripsi_event;
+                    document.getElementById('tanggal-mulai').value = event.tanggal_mulai;
+                    document.getElementById('tanggal-selesai').value = event.tanggal_selesai;
+                    document.getElementById('target-peserta').value = event.target_peserta;
+                    document.getElementById('tahun-lulusan').value = event.tahun_lulusan || '';
+                    document.getElementById('status-event').value = event.status;
+
+                    openModal('modal-event');
+                } catch (error) {
+                    console.error('Error loading event:', error);
+                    showNotification('Gagal memuat data event', 'error');
+                }
+            }
+
+            window.deleteEvent = async function(eventId) {
+                if (!confirm('Apakah Anda yakin ingin menghapus event ini? Tindakan ini tidak dapat dibatalkan.')) {
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('id', eventId);
+                    const response = await fetch(`/dashboard/kuesioner/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        showNotification('Event berhasil dihapus');
+                        loadEvents();
+                    } else {
+                        throw new Error(data.message || 'Gagal menghapus event');
+                    }
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    showNotification(error.message, 'error');
+                }
+            }
+
+            window.kelolaPertanyaan = async function(eventId) {
+                currentEventId = eventId;
+                const event = allEvents.find(e => e.id === eventId);
+                document.getElementById('modal-pertanyaan-title').textContent =
+                    `Kelola Pertanyaan - ${event?.judul_event || 'Event ID: ' + eventId}`;
+                await loadPertanyaan(eventId);
+                openModal('modal-pertanyaan');
+            }
+
+            window.downloadRespon = function(eventId) {
+                window.open(`/dashboard/kuesioner/${eventId}/download-respon`, '_blank');
+            }
+
+            window.isiRespon = async function(eventId) {
+                currentEventId = eventId;
+                const event = allEvents.find(e => e.id === eventId);
+                document.getElementById('modal-respon-title').textContent =
+                    `Isi Kuesioner - ${event?.judul_event || 'Event'}`;
+                document.getElementById('respon-event-id').value = eventId;
+
+                // Check if user is logged in
+                const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+
+                if (isLoggedIn) {
+                    document.getElementById('email-container').style.display = 'none';
+                } else {
+                    document.getElementById('email-container').style.display = 'block';
+                }
+
+                await loadPertanyaanForRespon(eventId);
+                openModal('modal-respon');
+            }
+
+            window.addSkalaItem = function(value = '') {
+                const skalaList = document.getElementById('skala-list');
+                const index = Date.now();
+
+                const div = document.createElement('div');
+                div.className = 'flex gap-2';
+                div.innerHTML = `
+        <input type="text" name="skala[]" value="${value}" class="flex-1 border rounded px-3 py-2" placeholder="Masukkan pilihan">
+        <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600">Hapus</button>
+    `;
+
+                skalaList.appendChild(div);
             }
 
             // Load events data
@@ -446,8 +577,8 @@
 
             // Create event card HTML
             function createEventCard(event) {
-                const statusClass = getStatusClass(event.status);
-                const statusText = getStatusText(event.status);
+                const statusClass = getStatusClass(normalizeStatus(event.status));
+                const statusText = getStatusText(normalizeStatus(event.status));
 
                 return `
         <div class="group bg-white/80 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border-0 overflow-hidden">
@@ -493,7 +624,7 @@
             <div class="p-6">
                 <div class="mb-4">
                     <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-2">${event.judul_event}</h3>
-                    <p class="text-sm text-gray-600 line-clamp-3">${event.deskripsi_event}</p>
+                    <p class="text-sm text-gray-600 line-clamp-3">${event.deskripsi_event || 'Tidak ada deskripsi'}</p>
                 </div>
 
                 <!-- Event Details -->
@@ -577,22 +708,6 @@
                 }
             }
 
-            // Toggle dropdown menu
-            function toggleDropdown(eventId) {
-                const dropdown = document.getElementById(`dropdown-${eventId}`);
-                const allDropdowns = document.querySelectorAll('.dropdown-menu');
-
-                // Close all other dropdowns
-                allDropdowns.forEach(menu => {
-                    if (menu.id !== `dropdown-${eventId}`) {
-                        menu.classList.add('hidden');
-                    }
-                });
-
-                // Toggle current dropdown
-                dropdown.classList.toggle('hidden');
-            }
-
             // Close dropdown when clicking outside
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown-toggle') && !event.target.closest('.dropdown-menu')) {
@@ -622,8 +737,8 @@
 
                 filteredEvents = allEvents.filter(event => {
                     const matchesSearch = event.judul_event.toLowerCase().includes(searchTerm) ||
-                        event.deskripsi_event.toLowerCase().includes(searchTerm);
-                    const matchesStatus = !statusFilter || event.status === statusFilter;
+                        (event.deskripsi_event && event.deskripsi_event.toLowerCase().includes(searchTerm));
+                    const matchesStatus = !statusFilter || normalizeStatus(event.status) === statusFilter;
                     const matchesTarget = !targetFilter || event.target_peserta === targetFilter;
 
                     return matchesSearch && matchesStatus && matchesTarget;
@@ -661,19 +776,17 @@
                 submitBtn.textContent = 'Menyimpan...';
 
                 try {
-                    let url, method;
+                    let url;
                     if (isEditMode) {
-                        url = "{{ route('dashboard.kuesioner.update', ['eventId' => ':eventId']) }}".replace(':eventId', currentEventId);
-                        method = 'PUT';
+                        url = "/dashboard/kuesioner/edit";
+                        formData.append('id', currentEventId);
                     } else {
-                        url = "{{ route('dashboard.kuesioner.store') }}";
-                        method = 'POST';
+                        url = "/dashboard/kuesioner/create";
                     }
 
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'X-HTTP-Method-Override': method,
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': csrfToken
                         },
@@ -697,76 +810,6 @@
                     submitBtn.textContent = originalText;
                 }
             });
-
-            // Edit event
-            async function editEvent(eventId) {
-                try {
-                    isEditMode = true;
-                    currentEventId = eventId;
-                    document.getElementById('modal-event-title').textContent = 'Edit Event';
-                    document.getElementById('event-id').value = eventId;
-
-                    // Find event in current data
-                    const event = allEvents.find(e => e.id === eventId);
-                    if (!event) {
-                        throw new Error('Event not found');
-                    }
-
-                    // Populate form
-                    document.getElementById('judul-event').value = event.judul_event;
-                    document.getElementById('deskripsi-event').value = event.deskripsi_event;
-                    document.getElementById('tanggal-mulai').value = event.tanggal_mulai;
-                    document.getElementById('tanggal-selesai').value = event.tanggal_selesai;
-                    document.getElementById('target-peserta').value = event.target_peserta;
-                    document.getElementById('tahun-lulusan').value = event.tahun_lulusan || '';
-                    document.getElementById('status-event').value = event.status;
-
-                    openModal('modal-event');
-                } catch (error) {
-                    console.error('Error loading event:', error);
-                    showNotification('Gagal memuat data event', 'error');
-                }
-            }
-
-            // Delete event
-            async function deleteEvent(eventId) {
-                if (!confirm('Apakah Anda yakin ingin menghapus event ini? Tindakan ini tidak dapat dibatalkan.')) {
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/dashboard/kuesioner/${eventId}/delete`, {
-                        method: 'POST',
-                        headers: {
-                            'X-HTTP-Method-Override': 'DELETE',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification('Event berhasil dihapus');
-                        loadEvents();
-                    } else {
-                        throw new Error(data.message || 'Gagal menghapus event');
-                    }
-                } catch (error) {
-                    console.error('Error deleting event:', error);
-                    showNotification(error.message, 'error');
-                }
-            }
-
-            // Kelola pertanyaan
-            async function kelolaPertanyaan(eventId) {
-                currentEventId = eventId;
-                const event = allEvents.find(e => e.id === eventId);
-                document.getElementById('modal-pertanyaan-title').textContent =
-                    `Kelola Pertanyaan - ${event?.judul_event || 'Event ID: ' + eventId}`;
-                await loadPertanyaan(eventId);
-                openModal('modal-pertanyaan');
-            }
 
             // Load pertanyaan
             async function loadPertanyaan(eventId) {
@@ -817,19 +860,7 @@
     `).join('');
             }
 
-            // Tambah pertanyaan
-            document.getElementById('btn-tambah-pertanyaan').addEventListener('click', () => {
-                isEditMode = false;
-                currentPertanyaanId = null;
-                document.getElementById('modal-form-pertanyaan-title').textContent = 'Tambah Pertanyaan';
-                document.getElementById('form-pertanyaan').reset();
-                document.getElementById('pertanyaan-event-id').value = currentEventId;
-                clearSkalaList();
-                openModal('modal-form-pertanyaan');
-            });
-
-            // Edit pertanyaan
-            async function editPertanyaan(pertanyaanId) {
+            window.editPertanyaan = async function(pertanyaanId) {
                 try {
                     isEditMode = true;
                     currentPertanyaanId = pertanyaanId;
@@ -860,6 +891,8 @@
                             .skala || '[]');
                         populateSkalaList(skalaArray);
                         document.getElementById('skala-container').classList.remove('hidden');
+                    } else {
+                        document.getElementById('skala-container').classList.add('hidden');
                     }
 
                     openModal('modal-form-pertanyaan');
@@ -869,21 +902,21 @@
                 }
             }
 
-            // Delete pertanyaan
-            async function deletePertanyaan(pertanyaanId) {
+            window.deletePertanyaan = async function(pertanyaanId) {
                 if (!confirm('Apakah Anda yakin ingin menghapus pertanyaan ini?')) {
                     return;
                 }
 
                 try {
-                    const response = await fetch(
-                    `/dashboard/kuesioner/${currentEventId}/pertanyaan/${pertanyaanId}/delete`, {
+                    const formData = new FormData();
+                    formData.append('id', pertanyaanId);
+                    const response = await fetch(`/dashboard/kuesioner/pertanyaan/delete`, {
                         method: 'POST',
                         headers: {
-                            'X-HTTP-Method-Override': 'DELETE',
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': csrfToken
-                        }
+                        },
+                        body: formData
                     });
 
                     const data = await response.json();
@@ -900,6 +933,17 @@
                 }
             }
 
+            // Tambah pertanyaan
+            document.getElementById('btn-tambah-pertanyaan').addEventListener('click', () => {
+                isEditMode = false;
+                currentPertanyaanId = null;
+                document.getElementById('modal-form-pertanyaan-title').textContent = 'Tambah Pertanyaan';
+                document.getElementById('form-pertanyaan').reset();
+                document.getElementById('pertanyaan-event-id').value = currentEventId;
+                clearSkalaList();
+                openModal('modal-form-pertanyaan');
+            });
+
             // Handle tipe pertanyaan change
             document.getElementById('tipe-pertanyaan').addEventListener('change', function() {
                 const skalaContainer = document.getElementById('skala-container');
@@ -915,20 +959,6 @@
             document.getElementById('btn-tambah-skala').addEventListener('click', () => {
                 addSkalaItem();
             });
-
-            function addSkalaItem(value = '') {
-                const skalaList = document.getElementById('skala-list');
-                const index = Date.now();
-
-                const div = document.createElement('div');
-                div.className = 'flex gap-2';
-                div.innerHTML = `
-        <input type="text" name="skala[]" value="${value}" class="flex-1 border rounded px-3 py-2" placeholder="Masukkan pilihan">
-        <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600">Hapus</button>
-    `;
-
-                skalaList.appendChild(div);
-            }
 
             function clearSkalaList() {
                 document.getElementById('skala-list').innerHTML = '';
@@ -951,19 +981,19 @@
                 submitBtn.textContent = 'Menyimpan...';
 
                 try {
-                    let url, method;
+                    let url;
                     if (isEditMode) {
-                        url = `/dashboard/kuesioner/${currentEventId}/pertanyaan/${currentPertanyaanId}/edit`;
-                        method = 'PUT';
+                        url = `/dashboard/kuesioner/pertanyaan/edit`;
+                        formData.append('id', currentPertanyaanId);
+                        formData.append('event_id', currentEventId);
                     } else {
-                        url = `/dashboard/kuesioner/${currentEventId}/pertanyaan`;
-                        method = 'POST';
+                        url = `/dashboard/kuesioner/pertanyaan`;
+                        formData.append('event_id', currentEventId);
                     }
 
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'X-HTTP-Method-Override': method,
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': csrfToken
                         },
@@ -988,32 +1018,6 @@
                     submitBtn.textContent = originalText;
                 }
             });
-
-            // Download respon
-            function downloadRespon(eventId) {
-                window.open(`/dashboard/kuesioner/${eventId}/download-respon`, '_blank');
-            }
-
-            // Isi respon
-            async function isiRespon(eventId) {
-                currentEventId = eventId;
-                const event = allEvents.find(e => e.id === eventId);
-                document.getElementById('modal-respon-title').textContent =
-                    `Isi Kuesioner - ${event?.judul_event || 'Event'}`;
-                document.getElementById('respon-event-id').value = eventId;
-
-                // Check if user is logged in
-                const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-
-                if (isLoggedIn) {
-                    document.getElementById('email-container').style.display = 'none';
-                } else {
-                    document.getElementById('email-container').style.display = 'block';
-                }
-
-                await loadPertanyaanForRespon(eventId);
-                openModal('modal-respon');
-            }
 
             // Load pertanyaan for respon
             async function loadPertanyaanForRespon(eventId) {

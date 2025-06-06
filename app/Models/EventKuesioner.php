@@ -25,6 +25,11 @@ class EventKuesioner extends Model
         return $this->hasMany(PertanyaanKuesioner::class, 'event_kuesioner_id');
     }
 
+    public function respon()
+    {
+        return $this->hasMany(\App\Models\ResponKuesioner::class, 'event_kuesioner_id');
+    }
+
     // Accessor untuk status
     public function getStatusAttribute($value)
     {
