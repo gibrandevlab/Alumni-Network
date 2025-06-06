@@ -3,1164 +3,822 @@
 @section('title', 'Manajemen Event Kuesioner - ALUMNET')
 
 @section('content')
-    @php use Illuminate\Support\Str; @endphp
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        @include('layouts.Dashboard.sidebarkiri', [], ['class' => 'w-64 flex-shrink-0'])
+@php
+    use Illuminate\Support\Str;
+@endphp
 
-        <div class="flex-1 flex flex-col min-w-0 p-6 overflow-x-auto ml-14 md:ml-64" id="mainContentainer">
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="flex min-h-screen">
+    @include('layouts.Dashboard.sidebarkiri', [], ['class' => 'w-64 flex-shrink-0'])
+    <div class="flex-1 ml-14 md:ml-64">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">Manajemen Event Kuesioner</h1>
-                        <p class="text-gray-600 mt-2">Kelola dan monitor event kuesioner alumni</p>
+                        <p class="text-gray-600 mt-1">Kelola dan monitor event kuesioner alumni</p>
                     </div>
-                    <button id="btn-tambah-event"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="openEventModal()" class="btn-primary flex items-center gap-2 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                         Buat Event Baru
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Notification Area -->
-            <div id="notification-area" class="hidden mb-6 p-4 rounded-lg">
-                <div class="flex items-center">
-                    <svg id="notification-icon" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span id="notification-message"></span>
-                </div>
-            </div>
-
-            <!-- Search and Filter -->
-            <div class="mb-6 flex flex-col sm:flex-row gap-4">
+        <!-- Filters -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <div class="flex-1">
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <input type="text" id="search-events" placeholder="Cari event kuesioner..."
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input type="text" id="searchInput" placeholder="Cari event kuesioner..."
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <select id="filter-status"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Semua Status</option>
-                        <option value="draft">Draft</option>
-                        <option value="active">Aktif</option>
-                        <option value="completed">Selesai</option>
-                    </select>
-                    <select id="filter-target"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Semua Target</option>
-                        <option value="alumni">Alumni</option>
-                        <option value="mahasiswa">Mahasiswa</option>
-                        <option value="umum">Umum</option>
-                    </select>
-                </div>
+                <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                    <option value="">Semua Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Non-aktif</option>
+                    <option value="selesai">Selesai</option>
+                </select>
+                <select id="targetFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                    <option value="">Semua Target</option>
+                    <option value="alumni">Alumni</option>
+                    <option value="mahasiswa">Mahasiswa</option>
+                    <option value="dosen">Dosen</option>
+                </select>
             </div>
 
-            <!-- Event Cards Grid -->
-            <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <!-- Cards akan dimuat via AJAX -->
+            <!-- Events Grid -->
+            <div id="eventsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($events as $event)
+                <div class="card hover:shadow-lg transition-shadow event-card" data-event-id="{{ $event->id }}">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $event->judul_event }}</h3>
+                            <p class="text-gray-600 text-sm mb-3">{{ Str::limit($event->deskripsi_event, 100) }}</p>
+                        </div>
+                        <div class="ml-4">
+                            <span class="px-2 py-1 text-xs rounded-full
+                                @if($event->status == 'aktif') bg-green-100 text-green-800
+                                @elseif($event->status == 'nonaktif') bg-red-100 text-red-800
+                                @else bg-gray-100 text-gray-800 @endif">
+                                {{ ucfirst($event->status) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>{{ $event->tahun_mulai }} - {{ $event->tahun_akhir }}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ $event->pertanyaan_count ?? 0 }} Pertanyaan</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            <span>{{ $event->respon_count ?? 0 }} Respon</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="editEvent({{ $event->id }})" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded text-sm transition-colors flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit
+                        </button>
+                        <button onclick="manageQuestions({{ $event->id }})" class="flex-1 btn-secondary text-sm flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            Pertanyaan
+                        </button>
+                        <button onclick="downloadResponses({{ $event->id }})" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-2 rounded text-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </button>
+                        <button onclick="confirmDelete('event', {{ $event->id }})" class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 rounded text-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                @endforeach
             </div>
 
             <!-- Empty State -->
-            <div id="empty-state" class="hidden text-center py-12">
-                <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada event</h3>
-                <p class="text-gray-600 mb-6">Mulai dengan membuat event kuesioner pertama Anda</p>
-                <button id="btn-tambah-event-empty"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                    Tambah Event Baru
+            <div id="emptyState" class="text-center py-12 hidden">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada event kuesioner</h3>
+                <p class="text-gray-600 mb-4">Mulai dengan membuat event kuesioner pertama Anda</p>
+                <button onclick="openEventModal()" class="btn-primary">
+                    Buat Event Baru
                 </button>
             </div>
-
-            <!-- Loading State -->
-            <div id="loading-state" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <!-- Skeleton cards -->
-                <div class="animate-pulse">
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                        <div class="h-32 bg-gray-200 rounded mb-4"></div>
-                        <div class="space-y-2">
-                            <div class="h-3 bg-gray-200 rounded"></div>
-                            <div class="h-3 bg-gray-200 rounded w-5/6"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                        <div class="h-32 bg-gray-200 rounded mb-4"></div>
-                        <div class="space-y-2">
-                            <div class="h-3 bg-gray-200 rounded"></div>
-                            <div class="h-3 bg-gray-200 rounded w-5/6"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                        <div class="h-32 bg-gray-200 rounded mb-4"></div>
-                        <div class="space-y-2">
-                            <div class="h-3 bg-gray-200 rounded"></div>
-                            <div class="h-3 bg-gray-200 rounded w-5/6"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <!-- Modal Tambah/Edit Event -->
-    <div id="modal-event" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-        style="display:none">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('modal-event')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-            <h2 id="modal-event-title" class="text-xl font-bold mb-4">Tambah Event Baru</h2>
-            <form id="form-event">
-                <input type="hidden" id="event-id" name="event_id">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Judul Event <span class="text-red-500">*</span></label>
-                    <input type="text" id="judul-event" name="judul_event" class="w-full border rounded px-3 py-2"
-                        required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Deskripsi Event <span
-                            class="text-red-500">*</span></label>
-                    <textarea id="deskripsi-event" name="deskripsi_event" class="w-full border rounded px-3 py-2" rows="3"
-                        required></textarea>
-                </div>
-                <div class="mb-4 flex gap-4">
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium mb-1">Tanggal Mulai <span
-                                class="text-red-500">*</span></label>
-                        <input type="date" id="tanggal-mulai" name="tanggal_mulai"
-                            class="w-full border rounded px-3 py-2" required>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium mb-1">Tanggal Selesai <span
-                                class="text-red-500">*</span></label>
-                        <input type="date" id="tanggal-selesai" name="tanggal_selesai"
-                            class="w-full border rounded px-3 py-2" required>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Target Peserta <span
-                            class="text-red-500">*</span></label>
-                    <select id="target-peserta" name="target_peserta" class="w-full border rounded px-3 py-2" required>
-                        <option value="">Pilih Target Peserta</option>
-                        <option value="alumni">Alumni</option>
-                        <option value="mahasiswa">Mahasiswa</option>
-                        <option value="umum">Umum</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Tahun Lulusan (opsional)</label>
-                    <input type="number" id="tahun-lulusan" name="tahun_lulusan"
-                        class="w-full border rounded px-3 py-2" min="1990" max="2030">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Status</label>
-                    <select id="status-event" name="status" class="w-full border rounded px-3 py-2">
-                        <option value="draft">Draft</option>
-                        <option value="active">Aktif</option>
-                        <option value="completed">Selesai</option>
-                    </select>
-                </div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('modal-event')"
-                        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                    <button type="submit" id="btn-submit-event"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Kelola Pertanyaan -->
-    <div id="modal-pertanyaan" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-        style="display:none">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('modal-pertanyaan')"
-                class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-            <h2 id="modal-pertanyaan-title" class="text-xl font-bold mb-4">Kelola Pertanyaan</h2>
-
-            <div class="mb-4">
-                <button id="btn-tambah-pertanyaan"
-                    class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Tambah Pertanyaan
-                </button>
-            </div>
-
-            <!-- Tabel Pertanyaan -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Kategori</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Pertanyaan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="pertanyaan-tbody" class="bg-white divide-y divide-gray-200">
-                        <!-- Data akan dimuat via AJAX -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah/Edit Pertanyaan -->
-    <div id="modal-form-pertanyaan" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-40"
-        style="display:none">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('modal-form-pertanyaan')"
-                class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-            <h2 id="modal-form-pertanyaan-title" class="text-xl font-bold mb-4">Tambah Pertanyaan</h2>
-            <form id="form-pertanyaan">
-                <input type="hidden" id="pertanyaan-id" name="pertanyaan_id">
-                <input type="hidden" id="pertanyaan-event-id" name="event_id">
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Kategori <span class="text-red-500">*</span></label>
-                    <select id="kategori-pertanyaan" name="kategori" class="w-full border rounded px-3 py-2" required>
-                        <option value="">Pilih Kategori</option>
-                        <option value="umum">Umum</option>
-                        <option value="bekerja">Bekerja</option>
-                        <option value="pendidikan">Pendidikan</option>
-                        <option value="lainnya">Lainnya</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Tipe Pertanyaan <span
-                            class="text-red-500">*</span></label>
-                    <select id="tipe-pertanyaan" name="tipe" class="w-full border rounded px-3 py-2" required>
-                        <option value="">Pilih Tipe</option>
-                        <option value="esai">Esai</option>
-                        <option value="pilihan_ganda">Pilihan Ganda</option>
-                        <option value="skala">Skala</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Urutan <span class="text-red-500">*</span></label>
-                    <input type="number" id="urutan-pertanyaan" name="urutan" class="w-full border rounded px-3 py-2"
-                        min="1" required>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Pertanyaan <span class="text-red-500">*</span></label>
-                    <textarea id="text-pertanyaan" name="pertanyaan" class="w-full border rounded px-3 py-2" rows="3" required></textarea>
-                </div>
-
-                <div id="skala-container" class="mb-4 hidden">
-                    <label class="block text-sm font-medium mb-1">Pilihan/Skala</label>
-                    <div id="skala-list" class="space-y-2">
-                        <!-- Pilihan akan ditambahkan secara dinamis -->
-                    </div>
-                    <button type="button" id="btn-tambah-skala"
-                        class="mt-2 px-3 py-1 bg-gray-200 rounded text-sm hover:bg-gray-300">
-                        Tambah Pilihan
-                    </button>
-                </div>
-
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('modal-form-pertanyaan')"
-                        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                    <button type="submit" id="btn-submit-pertanyaan"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Isi Respon -->
-    <div id="modal-respon" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-        style="display:none">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('modal-respon')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-            <h2 id="modal-respon-title" class="text-xl font-bold mb-4">Isi Kuesioner</h2>
-            <form id="form-respon">
-                <input type="hidden" id="respon-event-id" name="event_id">
-
-                <!-- Email field untuk guest user -->
-                <div id="email-container" class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Email <span class="text-red-500">*</span></label>
-                    <input type="email" id="email-respon" name="email" class="w-full border rounded px-3 py-2"
-                        required>
-                </div>
-
-                <div id="pertanyaan-respon-container">
-                    <!-- Pertanyaan akan dimuat secara dinamis -->
-                </div>
-
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="closeModal('modal-respon')"
-                        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                    <button type="submit" id="btn-submit-respon"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit Respon</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    @push('scripts')
-        <script>
-            // Global variables
-            let allEvents = [];
-            let filteredEvents = [];
-            let currentEventId = null;
-            let currentPertanyaanId = null;
-            let isEditMode = false;
-
-            // CSRF Token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
-
-            // Utility functions
-            function normalizeStatus(status) {
-                if (status === 'aktif') return 'active';
-                if (status === 'selesai') return 'completed';
-                return status;
-            }
-
-            function showNotification(message, type = 'success') {
-                const notificationArea = document.getElementById('notification-area');
-                const notificationMessage = document.getElementById('notification-message');
-                const notificationIcon = document.getElementById('notification-icon');
-
-                notificationMessage.textContent = message;
-                notificationArea.className =
-                    `mb-6 p-4 rounded-lg ${type === 'success' ? 'bg-green-100 border border-green-200 text-green-700' : 'bg-red-100 border border-red-200 text-red-700'}`;
-                notificationArea.classList.remove('hidden');
-
-                setTimeout(() => {
-                    notificationArea.classList.add('hidden');
-                }, 5000);
-            }
-
-            function closeModal(modalId) {
-                document.getElementById(modalId).style.display = 'none';
-            }
-
-            function openModal(modalId) {
-                document.getElementById(modalId).style.display = 'flex';
-            }
-
-            function showLoading() {
-                document.getElementById('loading-state').classList.remove('hidden');
-                document.getElementById('events-container').classList.add('hidden');
-                document.getElementById('empty-state').classList.add('hidden');
-            }
-
-            function hideLoading() {
-                document.getElementById('loading-state').classList.add('hidden');
-            }
-
-            // Global functions for inline event handlers
-            window.toggleDropdown = function(eventId) {
-                const dropdown = document.getElementById(`dropdown-${eventId}`);
-                const allDropdowns = document.querySelectorAll('.dropdown-menu');
-
-                // Close all other dropdowns
-                allDropdowns.forEach(menu => {
-                    if (menu.id !== `dropdown-${eventId}`) {
-                        menu.classList.add('hidden');
-                    }
-                });
-
-                // Toggle current dropdown
-                dropdown.classList.toggle('hidden');
-            }
-
-            window.editEvent = async function(eventId) {
-                try {
-                    isEditMode = true;
-                    currentEventId = eventId;
-                    document.getElementById('modal-event-title').textContent = 'Edit Event';
-                    document.getElementById('event-id').value = eventId;
-
-                    // Find event in current data
-                    const event = allEvents.find(e => e.id === eventId);
-                    if (!event) {
-                        throw new Error('Event not found');
-                    }
-
-                    // Populate form
-                    document.getElementById('judul-event').value = event.judul_event;
-                    document.getElementById('deskripsi-event').value = event.deskripsi_event;
-                    document.getElementById('tanggal-mulai').value = event.tanggal_mulai;
-                    document.getElementById('tanggal-selesai').value = event.tanggal_selesai;
-                    document.getElementById('target-peserta').value = event.target_peserta;
-                    document.getElementById('tahun-lulusan').value = event.tahun_lulusan || '';
-                    document.getElementById('status-event').value = event.status;
-
-                    openModal('modal-event');
-                } catch (error) {
-                    console.error('Error loading event:', error);
-                    showNotification('Gagal memuat data event', 'error');
-                }
-            }
-
-            window.deleteEvent = async function(eventId) {
-                if (!confirm('Apakah Anda yakin ingin menghapus event ini? Tindakan ini tidak dapat dibatalkan.')) {
-                    return;
-                }
-
-                try {
-                    const formData = new FormData();
-                    formData.append('id', eventId);
-                    const response = await fetch(`/dashboard/kuesioner/delete`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification('Event berhasil dihapus');
-                        loadEvents();
-                    } else {
-                        throw new Error(data.message || 'Gagal menghapus event');
-                    }
-                } catch (error) {
-                    console.error('Error deleting event:', error);
-                    showNotification(error.message, 'error');
-                }
-            }
-
-            window.kelolaPertanyaan = async function(eventId) {
-                currentEventId = eventId;
-                const event = allEvents.find(e => e.id === eventId);
-                document.getElementById('modal-pertanyaan-title').textContent =
-                    `Kelola Pertanyaan - ${event?.judul_event || 'Event ID: ' + eventId}`;
-                await loadPertanyaan(eventId);
-                openModal('modal-pertanyaan');
-            }
-
-            window.downloadRespon = function(eventId) {
-                window.open(`/dashboard/kuesioner/${eventId}/download-respon`, '_blank');
-            }
-
-            window.isiRespon = async function(eventId) {
-                currentEventId = eventId;
-                const event = allEvents.find(e => e.id === eventId);
-                document.getElementById('modal-respon-title').textContent =
-                    `Isi Kuesioner - ${event?.judul_event || 'Event'}`;
-                document.getElementById('respon-event-id').value = eventId;
-
-                // Check if user is logged in
-                const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-
-                if (isLoggedIn) {
-                    document.getElementById('email-container').style.display = 'none';
-                } else {
-                    document.getElementById('email-container').style.display = 'block';
-                }
-
-                await loadPertanyaanForRespon(eventId);
-                openModal('modal-respon');
-            }
-
-            window.addSkalaItem = function(value = '') {
-                const skalaList = document.getElementById('skala-list');
-                const index = Date.now();
-
-                const div = document.createElement('div');
-                div.className = 'flex gap-2';
-                div.innerHTML = `
-        <input type="text" name="skala[]" value="${value}" class="flex-1 border rounded px-3 py-2" placeholder="Masukkan pilihan">
-        <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600">Hapus</button>
-    `;
-
-                skalaList.appendChild(div);
-            }
-
-            // Load events data
-            async function loadEvents() {
-                showLoading();
-                try {
-                    const response = await fetch('/dashboard/kuesioner', {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to load events');
-
-                    const data = await response.json();
-                    allEvents = data.data;
-                    filteredEvents = [...allEvents];
-                    renderEventsCards(filteredEvents);
-                } catch (error) {
-                    console.error('Error loading events:', error);
-                    showNotification('Gagal memuat data event', 'error');
-                    allEvents = [];
-                    filteredEvents = [];
-                    showEmptyState();
-                } finally {
-                    hideLoading();
-                }
-            }
-
-            // Render events cards
-            function renderEventsCards(events) {
-                const container = document.getElementById('events-container');
-                const emptyState = document.getElementById('empty-state');
-
-                if (!events || events.length === 0) {
-                    showEmptyState();
-                    return;
-                }
-
-                container.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-
-                container.innerHTML = events.map(event => createEventCard(event)).join('');
-            }
-
-            function showEmptyState() {
-                document.getElementById('events-container').classList.add('hidden');
-                document.getElementById('empty-state').classList.remove('hidden');
-            }
-
-            // Create event card HTML
-            function createEventCard(event) {
-                const statusClass = getStatusClass(normalizeStatus(event.status));
-                const statusText = getStatusText(normalizeStatus(event.status));
-
-                return `
-        <div class="group bg-white/80 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border-0 overflow-hidden">
-            <!-- Card Header -->
-            <div class="relative">
-                <img src="${event.foto || '/images/defaultkuesioner.png'}"
-                     alt="${event.judul_event}"
-                     class="w-full h-48 object-cover">
-                <div class="absolute top-4 right-4">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
-                        ${statusText}
-                    </span>
-                </div>
-                <div class="absolute top-4 left-4">
-                    <div class="relative">
-                        <button class="dropdown-toggle opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full bg-white/80 hover:bg-white"
-                                onclick="toggleDropdown(${event.id})">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+        <!-- Event Modal -->
+        <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-md w-full">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h3 id="eventModalTitle" class="text-lg font-semibold">Tambah Event Baru</h3>
+                        <button onclick="closeEventModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                        <div id="dropdown-${event.id}" class="dropdown-menu hidden absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
-                            <div class="py-1">
-                                <button onclick="downloadRespon(${event.id})" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Download Respon
-                                </button>
-                                <button onclick="isiRespon(${event.id})" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                    Isi/Lihat Respon
-                                </button>
+                    </div>
+                    <form id="eventForm" class="p-6">
+                        <input type="hidden" id="eventId" name="eventId">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Event</label>
+                                <input type="text" id="judulEvent" name="judul_event" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                                <textarea id="deskripsiEvent" name="deskripsi_event" rows="3" required
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Mulai</label>
+                                    <input type="number" id="tahunMulai" name="tahun_mulai" required min="2020" max="2030"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Akhir</label>
+                                    <input type="number" id="tahunAkhir" name="tahun_akhir" required min="2020" max="2030"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <select id="statusEvent" name="status" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non-aktif</option>
+                                    <option value="selesai">Selesai</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="closeEventModal()"
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                Batal
+                            </button>
+                            <button type="submit" id="eventSubmitBtn"
+                                    class="flex-1 btn-primary">
+                                <span class="btn-text">Simpan</span>
+                                <svg class="w-4 h-4 animate-spin hidden btn-loading" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Modal -->
+        <div id="questionsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h3 id="questionsModalTitle" class="text-lg font-semibold">Kelola Pertanyaan</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openQuestionModal()" class="btn-primary text-sm flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Tambah Pertanyaan
+                            </button>
+                            <button onclick="closeQuestionsModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                        <div id="questionsList" class="space-y-4">
+                            <!-- Questions will be loaded here -->
+                        </div>
+                        <div id="questionsEmpty" class="text-center py-8 hidden">
+                            <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-gray-600">Belum ada pertanyaan untuk event ini</p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Card Content -->
-            <div class="p-6">
-                <div class="mb-4">
-                    <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-2">${event.judul_event}</h3>
-                    <p class="text-sm text-gray-600 line-clamp-3">${event.deskripsi_event || 'Tidak ada deskripsi'}</p>
-                </div>
-
-                <!-- Event Details -->
-                <div class="space-y-2 mb-4">
-                    <div class="flex items-center text-sm text-gray-600">
-                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>${event.tanggal_mulai} - ${event.tanggal_selesai}</span>
+        <!-- Question Form Modal -->
+        <div id="questionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-60">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-md w-full">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h3 id="questionModalTitle" class="text-lg font-semibold">Tambah Pertanyaan</h3>
+                        <button onclick="closeQuestionModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="flex items-center text-sm text-gray-600">
-                        <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                        <span>Target: ${event.target_peserta}</span>
-                    </div>
-                    ${event.tahun_lulusan ? `
-                            <div class="flex items-center text-sm text-gray-600">
-                                <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                </svg>
-                                <span>Lulusan: ${event.tahun_lulusan}</span>
+                    <form id="questionForm" class="p-6">
+                        <input type="hidden" id="questionId" name="questionId">
+                        <input type="hidden" id="questionEventId" name="eventId">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                <input type="text" id="kategori" name="kategori" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                             </div>
-                            ` : ''}
-                    <div class="flex items-center text-sm text-gray-600">
-                        <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Respon: ${event.respon_count || 0}</span>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Pertanyaan</label>
+                                <select id="tipe" name="tipe" required onchange="toggleSkalaField()"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                    <option value="likert">Likert Scale</option>
+                                    <option value="esai">Esai</option>
+                                    <option value="pilihan">Pilihan Ganda</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Urutan</label>
+                                <input type="number" id="urutan" name="urutan" required min="1"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                                <textarea id="pertanyaan" name="pertanyaan" rows="3" required
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                            </div>
+                            <div id="skalaField">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Skala/Opsi</label>
+                                <input type="text" id="skala" name="skala" placeholder="Contoh: 1-5 atau Opsi A,Opsi B,Opsi C"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="closeQuestionModal()"
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                Batal
+                            </button>
+                            <button type="submit" id="questionSubmitBtn"
+                                    class="flex-1 btn-primary">
+                                <span class="btn-text">Simpan</span>
+                                <svg class="w-4 h-4 animate-spin hidden btn-loading" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-sm w-full">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-8 h-8 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            <h3 class="text-lg font-semibold">Konfirmasi Hapus</h3>
+                        </div>
+                        <p id="confirmMessage" class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus item ini?</p>
+                        <div class="flex gap-3">
+                            <button onclick="closeConfirmModal()"
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                Batal
+                            </button>
+                            <button onclick="confirmDelete()" id="confirmDeleteBtn"
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                                <span class="btn-text">Hapus</span>
+                                <svg class="w-4 h-4 animate-spin hidden btn-loading" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Action Buttons -->
-                <div class="flex gap-2">
-                    <button onclick="editEvent(${event.id})" class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Notification -->
+        <div id="notification" class="fixed top-4 right-4 z-50 hidden">
+            <div class="bg-white border-l-4 border-green-500 rounded-lg shadow-lg p-4 max-w-sm">
+                <div class="flex items-center">
+                    <svg id="notificationIcon" class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p id="notificationMessage" class="text-gray-800"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global variables
+    let currentEventId = null;
+    let currentQuestionId = null;
+    let deleteType = null;
+    let deleteId = null;
+
+    // CSRF Token setup
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Event Modal Functions
+    function openEventModal(eventId = null) {
+        const modal = document.getElementById('eventModal');
+        const title = document.getElementById('eventModalTitle');
+        const form = document.getElementById('eventForm');
+
+        if (eventId) {
+            title.textContent = 'Edit Event';
+            // AJAX fetch event data
+            fetch(`/dashboard/kuesioner/${eventId}/json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.event) {
+                        document.getElementById('eventId').value = data.event.id;
+                        document.getElementById('judulEvent').value = data.event.judul_event || '';
+                        document.getElementById('deskripsiEvent').value = data.event.deskripsi_event || '';
+                        document.getElementById('tahunMulai').value = data.event.tahun_mulai || '';
+                        document.getElementById('tahunAkhir').value = data.event.tahun_akhir || '';
+                        document.getElementById('statusEvent').value = data.event.status || 'aktif';
+                        modal.classList.remove('hidden');
+                    } else {
+                        showNotification('Data event tidak ditemukan', 'error');
+                    }
+                })
+                .catch(() => {
+                    showNotification('Gagal memuat data event', 'error');
+                });
+        } else {
+            title.textContent = 'Tambah Event Baru';
+            form.reset();
+            document.getElementById('eventId').value = '';
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeEventModal() {
+        document.getElementById('eventModal').classList.add('hidden');
+    }
+
+    // Event Form Submit
+    document.getElementById('eventForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('eventSubmitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+
+        // Show loading state
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+
+        const formData = new FormData(this);
+        const eventId = document.getElementById('eventId').value;
+
+        try {
+            let url = '/dashboard/kuesioner';
+            let method = 'POST';
+
+            if (eventId) {
+                url = `/dashboard/kuesioner/${eventId}`;
+                method = 'PUT';
+                formData.append('_method', 'PUT');
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                showNotification('Event berhasil disimpan!', 'success');
+                closeEventModal();
+                // Refresh the page or update the events list
+                location.reload();
+            } else {
+                throw new Error('Gagal menyimpan event');
+            }
+        } catch (error) {
+            showNotification('Gagal menyimpan event: ' + error.message, 'error');
+        } finally {
+            // Hide loading state
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Edit Event
+    function editEvent(eventId) {
+        openEventModal(eventId);
+    }
+
+    // Questions Modal Functions
+    function manageQuestions(eventId) {
+        currentEventId = eventId;
+        const modal = document.getElementById('questionsModal');
+        const title = document.getElementById('questionsModalTitle');
+
+        // Find event title
+        const eventCard = document.querySelector(`[data-event-id="${eventId}"]`);
+        const eventTitle = eventCard ? eventCard.querySelector('h3').textContent : 'Event';
+
+        title.textContent = `Kelola Pertanyaan - ${eventTitle}`;
+        modal.classList.remove('hidden');
+
+        loadQuestions(eventId);
+    }
+
+    function closeQuestionsModal() {
+        document.getElementById('questionsModal').classList.add('hidden');
+        currentEventId = null;
+    }
+
+    async function loadQuestions(eventId) {
+        try {
+            const response = await fetch(`/dashboard/kuesioner/${eventId}/pertanyaan`);
+            const data = await response.json();
+
+            const questionsList = document.getElementById('questionsList');
+            const questionsEmpty = document.getElementById('questionsEmpty');
+
+            // FIX: handle both array and object response
+            let pertanyaanArr = [];
+            if (Array.isArray(data)) {
+                pertanyaanArr = data;
+            } else if (data.pertanyaan && Array.isArray(data.pertanyaan)) {
+                pertanyaanArr = data.pertanyaan;
+            }
+
+            if (pertanyaanArr.length > 0) {
+                questionsList.innerHTML = '';
+                questionsEmpty.classList.add('hidden');
+
+                pertanyaanArr.forEach(question => {
+                    const questionCard = createQuestionCard(question);
+                    questionsList.appendChild(questionCard);
+                });
+            } else {
+                questionsList.innerHTML = '';
+                questionsEmpty.classList.remove('hidden');
+            }
+        } catch (error) {
+            showNotification('Gagal memuat pertanyaan: ' + error.message, 'error');
+        }
+    }
+
+    function createQuestionCard(question) {
+        const div = document.createElement('div');
+        div.className = 'bg-gray-50 rounded-lg p-4 border';
+        div.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${question.kategori}</span>
+                        <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">${question.tipe}</span>
+                        <span class="text-gray-500 text-xs">Urutan: ${question.urutan}</span>
+                    </div>
+                    <p class="text-gray-900 font-medium">${question.pertanyaan}</p>
+                    ${question.skala ? `<p class="text-gray-600 text-sm mt-1">Skala/Opsi: ${question.skala}</p>` : ''}
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="editQuestion(${question.id})" class="text-blue-600 hover:text-blue-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
-                        Edit
                     </button>
-                    <button onclick="kelolaPertanyaan(${event.id})" class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-green-300 text-sm font-medium rounded-md text-green-700 bg-green-50 hover:bg-green-100 transition-colors duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Pertanyaan
-                    </button>
-                    <button onclick="deleteEvent(${event.id})" class="px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 transition-colors duration-200">
+                    <button onclick="confirmDelete('question', ${question.id})" class="text-red-600 hover:text-red-800">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
                     </button>
                 </div>
             </div>
-        </div>
-    `;
-            }
+        `;
+        return div;
+    }
 
-            function getStatusClass(status) {
-                switch (status) {
-                    case 'active':
-                        return 'bg-green-100 text-green-800';
-                    case 'draft':
-                        return 'bg-yellow-100 text-yellow-800';
-                    case 'completed':
-                        return 'bg-gray-100 text-gray-800';
-                    default:
-                        return 'bg-gray-100 text-gray-800';
-                }
-            }
+    // Question Modal Functions
+    function openQuestionModal(questionId = null) {
+        const modal = document.getElementById('questionModal');
+        const title = document.getElementById('questionModalTitle');
+        const form = document.getElementById('questionForm');
 
-            function getStatusText(status) {
-                switch (status) {
-                    case 'active':
-                        return 'Aktif';
-                    case 'draft':
-                        return 'Draft';
-                    case 'completed':
-                        return 'Selesai';
-                    default:
-                        return status;
-                }
-            }
+        document.getElementById('questionEventId').value = currentEventId;
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.dropdown-toggle') && !event.target.closest('.dropdown-menu')) {
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        menu.classList.add('hidden');
-                    });
-                }
-            });
-
-            // Search and filter functionality
-            document.getElementById('search-events').addEventListener('input', function() {
-                filterEvents();
-            });
-
-            document.getElementById('filter-status').addEventListener('change', function() {
-                filterEvents();
-            });
-
-            document.getElementById('filter-target').addEventListener('change', function() {
-                filterEvents();
-            });
-
-            function filterEvents() {
-                const searchTerm = document.getElementById('search-events').value.toLowerCase();
-                const statusFilter = document.getElementById('filter-status').value;
-                const targetFilter = document.getElementById('filter-target').value;
-
-                filteredEvents = allEvents.filter(event => {
-                    const matchesSearch = event.judul_event.toLowerCase().includes(searchTerm) ||
-                        (event.deskripsi_event && event.deskripsi_event.toLowerCase().includes(searchTerm));
-                    const matchesStatus = !statusFilter || normalizeStatus(event.status) === statusFilter;
-                    const matchesTarget = !targetFilter || event.target_peserta === targetFilter;
-
-                    return matchesSearch && matchesStatus && matchesTarget;
+        if (questionId) {
+            title.textContent = 'Edit Pertanyaan';
+            currentQuestionId = questionId;
+            // AJAX fetch question data
+            fetch(`/dashboard/kuesioner/${currentEventId}/pertanyaan/${questionId}/json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.pertanyaan) {
+                        document.getElementById('questionId').value = data.pertanyaan.id;
+                        document.getElementById('questionEventId').value = data.pertanyaan.event_kuesioner_id || currentEventId;
+                        document.getElementById('kategori').value = data.pertanyaan.kategori || '';
+                        document.getElementById('tipe').value = data.pertanyaan.tipe || 'likert';
+                        document.getElementById('urutan').value = data.pertanyaan.urutan || '';
+                        document.getElementById('pertanyaan').value = data.pertanyaan.pertanyaan || '';
+                        document.getElementById('skala').value = Array.isArray(data.pertanyaan.skala) ? data.pertanyaan.skala.join(',') : (data.pertanyaan.skala || '');
+                        toggleSkalaField();
+                        modal.classList.remove('hidden');
+                    } else {
+                        showNotification('Data pertanyaan tidak ditemukan', 'error');
+                    }
+                })
+                .catch(() => {
+                    showNotification('Gagal memuat data pertanyaan', 'error');
                 });
+        } else {
+            title.textContent = 'Tambah Pertanyaan';
+            form.reset();
+            document.getElementById('questionId').value = '';
+            document.getElementById('questionEventId').value = currentEventId;
+            currentQuestionId = null;
+            modal.classList.remove('hidden');
+            toggleSkalaField();
+        }
+    }
 
-                renderEventsCards(filteredEvents);
+    function closeQuestionModal() {
+        document.getElementById('questionModal').classList.add('hidden');
+        currentQuestionId = null;
+    }
+
+    function toggleSkalaField() {
+        const tipe = document.getElementById('tipe').value;
+        const skalaField = document.getElementById('skalaField');
+
+        if (tipe === 'esai') {
+            skalaField.style.display = 'none';
+        } else {
+            skalaField.style.display = 'block';
+        }
+    }
+
+    // Question Form Submit
+    document.getElementById('questionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('questionSubmitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+
+        // Show loading state
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+
+        const formData = new FormData(this);
+        const questionId = document.getElementById('questionId').value;
+
+        try {
+            let url = `/dashboard/kuesioner/${currentEventId}/pertanyaan`;
+            let method = 'POST';
+
+            if (questionId) {
+                url = `/dashboard/kuesioner/${currentEventId}/pertanyaan/${questionId}`;
+                method = 'PUT';
+                formData.append('_method', 'PUT');
             }
 
-            // Event handlers
-            document.getElementById('btn-tambah-event').addEventListener('click', () => {
-                isEditMode = false;
-                currentEventId = null;
-                document.getElementById('modal-event-title').textContent = 'Tambah Event Baru';
-                document.getElementById('form-event').reset();
-                openModal('modal-event');
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
             });
 
-            document.getElementById('btn-tambah-event-empty').addEventListener('click', () => {
-                isEditMode = false;
-                currentEventId = null;
-                document.getElementById('modal-event-title').textContent = 'Tambah Event Baru';
-                document.getElementById('form-event').reset();
-                openModal('modal-event');
+            if (response.ok) {
+                showNotification('Pertanyaan berhasil disimpan!', 'success');
+                closeQuestionModal();
+                loadQuestions(currentEventId);
+            } else {
+                throw new Error('Gagal menyimpan pertanyaan');
+            }
+        } catch (error) {
+            showNotification('Gagal menyimpan pertanyaan: ' + error.message, 'error');
+        } finally {
+            // Hide loading state
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+    });
+
+    function editQuestion(questionId) {
+        openQuestionModal(questionId);
+    }
+
+    // Delete Confirmation
+    function confirmDelete(type, id) {
+        deleteType = type;
+        deleteId = id;
+
+        const modal = document.getElementById('confirmModal');
+        const message = document.getElementById('confirmMessage');
+
+        if (type === 'event') {
+            message.textContent = 'Apakah Anda yakin ingin menghapus event ini? Semua pertanyaan dan respon akan ikut terhapus.';
+        } else {
+            message.textContent = 'Apakah Anda yakin ingin menghapus pertanyaan ini?';
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+        deleteType = null;
+        deleteId = null;
+    }
+
+    async function confirmDelete() {
+        const submitBtn = document.getElementById('confirmDeleteBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+
+        // Show loading state
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+
+        try {
+            let url;
+            if (deleteType === 'event') {
+                url = `/dashboard/kuesioner/${deleteId}`;
+            } else {
+                url = `/dashboard/kuesioner/${currentEventId}/pertanyaan/${deleteId}`;
+            }
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                }
             });
 
-            // Form event submit
-            document.getElementById('form-event').addEventListener('submit', async (e) => {
-                e.preventDefault();
+            if (response.ok) {
+                showNotification(`${deleteType === 'event' ? 'Event' : 'Pertanyaan'} berhasil dihapus!`, 'success');
+                closeConfirmModal();
 
-                const formData = new FormData(e.target);
-                const submitBtn = document.getElementById('btn-submit-event');
-                const originalText = submitBtn.textContent;
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Menyimpan...';
-
-                try {
-                    let url;
-                    if (isEditMode) {
-                        url = "/dashboard/kuesioner/edit";
-                        formData.append('id', currentEventId);
-                    } else {
-                        url = "/dashboard/kuesioner/create";
-                    }
-
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification(isEditMode ? 'Event berhasil diperbarui' : 'Event berhasil ditambahkan');
-                        closeModal('modal-event');
-                        loadEvents();
-                    } else {
-                        throw new Error(data.message || 'Gagal menyimpan event');
-                    }
-                } catch (error) {
-                    console.error('Error saving event:', error);
-                    showNotification(error.message, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-
-            // Load pertanyaan
-            async function loadPertanyaan(eventId) {
-                try {
-                    const response = await fetch(`/dashboard/kuesioner/${eventId}/pertanyaan-list`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to load pertanyaan');
-
-                    const pertanyaan = await response.json();
-                    renderPertanyaanTable(pertanyaan.data);
-                } catch (error) {
-                    console.error('Error loading pertanyaan:', error);
-                    showNotification('Gagal memuat data pertanyaan', 'error');
-                }
-            }
-
-            // Render pertanyaan table
-            function renderPertanyaanTable(pertanyaan) {
-                const tbody = document.getElementById('pertanyaan-tbody');
-
-                if (!pertanyaan || pertanyaan.length === 0) {
-                    tbody.innerHTML = `
-            <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                    Belum ada pertanyaan
-                </td>
-            </tr>
-        `;
-                    return;
-                }
-
-                tbody.innerHTML = pertanyaan.map((p, index) => `
-        <tr>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${p.kategori}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${p.tipe}</td>
-            <td class="px-6 py-4 text-sm text-gray-900">${p.pertanyaan}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                <button onclick="editPertanyaan(${p.id})" class="text-indigo-600 hover:text-indigo-900">Edit</button>
-                <button onclick="deletePertanyaan(${p.id})" class="text-red-600 hover:text-red-900">Hapus</button>
-            </td>
-        </tr>
-    `).join('');
-            }
-
-            window.editPertanyaan = async function(pertanyaanId) {
-                try {
-                    isEditMode = true;
-                    currentPertanyaanId = pertanyaanId;
-                    document.getElementById('modal-form-pertanyaan-title').textContent = 'Edit Pertanyaan';
-                    document.getElementById('pertanyaan-id').value = pertanyaanId;
-
-                    // Fetch pertanyaan data
-                    const response = await fetch(`/dashboard/kuesioner/${currentEventId}/pertanyaan/${pertanyaanId}`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to load pertanyaan data');
-
-                    const pertanyaan = await response.json();
-
-                    // Populate form
-                    document.getElementById('kategori-pertanyaan').value = pertanyaan.kategori;
-                    document.getElementById('tipe-pertanyaan').value = pertanyaan.tipe;
-                    document.getElementById('urutan-pertanyaan').value = pertanyaan.urutan;
-                    document.getElementById('text-pertanyaan').value = pertanyaan.pertanyaan;
-
-                    // Handle skala
-                    if (pertanyaan.skala && (pertanyaan.tipe === 'pilihan_ganda' || pertanyaan.tipe === 'skala')) {
-                        const skalaArray = Array.isArray(pertanyaan.skala) ? pertanyaan.skala : JSON.parse(pertanyaan
-                            .skala || '[]');
-                        populateSkalaList(skalaArray);
-                        document.getElementById('skala-container').classList.remove('hidden');
-                    } else {
-                        document.getElementById('skala-container').classList.add('hidden');
-                    }
-
-                    openModal('modal-form-pertanyaan');
-                } catch (error) {
-                    console.error('Error loading pertanyaan:', error);
-                    showNotification('Gagal memuat data pertanyaan', 'error');
-                }
-            }
-
-            window.deletePertanyaan = async function(pertanyaanId) {
-                if (!confirm('Apakah Anda yakin ingin menghapus pertanyaan ini?')) {
-                    return;
-                }
-
-                try {
-                    const formData = new FormData();
-                    formData.append('id', pertanyaanId);
-                    const response = await fetch(`/dashboard/kuesioner/pertanyaan/delete`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification('Pertanyaan berhasil dihapus');
-                        loadPertanyaan(currentEventId);
-                    } else {
-                        throw new Error(data.message || 'Gagal menghapus pertanyaan');
-                    }
-                } catch (error) {
-                    console.error('Error deleting pertanyaan:', error);
-                    showNotification(error.message, 'error');
-                }
-            }
-
-            // Tambah pertanyaan
-            document.getElementById('btn-tambah-pertanyaan').addEventListener('click', () => {
-                isEditMode = false;
-                currentPertanyaanId = null;
-                document.getElementById('modal-form-pertanyaan-title').textContent = 'Tambah Pertanyaan';
-                document.getElementById('form-pertanyaan').reset();
-                document.getElementById('pertanyaan-event-id').value = currentEventId;
-                clearSkalaList();
-                openModal('modal-form-pertanyaan');
-            });
-
-            // Handle tipe pertanyaan change
-            document.getElementById('tipe-pertanyaan').addEventListener('change', function() {
-                const skalaContainer = document.getElementById('skala-container');
-                if (this.value === 'pilihan_ganda' || this.value === 'skala') {
-                    skalaContainer.classList.remove('hidden');
+                if (deleteType === 'event') {
+                    location.reload();
                 } else {
-                    skalaContainer.classList.add('hidden');
-                    clearSkalaList();
+                    loadQuestions(currentEventId);
                 }
-            });
-
-            // Tambah skala
-            document.getElementById('btn-tambah-skala').addEventListener('click', () => {
-                addSkalaItem();
-            });
-
-            function clearSkalaList() {
-                document.getElementById('skala-list').innerHTML = '';
+            } else {
+                throw new Error(`Gagal menghapus ${deleteType}`);
             }
-
-            function populateSkalaList(skalaArray) {
-                clearSkalaList();
-                skalaArray.forEach(item => addSkalaItem(item));
-            }
-
-            // Form pertanyaan submit
-            document.getElementById('form-pertanyaan').addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const formData = new FormData(e.target);
-                const submitBtn = document.getElementById('btn-submit-pertanyaan');
-                const originalText = submitBtn.textContent;
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Menyimpan...';
-
-                try {
-                    let url;
-                    if (isEditMode) {
-                        url = `/dashboard/kuesioner/pertanyaan/edit`;
-                        formData.append('id', currentPertanyaanId);
-                        formData.append('event_id', currentEventId);
-                    } else {
-                        url = `/dashboard/kuesioner/pertanyaan`;
-                        formData.append('event_id', currentEventId);
-                    }
-
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification(isEditMode ? 'Pertanyaan berhasil diperbarui' :
-                            'Pertanyaan berhasil ditambahkan');
-                        closeModal('modal-form-pertanyaan');
-                        loadPertanyaan(currentEventId);
-                    } else {
-                        throw new Error(data.message || 'Gagal menyimpan pertanyaan');
-                    }
-                } catch (error) {
-                    console.error('Error saving pertanyaan:', error);
-                    showNotification(error.message, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-
-            // Load pertanyaan for respon
-            async function loadPertanyaanForRespon(eventId) {
-                try {
-                    const response = await fetch(`/dashboard/kuesioner/${eventId}/pertanyaan-list`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to load pertanyaan');
-
-                    const pertanyaan = await response.json();
-                    renderPertanyaanForRespon(pertanyaan.data);
-                } catch (error) {
-                    console.error('Error loading pertanyaan for respon:', error);
-                    showNotification('Gagal memuat pertanyaan', 'error');
-                }
-            }
-
-            // Render pertanyaan for respon
-            function renderPertanyaanForRespon(pertanyaan) {
-                const container = document.getElementById('pertanyaan-respon-container');
-
-                if (!pertanyaan || pertanyaan.length === 0) {
-                    container.innerHTML = '<p class="text-gray-500 text-center">Belum ada pertanyaan untuk kuesioner ini.</p>';
-                    return;
-                }
-
-                container.innerHTML = pertanyaan.map((p, index) => {
-                    let inputHtml = '';
-
-                    switch (p.tipe) {
-                        case 'esai':
-                            inputHtml =
-                                `<textarea name="jawaban[${p.id}]" class="w-full border rounded px-3 py-2" rows="3" required></textarea>`;
-                            break;
-
-                        case 'pilihan_ganda':
-                            const pilihan = Array.isArray(p.skala) ? p.skala : JSON.parse(p.skala || '[]');
-                            inputHtml = pilihan.map((option, i) => `
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="jawaban[${p.id}]" value="${option}" required>
-                        <span>${option}</span>
-                    </label>
-                `).join('');
-                            break;
-
-                        case 'skala':
-                            const skala = Array.isArray(p.skala) ? p.skala : JSON.parse(p.skala || '[]');
-                            inputHtml = skala.map((option, i) => `
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="jawaban[${p.id}]" value="${option}" required>
-                        <span>${option}</span>
-                    </label>
-                `).join('');
-                            break;
-                    }
-
-                    return `
-            <div class="mb-6 p-4 border rounded-lg">
-                <label class="block text-sm font-medium mb-2">
-                    ${index + 1}. ${p.pertanyaan}
-                    <span class="text-red-500">*</span>
-                </label>
-                <div class="space-y-2">
-                    ${inputHtml}
-                </div>
-            </div>
-        `;
-                }).join('');
-            }
-
-            // Form respon submit
-            document.getElementById('form-respon').addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const formData = new FormData(e.target);
-                const submitBtn = document.getElementById('btn-submit-respon');
-                const originalText = submitBtn.textContent;
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Mengirim...';
-
-                try {
-                    const response = await fetch(`/dashboard/kuesioner/${currentEventId}/respon`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification('Respon berhasil dikirim');
-                        closeModal('modal-respon');
-
-                        // Redirect to respon detail if available
-                        if (data.respon_id) {
-                            setTimeout(() => {
-                                window.location.href =
-                                    `/dashboard/kuesioner/${currentEventId}/respon/${data.respon_id}`;
-                            }, 1000);
-                        }
-                    } else {
-                        throw new Error(data.message || 'Gagal mengirim respon');
-                    }
-                } catch (error) {
-                    console.error('Error submitting respon:', error);
-                    showNotification(error.message, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-
-            // Add CSS for line-clamp
-            const style = document.createElement('style');
-            style.textContent = `
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        } catch (error) {
+            showNotification(`Gagal menghapus ${deleteType}: ` + error.message, 'error');
+        } finally {
+            // Hide loading state
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
     }
-    .line-clamp-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+
+    // Download Responses
+    async function downloadResponses(eventId) {
+        try {
+            const response = await fetch(`/dashboard/kuesioner/${eventId}/download-respon`);
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `respon-kuesioner-${eventId}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showNotification('File berhasil diunduh!', 'success');
+            } else {
+                throw new Error('Gagal mengunduh file');
+            }
+        } catch (error) {
+            showNotification('Gagal mengunduh file: ' + error.message, 'error');
+        }
     }
-`;
-            document.head.appendChild(style);
 
-            // Initialize page
-            document.addEventListener('DOMContentLoaded', () => {
-                loadEvents();
-            });
-        </script>
-    @endpush
+    // Notification Function
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        const icon = document.getElementById('notificationIcon');
+        const messageEl = document.getElementById('notificationMessage');
 
+        messageEl.textContent = message;
+
+        if (type === 'success') {
+            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
+            icon.className = 'w-6 h-6 text-green-500 mr-3';
+            notification.querySelector('div').className = 'bg-white border-l-4 border-green-500 rounded-lg shadow-lg p-4 max-w-sm';
+        } else {
+            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
+            icon.className = 'w-6 h-6 text-red-500 mr-3';
+            notification.querySelector('div').className = 'bg-white border-l-4 border-red-500 rounded-lg shadow-lg p-4 max-w-sm';
+        }
+
+        notification.classList.remove('hidden');
+
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 5000);
+    }
+
+    // Search and Filter Functions
+    document.getElementById('searchInput').addEventListener('input', filterEvents);
+    document.getElementById('statusFilter').addEventListener('change', filterEvents);
+    document.getElementById('targetFilter').addEventListener('change', filterEvents);
+
+    function filterEvents() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const targetFilter = document.getElementById('targetFilter').value;
+
+        const eventCards = document.querySelectorAll('.event-card');
+        let visibleCount = 0;
+
+        eventCards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const description = card.querySelector('p').textContent.toLowerCase();
+            const status = card.querySelector('.px-2.py-1').textContent.toLowerCase().trim();
+
+            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+            const matchesStatus = !statusFilter || status === statusFilter;
+            // Target filter would need additional data attribute or API call
+            const matchesTarget = true; // Placeholder
+
+            if (matchesSearch && matchesStatus && matchesTarget) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show/hide empty state
+        const emptyState = document.getElementById('emptyState');
+        if (visibleCount === 0) {
+            emptyState.classList.remove('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if there are no events to show empty state
+        const eventCards = document.querySelectorAll('.event-card');
+        if (eventCards.length === 0) {
+            document.getElementById('emptyState').classList.remove('hidden');
+        }
+    });
+</script>
 @endsection

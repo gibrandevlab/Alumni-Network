@@ -143,40 +143,22 @@ Route::middleware(['auth'])
     ->prefix('dashboard/kuesioner')
     ->name('dashboard.kuesioner.')
     ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])->name('store');
+        Route::put('/{event}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])->name('update');
+        Route::delete('/{event}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])->name('destroy');
 
-        // 1) Halaman index: list semua event kuesioner
-        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'index'])
-            ->name('index');
+        // CRUD Pertanyaan per event
+        Route::get('/{event}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanIndex'])->name('pertanyaan.index');
+        Route::post('/{event}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])->name('pertanyaan.store');
+        Route::put('/{event}/pertanyaan/{pertanyaan}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])->name('pertanyaan.update');
+        Route::delete('/{event}/pertanyaan/{pertanyaan}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])->name('pertanyaan.destroy');
 
-        // 2) CRUD Event Kuesioner
-        Route::post('/create', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])
-            ->name('store');
-        Route::post('/{eventId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])
-            ->name('update');
-        Route::post('/{eventId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])
-            ->name('destroy');
+        // Get single event as JSON (for AJAX edit modal)
+        Route::get('/{event}/json', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'getEventJson'])->name('json');
+        // Get single pertanyaan as JSON (for AJAX edit modal)
+        Route::get('/{event}/pertanyaan/{pertanyaan}/json', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'getPertanyaanJson'])->name('pertanyaan.json');
 
-        // 3) CRUD Pertanyaan Kuesioner
-        Route::post('/{eventId}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])
-            ->name('pertanyaan.store');
-        Route::post('/{eventId}/pertanyaan/{pertanyaanId}/edit', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])
-            ->name('pertanyaan.update');
-        Route::post('/{eventId}/pertanyaan/{pertanyaanId}/delete', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])
-            ->name('pertanyaan.destroy');
-        Route::get('/{eventId}/pertanyaan-list', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanList'])
-            ->name('pertanyaan.list');
-
-        // 4) Download respon
-        Route::get('/{eventId}/download-respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'downloadRespon'])
-            ->name('downloadRespon');
-
-        // 5) Respon Kuesioner
-        Route::get('/{eventId}/respon/create', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'responCreate'])
-            ->name('respon.create');
-        Route::post('/{eventId}/respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'responStore'])
-            ->name('respon.store');
-        Route::get('/{eventId}/respon/{responId}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'responShow'])
-            ->name('respon.show');
-        Route::get('/{eventId}/respon/{responId}/detail', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'responDetail'])
-            ->name('respon.detail');
+        // Download Excel respon kuesioner per event
+        Route::get('/{event}/download-respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'downloadRespon'])->name('downloadRespon');
     });
