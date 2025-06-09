@@ -44,8 +44,53 @@ class KuesionerEventController extends Controller
     }
     public function pertanyaanStore(Request $request, EventKuesioner $event)
     {
-        $pertanyaan = $event->pertanyaan()->create($request->all());
-        return response()->json(['success' => true, 'pertanyaan' => $pertanyaan]);
+        // Validasi input
+        $validated = $request->validate([
+            'kategori' => 'required|in:umum,bekerja,pendidikan,lainnya',
+            'tipe' => 'required|in:likert,esai,pilihan',
+            'urutan' => 'required|integer|min:1',
+            'pertanyaan' => 'required|string',
+            'skala' => 'nullable|string'
+        ]);
+
+        // Proses skala jika ada
+        if ($request->has('skala') && $request->skala) {
+            if ($validated['tipe'] === 'likert') {
+                $skala = explode('-', $request->skala);
+                if (count($skala) === 2) {
+                    $start = (int)trim($skala[0]);
+                    $end = (int)trim($skala[1]);
+                    $validated['skala'] = json_encode(range($start, $end));
+                } else {
+                    $validated['skala'] = null;
+                }
+            } else if ($validated['tipe'] === 'pilihan') {
+                $skala = explode(',', $request->skala);
+                $validated['skala'] = json_encode(array_map('trim', $skala));
+            } else {
+                $validated['skala'] = null;
+            }
+        } else {
+            $validated['skala'] = null;
+        }
+
+        // Tambahkan event_kuesioner_id
+        $validated['event_kuesioner_id'] = $event->id;
+
+        try {
+            // Buat pertanyaan baru
+            $pertanyaan = PertanyaanKuesioner::create($validated);
+
+            return response()->json([
+                'success' => true, 
+                'pertanyaan' => $pertanyaan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan pertanyaan: ' . $e->getMessage()
+            ], 500);
+        }
     }
     public function pertanyaanUpdate(Request $request, EventKuesioner $event, PertanyaanKuesioner $pertanyaan)
     {

@@ -249,13 +249,19 @@
                         </button>
                     </div>
                     <form id="questionForm" class="p-6">
+                        @csrf
                         <input type="hidden" id="questionId" name="questionId">
                         <input type="hidden" id="questionEventId" name="eventId">
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                                <input type="text" id="kategori" name="kategori" required
+                                <select id="kategori" name="kategori" required
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                    <option value="umum">Umum</option>
+                                    <option value="bekerja">Bekerja</option>
+                                    <option value="pendidikan">Pendidikan</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Pertanyaan</label>
@@ -278,7 +284,8 @@
                             </div>
                             <div id="skalaField">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Skala/Opsi</label>
-                                <input type="text" id="skala" name="skala" placeholder="Contoh: 1-5 atau Opsi A,Opsi B,Opsi C"
+                                <div id="skalaHint" class="text-sm text-gray-500 mb-1"></div>
+                                <input type="text" id="skala" name="skala" 
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                             </div>
                         </div>
@@ -588,11 +595,21 @@
     function toggleSkalaField() {
         const tipe = document.getElementById('tipe').value;
         const skalaField = document.getElementById('skalaField');
+        const skalaHint = document.getElementById('skalaHint');
+        const skalaInput = document.getElementById('skala');
 
         if (tipe === 'esai') {
             skalaField.style.display = 'none';
+            skalaInput.value = '';
         } else {
             skalaField.style.display = 'block';
+            if (tipe === 'likert') {
+                skalaHint.textContent = 'Masukkan rentang skala (contoh: 1-5)';
+                skalaInput.placeholder = '1-5';
+            } else if (tipe === 'pilihan') {
+                skalaHint.textContent = 'Masukkan opsi jawaban dipisahkan dengan koma (contoh: Sangat Setuju,Setuju,Ragu-ragu,Tidak Setuju,Sangat Tidak Setuju)';
+                skalaInput.placeholder = 'Opsi 1,Opsi 2,Opsi 3';
+            }
         }
     }
 

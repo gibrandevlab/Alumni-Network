@@ -7,6 +7,7 @@ use App\Models\PertanyaanKuesioner;
 use App\Models\ResponKuesioner;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class KuesionerController extends Controller
 {
@@ -86,12 +87,26 @@ class KuesionerController extends Controller
             'esai' => $esai
         ];
         // Simpan ke DB
-        ResponKuesioner::create([
-            'event_kuesioner_id' => $event_id,
-            'user_id' => Auth::id(),
-            'jawaban' => json_encode($jawaban)
-        ]);
-        Session::forget($sessionKey);
-        return view('pages.kuesioner.terima-kasih', compact('event'));
+        $validated['event_kuesioner_id'] = $event->id;
+        try {
+            ResponKuesioner::create([
+                'event_kuesioner_id' => $event_id,
+                'user_id' => Auth::id(),
+                'jawaban' => json_encode($jawaban)
+            ]);
+            Session::forget($sessionKey);
+            return view('pages.kuesioner.terima-kasih', compact('event'));
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan pertanyaan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
