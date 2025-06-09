@@ -1,27 +1,16 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class PertanyaanKuesioner extends Model
 {
-    protected $table = 'pertanyaan_kuesioner';
     protected $fillable = [
-        'event_kuesioner_id',
-        'kategori',
-        'tipe',
-        'urutan',
-        'pertanyaan',
-        'skala',
-    ];
-    protected $casts = [
-        'skala' => 'array',
+        'kuesioner_id', 'pertanyaan', 'tipe', 'skala', 'urutan'
     ];
 
-    // Relasi: PertanyaanKuesioner belongsTo EventKuesioner
-    public function event()
+    public function kuesioner()
     {
-        return $this->belongsTo(\App\Models\EventKuesioner::class, 'event_kuesioner_id');
+        return $this->belongsTo(Kuesioner::class);
     }
-}
+} 

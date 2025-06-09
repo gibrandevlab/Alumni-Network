@@ -33,11 +33,11 @@ Route::get('/panduan', fn() => view('pages.panduan'))->name('panduan.index');
 // Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])->name('alumni.searchByNim');
 
 // Route dinamis baru untuk sistem kuesioner
-Route::prefix('pengisian-tracer-study')->group(function () {
-    Route::get('/', [KuesionerController::class, 'index'])->name('kuesioner.index');
-    Route::get('/{event_id}/form', [KuesionerController::class, 'showForm'])->name('kuesioner.form');
-    Route::post('/{event_id}/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
-});
+// Route::prefix('pengisian-tracer-study')->group(function () {
+//     Route::get('/', [KuesionerController::class, 'index'])->name('kuesioner.index');
+//     Route::get('/{event_id}/form', [KuesionerController::class, 'showForm'])->name('kuesioner.form');
+//     Route::post('/{event_id}/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
+// });
 
 // 4. Dashboard Controllers
 
@@ -138,27 +138,22 @@ Route::get('/midtrans/finish',   [MidtransNotificationController::class, 'finish
 Route::get('/midtrans/unfinish', [MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
 Route::get('/midtrans/error',    [MidtransNotificationController::class, 'error'])->name('midtrans.error');
 
-// ===================== KUESIONER (DASHBOARD) =====================
+// ===================== KUESIONER (DASHBOARD BARU) =====================
 Route::middleware(['auth'])
     ->prefix('dashboard/kuesioner')
     ->name('dashboard.kuesioner.')
     ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'index'])->name('index');
-        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'store'])->name('store');
-        Route::put('/{event}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'update'])->name('update');
-        Route::delete('/{event}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'destroy'])->name('destroy');
-
-        // CRUD Pertanyaan per event
-        Route::get('/{event}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanIndex'])->name('pertanyaan.index');
-        Route::post('/{event}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanStore'])->name('pertanyaan.store');
-        Route::put('/{event}/pertanyaan/{pertanyaan}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanUpdate'])->name('pertanyaan.update');
-        Route::delete('/{event}/pertanyaan/{pertanyaan}', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'pertanyaanDestroy'])->name('pertanyaan.destroy');
-
-        // Get single event as JSON (for AJAX edit modal)
-        Route::get('/{event}/json', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'getEventJson'])->name('json');
-        // Get single pertanyaan as JSON (for AJAX edit modal)
-        Route::get('/{event}/pertanyaan/{pertanyaan}/json', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'getPertanyaanJson'])->name('pertanyaan.json');
-
-        // Download Excel respon kuesioner per event
-        Route::get('/{event}/download-respon', [\App\Http\Controllers\Dashboard\KuesionerEventController::class, 'downloadRespon'])->name('downloadRespon');
+        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'addPertanyaan'])->name('pertanyaan.add');
+        Route::delete('/{id}/pertanyaan/{pertanyaan_id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'deletePertanyaan'])->name('pertanyaan.delete');
     });
+
+// ===================== KUESIONER (PUBLIC) =====================
+Route::get('/pengisian-tracer-study', [\App\Http\Controllers\KuesionerPublicController::class, 'index'])->name('kuesioner.list');
+Route::get('/pengisian-tracer-study/{id}/form', [\App\Http\Controllers\KuesionerPublicController::class, 'form'])->name('kuesioner.form');
+Route::post('/pengisian-tracer-study/{id}/submit', [\App\Http\Controllers\KuesionerPublicController::class, 'submit'])->name('kuesioner.submit');

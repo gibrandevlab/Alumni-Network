@@ -93,9 +93,9 @@ class DashboardController extends Controller
         return ProfilAlumni::select(
             'tahun_lulus',
             DB::raw('COUNT(profil_alumni.id) as total_alumni'),
-            DB::raw('COUNT(DISTINCT respon_kuesioner.user_id) as total_responden')
+            DB::raw('COUNT(DISTINCT respon_kuesioners.user_id) as total_responden')
         )
-            ->leftJoin('respon_kuesioner', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
+            ->leftJoin('respon_kuesioners', 'profil_alumni.user_id', '=', 'respon_kuesioners.user_id')
             ->when($jurusan, fn($q) => $q->where('profil_alumni.jurusan', $jurusan))
             ->groupBy('tahun_lulus')
             ->get();
@@ -105,7 +105,7 @@ class DashboardController extends Controller
     private function getStatusKuesionerByTahun($jurusan = null): array
     {
         $responses = ResponKuesioner::with('user.profilAlumni')
-            ->join('profil_alumni', 'profil_alumni.user_id', '=', 'respon_kuesioner.user_id')
+            ->join('profil_alumni', 'profil_alumni.user_id', '=', 'respon_kuesioners.user_id')
             ->whereNotNull('profil_alumni.jurusan')
             ->when($jurusan, fn($q) => $q->where('profil_alumni.jurusan', $jurusan))
             ->get();
