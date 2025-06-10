@@ -9,7 +9,7 @@
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
-                <a href="{{ route('dashboard.kuesioner.index') }}" class="text-blue-600 hover:underline text-sm">&larr; Kembali ke daftar kuesioner</a>
+                <a href="{{ route('dashboard.kuesioner.index') }}" class="text-blue-600 hover:underline text-sm">&larr; Kembali ke dashboard</a>
                 <h1 class="text-2xl font-bold text-gray-800">Manajemen Kuesioner</h1>
                 <p class="text-gray-500 text-sm">Kelola dan monitor kuesioner alumni</p>
             </div>
