@@ -7,7 +7,7 @@
 <div class="max-w-2xl mx-auto px-4 py-8">
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 mb-1">{{ isset($kuesioner) ? 'Edit Kuesioner' : 'Tambah Kuesioner' }}</h1>
-        <a href="{{ route('dashboard.kuesioner.index') }}" class="text-amber-600 hover:underline text-sm">&larr; Kembali ke daftar kuesioner</a>
+        <a href="{{ route('dashboard.kuesioner.index') }}" class="text-blue-600 hover:underline text-sm">&larr; Kembali ke daftar kuesioner</a>
     </div>
     <form method="POST" action="{{ isset($kuesioner) ? route('dashboard.kuesioner.update', $kuesioner->id) : route('dashboard.kuesioner.store') }}" class="bg-white rounded-lg shadow p-6 mb-8">
         @csrf
@@ -38,8 +38,8 @@
             </select>
         </div>
         <div class="flex gap-3 mt-6">
-            <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
             <a href="{{ route('dashboard.kuesioner.index') }}" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-center">Batal</a>
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
         </div>
     </form>
 

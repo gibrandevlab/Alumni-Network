@@ -15,7 +15,7 @@
                     <span class="bg-gray-100 px-2 py-1 rounded">{{ $kuesioner->tahun_mulai }} - {{ $kuesioner->tahun_akhir }}</span>
                 </div>
             </div>
-            <a href="{{ route('kuesioner.form', $kuesioner->id) }}" class="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-lg text-center transition">Isi Kuesioner</a>
+            <a href="{{ route('kuesioner.form', $kuesioner->id) }}" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-center transition">Isi Kuesioner</a>
         </div>
         @empty
         <div class="col-span-2 text-center text-gray-400 py-12">

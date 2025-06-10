@@ -36,7 +36,7 @@
             @endif
         </div>
         @endforeach
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-lg shadow">Kirim Jawaban</button>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow">Kirim Jawaban</button>
     </form>
 </div>
 @endsection 
