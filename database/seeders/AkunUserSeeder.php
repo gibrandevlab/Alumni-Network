@@ -12,7 +12,7 @@ use App\Models\EventPengembanganKarir;
 use App\Models\PendaftaranEvent;
 use App\Models\PembayaranEvent;
 use App\Models\Message;
-use App\Models\EventKuesioner;
+use App\Models\Kuesioner;
 use App\Models\PertanyaanKuesioner;
 
 class AkunUserSeeder extends Seeder
@@ -85,7 +85,7 @@ class AkunUserSeeder extends Seeder
         ]);
 
         // Seed EventKuesioner
-        EventKuesioner::create([
+        Kuesioner::create([
             'judul_event' => 'Tracer Study 2025',
             'deskripsi_event' => 'A study to track alumni progress.',
             'foto' => null,
@@ -97,13 +97,13 @@ class AkunUserSeeder extends Seeder
 
         // Seed ResponKuesioner
         ResponKuesioner::create([
-            'event_kuesioner_id' => EventKuesioner::first()->id,
+            'event_kuesioner_id' => Kuesioner::first()->id,
             'jawaban' => json_encode(['question1' => 'answer1', 'question2' => 'answer2']),
             'user_id' => User::where('role', 'alumni')->first()->id,
         ]);
 
         // Seed PertanyaanKuesioner (46 pertanyaan)
-        $eventKuesionerId = EventKuesioner::first()->id;
+        $eventKuesionerId = Kuesioner::first()->id;
         // Umum
         PertanyaanKuesioner::create([
             'event_kuesioner_id' => $eventKuesionerId,

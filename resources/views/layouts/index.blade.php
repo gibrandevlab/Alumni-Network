@@ -560,8 +560,15 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .fade-in {
@@ -596,50 +603,60 @@
 
             <!-- Auth Section -->
             <div class="auth-section">
-                @if (!empty($id) && !empty($role) && !empty($status))
-                    @php
-                        $user = \App\Models\User::find($id);
-                        $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
-                    @endphp
-                    <div class="profile-dropdown">
-                        <button class="profile-button flex flex-row items-center gap-2" id="profileButton" aria-haspopup="true" aria-expanded="false">
-                            <img src="{{ $foto }}" alt="Profile picture of {{ $user->nama ?? 'User' }}" class="profile-avatar" />
-                            <span class="profile-name">{{ $user->nama ?? 'User' }}</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;"><polyline points="6,9 12,15 18,9"></polyline></svg>
-                        </button>
-                        <div class="dropdown-menu" id="profileDropdown" role="menu">
-                            <a href="{{ route('profile.index') }}" class="dropdown-item flex items-center gap-2" role="menuitem">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-profile"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4z"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                <span>Profile</span>
-                            </a>                        
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
-                                <a href="{{ route('logout') }}" class="dropdown-item danger flex items-center gap-2" role="menuitem">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                                    <span>Keluar</span>
-                                </a>
-                        </div>
+                @auth
+                @php
+                $user = auth()->user();
+                $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
+                @endphp
+                <div class="profile-dropdown">
+                    <button class="profile-button flex flex-row items-center gap-2" id="profileButton" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ $foto }}" alt="Profile picture of {{ $user->nama ?? 'User' }}" class="profile-avatar" />
+                        <span class="profile-name">{{ $user->nama ?? 'User' }}</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;">
+                            <polyline points="6,9 12,15 18,9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="profileDropdown" role="menu">
+                        <a href="{{ route('profile.index') }}" class="dropdown-item flex items-center gap-2" role="menuitem">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-profile">
+                                <path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4z"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Profile</span>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a href="{{ route('logout') }}" class="dropdown-item danger flex items-center gap-2" role="menuitem">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Keluar</span>
+                        </a>
                     </div>
-                @else
-                    <a href="/login" class="btn btn-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                            <polyline points="10,17 15,12 10,7"></polyline>
-                            <line x1="15" y1="12" x2="3" y2="12"></line>
-                        </svg>
-                        Sign In
-                    </a>
-                    <a href="/register" class="btn btn-primary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        Sign Up
-                    </a>
-                @endif
+                </div>
+                @endauth
+                @guest
+                <a href="/login" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10,17 15,12 10,7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    Sign In
+                </a>
+                <a href="/register" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Sign Up
+                </a>
+                @endguest
             </div>
 
             <!-- Mobile Menu Button -->
@@ -693,33 +710,33 @@
             <!-- Mobile Auth Section -->
             <div class="mobile-auth-section">
                 @if (!empty($id) && !empty($role) && !empty($status))
-                    @php
-                        $user = \App\Models\User::find($id);
-                        $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
-                    @endphp
-                    <div style="padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                            <img src="{{ $foto }}" alt="Profile picture" class="profile-avatar" style="width: 48px; height: 48px;">
-                            <div>
-                                <div style="font-weight: 600; color: var(--text-primary);">{{ $user->nama ?? 'User' }}</div>
-                                <div style="font-size: 0.875rem; color: var(--text-secondary);">{{ $user->email ?? '' }}</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                            <a href="{{ route('profile.index') }}" class="btn btn-secondary" style="justify-content: center;">Profile</a>
-                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                                @csrf
-                                <button type="submit" class="btn" style="width: 100%; justify-content: center; background-color: var(--error-color); color: white;">
-                                    Logout
-                                </button>
-                            </form>
+                @php
+                $user = \App\Models\User::find($id);
+                $foto = $user && $user->foto ? asset('images/profil/' . $user->foto) : asset('images/profil/default.png');
+                @endphp
+                <div style="padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <img src="{{ $foto }}" alt="Profile picture" class="profile-avatar" style="width: 48px; height: 48px;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary);">{{ $user->nama ?? 'User' }}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">{{ $user->email ?? '' }}</div>
                         </div>
                     </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="{{ route('profile.index') }}" class="btn btn-secondary" style="justify-content: center;">Profile</a>
+                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="btn" style="width: 100%; justify-content: center; background-color: var(--error-color); color: white;">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 @else
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
-                        <a href="/login" class="btn btn-secondary" style="justify-content: center;">Sign In</a>
-                        <a href="/register" class="btn btn-primary" style="justify-content: center;">Sign Up</a>
-                    </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                    <a href="/login" class="btn btn-secondary" style="justify-content: center;">Sign In</a>
+                    <a href="/register" class="btn btn-primary" style="justify-content: center;">Sign Up</a>
+                </div>
                 @endif
             </div>
         </div>
@@ -749,22 +766,22 @@
                     <div class="social-links">
                         <a href="#" class="social-link" aria-label="Facebook">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="Instagram">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297z"/>
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297z" />
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="Twitter">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="LinkedIn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                             </svg>
                         </a>
                     </div>
@@ -1074,47 +1091,50 @@
     @yield('additional_scripts')
     @push('script')
     <script>
-    (function() {
-        const btn = document.getElementById('profileButton');
-        const dropdown = document.getElementById('profileDropdown');
-        let hideTimeout;
-        if (!btn || !dropdown) return;
-        function showDropdown() {
-            clearTimeout(hideTimeout);
-            dropdown.classList.add('active', 'fade-in');
-            btn.setAttribute('aria-expanded', 'true');
-        }
-        function hideDropdown() {
-            hideTimeout = setTimeout(() => {
-                dropdown.classList.remove('active', 'fade-in');
-                btn.setAttribute('aria-expanded', 'false');
-            }, 180); // delay supaya tidak langsung hilang
-        }
-        btn.addEventListener('mouseenter', showDropdown);
-        btn.addEventListener('focus', showDropdown);
-        btn.addEventListener('mouseleave', hideDropdown);
-        btn.addEventListener('blur', hideDropdown);
-        dropdown.addEventListener('mouseenter', showDropdown);
-        dropdown.addEventListener('mouseleave', hideDropdown);
-        // Untuk klik di luar dropdown
-        document.addEventListener('mousedown', function(e) {
-            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('active', 'fade-in');
-                btn.setAttribute('aria-expanded', 'false');
+        (function() {
+            const btn = document.getElementById('profileButton');
+            const dropdown = document.getElementById('profileDropdown');
+            let hideTimeout;
+            if (!btn || !dropdown) return;
+
+            function showDropdown() {
+                clearTimeout(hideTimeout);
+                dropdown.classList.add('active', 'fade-in');
+                btn.setAttribute('aria-expanded', 'true');
             }
-        });
-        // Untuk mobile: toggle dengan klik
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (dropdown.classList.contains('active')) {
-                dropdown.classList.remove('active', 'fade-in');
-                btn.setAttribute('aria-expanded', 'false');
-            } else {
-                showDropdown();
+
+            function hideDropdown() {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('active', 'fade-in');
+                    btn.setAttribute('aria-expanded', 'false');
+                }, 180); // delay supaya tidak langsung hilang
             }
-        });
-    })();
+            btn.addEventListener('mouseenter', showDropdown);
+            btn.addEventListener('focus', showDropdown);
+            btn.addEventListener('mouseleave', hideDropdown);
+            btn.addEventListener('blur', hideDropdown);
+            dropdown.addEventListener('mouseenter', showDropdown);
+            dropdown.addEventListener('mouseleave', hideDropdown);
+            // Untuk klik di luar dropdown
+            document.addEventListener('mousedown', function(e) {
+                if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active', 'fade-in');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+            // Untuk mobile: toggle dengan klik
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active', 'fade-in');
+                    btn.setAttribute('aria-expanded', 'false');
+                } else {
+                    showDropdown();
+                }
+            });
+        })();
     </script>
     @endpush
 </body>
+
 </html>

@@ -45,6 +45,7 @@ class RegisterController extends Controller
             if (!ProfilAlumni::where('user_id', $user->id)->exists()) {
                 ProfilAlumni::create([
                     'user_id' => $user->id,
+                    'nama_lengkap' => $request->nama,
                 ]);
             }
 
