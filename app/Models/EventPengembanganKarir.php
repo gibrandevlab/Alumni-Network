@@ -13,12 +13,13 @@ class EventPengembanganKarir extends Model
     protected $table = 'event_pengembangan_karir';
 
     protected $fillable = [
+        'status',
+        'tipe_event',
         'judul_event',
         'deskripsi_event',
         'tanggal_mulai',
         'tanggal_akhir_pendaftaran',
         'dilaksanakan_oleh',
-        'tipe_event',
         'foto',
         'link',
         'harga_daftar',
@@ -36,6 +37,32 @@ class EventPengembanganKarir extends Model
     protected $attributes = [
         'tipe_event' => 'event',
     ];
+
+    public static function rules($tipe = 'event') {
+        $base = [
+            'judul_event' => 'required|string|max:255',
+            'dilaksanakan_oleh' => 'required|string|max:100',
+            'foto' => 'nullable|image|max:2048',
+            'link' => 'nullable|string',
+            'status' => 'required|in:aktif,nonaktif',
+        ];
+        if ($tipe === 'event') {
+            $base = array_merge($base, [
+                'deskripsi_event' => 'required|string',
+                'tanggal_mulai' => 'required|date',
+                'tanggal_akhir_pendaftaran' => 'required|date|after_or_equal:tanggal_mulai',
+                'harga_daftar' => 'required|integer',
+                'maksimal_peserta' => 'required|integer',
+            ]);
+        } else {
+            $base['deskripsi_event'] = 'nullable|string';
+            $base['tanggal_mulai'] = 'nullable|date';
+            $base['tanggal_akhir_pendaftaran'] = 'nullable|date';
+            $base['harga_daftar'] = 'nullable|integer';
+            $base['maksimal_peserta'] = 'nullable|integer';
+        }
+        return $base;
+    }
 
     /**
      * Scope untuk filter tipe event "loker"
@@ -57,6 +84,10 @@ class EventPengembanganKarir extends Model
     public function scopeEvent($query)
     {
         return $query->where('tipe_event', 'event');
+    }
+
+    public function pendaftarans() {
+        return $this->hasMany(PendaftaranEvent::class, 'event_id');
     }
 }
 

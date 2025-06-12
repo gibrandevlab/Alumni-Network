@@ -56,7 +56,7 @@
                     </ul>
                 </li>
                     <li>
-                        <a href="{{ route('events.index') }}"
+                        <a href="{{ route('dashboard.workshop.index') }}"
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-300 pr-6">
                             <span class="inline-flex justify-center items-center ml-4">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -65,7 +65,7 @@
                                         d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                                 </svg>
                             </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Manage Events</span>
+                            <span class="ml-2 text-sm tracking-wide truncate">Manage Workshop</span>
                         </a>
                     </li>
                     <li>

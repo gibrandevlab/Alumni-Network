@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -15,35 +16,19 @@ use App\Http\Controllers\Dashboard\EventController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\EventUserController;
 use App\Http\Controllers\KuesionerController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dashboard\WorkshopAdminController;
 
-// 1. HomepageController
+// ===================== HOMEPAGE =====================
 Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
 
-// 2. Routes Menggunakan Closure (Tanpa Controller)
+// ===================== STATIC PAGES =====================
 Route::get('/dashboard/partisipasi-alumni', fn() => view('pages.dashboard.table data.read_partisipasiAlumni'))->name('dashboard.partisipasi-alumni');
 Route::get('/panduan', fn() => view('pages.panduan'))->name('panduan.index');
 
-// 3. Hapus route lama kuesioner
-// Route::get('/pengisian-tracer-study', fn() => view('pages.Kuesioner.index_quest'))->name('kuesioner.index');
-// Route::get('/pengisian-tracer-study/Tracer-Study-1', fn() => view('pages.Kuesioner.Tracer-study-1'))->name('kuesioner.tracer-study-1');
-// Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1', [FormQ1Controllers::class, 'index'])->name('kuesioner.tracer-study-1.index');
-// Route::get('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'index_Public'])->name('kuesioner.tracer-study-1.index_public');
-// Route::post('/pengisian-tracer-study/Tracer-Study-1/Q1_2015-2020', [FormQ1Controllers::class, 'store_public'])->name('kuesioner.tracer-study-1.store_public');
-// Route::get('/search-by-nim/{nim}', [FormQ1Controllers::class, 'searchByNim'])->name('alumni.searchByNim');
-
-// Route dinamis baru untuk sistem kuesioner
-// Route::prefix('pengisian-tracer-study')->group(function () {
-//     Route::get('/', [KuesionerController::class, 'index'])->name('kuesioner.index');
-//     Route::get('/{event_id}/form', [KuesionerController::class, 'showForm'])->name('kuesioner.form');
-//     Route::post('/{event_id}/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
-// });
-
-// 4. Dashboard Controllers
-
-Route::middleware(['auth'])->group(function () {
-    // AlumniSettingController Routes
-    Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
+// ===================== DASHBOARD (AUTH) =====================
+Route::prefix('dashboard')->middleware(['auth'])->group(function () {
+    // Member - Alumni
+    Route::prefix('member')->name('dashboard.member.')->group(function () {
         Route::resource('alumni', AlumniSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
             ->names([
@@ -53,12 +38,10 @@ Route::middleware(['auth'])->group(function () {
                 'update' => 'alumni.update',
                 'destroy' => 'alumni.destroy',
             ]);
-
         Route::get('alumni-export-all', [AlumniSettingController::class, 'exportAll'])->name('alumni.exportAll');
     });
-
-    // AdminSettingController Routes
-    Route::prefix('dashboard/member')->name('dashboard.member.')->group(function () {
+    // Member - Admin
+    Route::prefix('member')->name('dashboard.member.')->group(function () {
         Route::resource('admin', AdminSettingController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy'])
             ->names([
@@ -68,27 +51,34 @@ Route::middleware(['auth'])->group(function () {
                 'update' => 'admin.update',
                 'destroy' => 'admin.destroy',
             ]);
-
         Route::get('admin-export-all', [AdminSettingController::class, 'exportAll'])->name('admin.exportAll');
     });
-
-    // DashboardController Routes
+    // Dashboard utama
     Route::controller(DashboardController::class)->group(function () {
-        Route::get('/dashboard', 'dashboard')->name('dashboard.dashboard');
+        Route::get('/', 'dashboard')->name('dashboard.dashboard');
     });
-
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
-
-    // Event User Routes
-    Route::get('/event-user', [EventUserController::class, 'index'])->name('event.user.index');
-    Route::get('/event-user/order/{eventId}', [EventUserController::class, 'order'])->name('event.user.order');
-    Route::post('/event-user/daftar/{eventId}', [EventUserController::class, 'daftar'])->name('event.user.daftar');
-    Route::get('/event-user/daftar/{eventId}', function ($eventId) {
-        return redirect()->route('event.user.order', $eventId);
+  // Kuesioner (DASHBOARD BARU)
+    Route::prefix('kuesioner')->name('dashboard.kuesioner.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'addPertanyaan'])->name('pertanyaan.add');
+        Route::delete('/{id}/pertanyaan/{pertanyaan_id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'deletePertanyaan'])->name('pertanyaan.delete');
+    });
+    // Workshop/Event Pengembangan Diri (Admin)
+    Route::prefix('workshop')->name('dashboard.workshop.')->group(function () {
+        Route::get('/', [WorkshopAdminController::class, 'index'])->name('index');
+        Route::post('/', [WorkshopAdminController::class, 'store'])->name('store');
+        Route::put('/{id}', [WorkshopAdminController::class, 'update'])->name('update');
+        Route::delete('/{id}', [WorkshopAdminController::class, 'destroy'])->name('destroy');
     });
 });
 
-// EventController
+// ===================== EVENTS =====================
 Route::controller(EventController::class)->group(function () {
     Route::get('/events', 'index')->name('events.index');
     Route::get('/events/create', 'create')->name('events.create');
@@ -99,8 +89,8 @@ Route::controller(EventController::class)->group(function () {
     Route::delete('/events/{id}', 'destroy')->name('events.destroy');
 });
 
-// 5. Auth Controllers
-// a. AuthController
+// ===================== AUTH =====================
+// Login
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'login');
@@ -108,8 +98,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('login/google', 'redirectToGoogle')->name('login.google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
-
-// b. RegisterController
+// Register
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register.show');
     Route::post('/register', 'register')->name('register');
@@ -117,6 +106,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
 });
 
+// ===================== GROUP CHAT =====================
 Route::controller(GroupChatController::class)->group(function () {
     Route::get('/group-chat', 'index')->name('group-chat.index');
     Route::post('/group-chat/store', 'store')->name('group-chat.store');
@@ -124,34 +114,17 @@ Route::controller(GroupChatController::class)->group(function () {
     Route::get('/users/search', 'searchUsers')->name('users.search');
 });
 
-// 7. ProfileController
+// ===================== PROFILE =====================
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile.index');
     Route::post('/profile/store', 'store')->name('profile.store');
 });
 
-// Notification Webhook (live update)
+// ===================== MIDTRANS =====================
 Route::post('/midtrans/notification', [MidtransNotificationController::class, 'handle']);
-
-// Redirect setelah pembayaran
 Route::get('/midtrans/finish',   [MidtransNotificationController::class, 'finish'])->name('midtrans.finish');
 Route::get('/midtrans/unfinish', [MidtransNotificationController::class, 'unfinish'])->name('midtrans.unfinish');
 Route::get('/midtrans/error',    [MidtransNotificationController::class, 'error'])->name('midtrans.error');
-
-// ===================== KUESIONER (DASHBOARD BARU) =====================
-Route::middleware(['auth'])
-    ->prefix('dashboard/kuesioner')
-    ->name('dashboard.kuesioner.')
-    ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'destroy'])->name('destroy');
-        Route::post('/{id}/pertanyaan', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'addPertanyaan'])->name('pertanyaan.add');
-        Route::delete('/{id}/pertanyaan/{pertanyaan_id}', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'deletePertanyaan'])->name('pertanyaan.delete');
-    });
 
 // ===================== KUESIONER (PUBLIC) =====================
 Route::get('/pengisian-tracer-study', [\App\Http\Controllers\KuesionerPublicController::class, 'index'])->name('kuesioner.list');

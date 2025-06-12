@@ -40,4 +40,13 @@ class PendaftaranEvent extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Relasi ke model PembayaranEvent.
+     * Satu pendaftaran_event memiliki satu pembayaran.
+     */
+    public function pembayaran()
+    {
+        return $this->hasOne(PembayaranEvent::class, 'pendaftaran_event_id');
+    }
 }
