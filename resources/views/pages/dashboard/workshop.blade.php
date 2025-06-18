@@ -160,7 +160,7 @@
                                     </svg>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" onclick="closeForm()" class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-600 transition-all duration-200 flex items-center justify-center space-x-2">
+                                <button type="button" onclick="closeForm()" class="flex-1 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-center px-6 py-3 rounded-xl font-semibold flex items-center justify-center space-x-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
