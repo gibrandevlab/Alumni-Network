@@ -6,12 +6,13 @@
 @php $editPertanyaanId = request('edit_pertanyaan'); @endphp
 <div class="min-h-screen flex flex-row bg-gradient-to-br from-blue-50 to-blue-100 text-gray-800">
     @include('layouts.Dashboard.sidebarkiri', [], ['class' => 'w-64 flex-shrink-0'])
-    <div class="flex-1 flex flex-col items-center justify-center p-8 ml-0 md:ml-64 transition-all duration-300">
-        <div class="w-full max-w-2xl">
+    <div class="flex-1 p-8 ml-0 md:ml-64 transition-all duration-300">
+        <div class="w-full">
             <div class="mb-8 animate-fade-in">
+                <a href="{{ route('dashboard.kuesioner.index') }}" class="text-blue-600 hover:underline"> &larr; Kembali</a>
                 <h1 class="text-4xl font-bold text-blue-700 mb-2">{{ isset($kuesioner) ? 'Edit Kuesioner' : 'Tambah Kuesioner' }}</h1>
             </div>
-            <form method="POST" action="{{ isset($kuesioner) ? route('dashboard.kuesioner.update', $kuesioner->id) : route('dashboard.kuesioner.store') }}" class="bg-white rounded-2xl shadow-xl p-8 mb-10 animate-fade-in-up border border-blue-100">
+            <form method="POST" action="{{ isset($kuesioner) ? route('dashboard.kuesioner.update', $kuesioner->id) : route('dashboard.kuesioner.store') }}" class="bg-white rounded-2xl shadow-xl p-8 mb-10 animate-fade-in-up border border-blue-100 max-w-2xl mx-auto">
                 @csrf
                 @if(isset($kuesioner)) @method('PUT') @endif
                 <div class="mb-5">
@@ -40,14 +41,14 @@
                     </select>
                 </div>
                 <div class="flex gap-4 mt-8">
-                    <a href="{{ route('dashboard.kuesioner.index') }}" class="flex-1 px-4 py-3 border border-blue-200 text-blue-700 rounded-xl hover:bg-blue-50 text-center font-semibold transition">Batal</a>
                     <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-3 rounded-xl shadow transition">Simpan</button>
+                    <a href="{{ route('dashboard.kuesioner.index') }}" class="flex-1 px-4 py-3 border border-blue-200 text-blue-700 rounded-xl hover:bg-blue-50 text-center font-semibold transition">Batal</a>
                 </div>
             </form>
             @if(isset($kuesioner))
             <div id="pertanyaan" class="mt-12 animate-fade-in-up">
                 <h2 class="text-2xl font-bold text-blue-700 mb-6">Kelola Pertanyaan</h2>
-                <form method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.add', $kuesioner->id) }}" class="bg-blue-50 rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-end border border-blue-100">
+                <form method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.add', $kuesioner->id) }}" class="bg-blue-50 rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-end border border-blue-100 max-w-5xl mx-auto">
                     @csrf
                     <div class="flex-1">
                         <label class="block text-xs font-semibold text-blue-700 mb-1">Pertanyaan</label>
@@ -71,7 +72,7 @@
                     </div>
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">Tambah</button>
                 </form>
-                <div class="overflow-x-auto bg-white rounded-xl shadow border border-blue-100">
+                <div class="overflow-x-auto bg-white rounded-2xl shadow border border-blue-100 max-w-5xl mx-auto">
                     <table class="min-w-full divide-y divide-blue-100">
                         <thead class="bg-blue-50">
                             <tr>
@@ -110,7 +111,7 @@
             @if($editPertanyaanId)
             @php $pertanyaanEdit = $kuesioner->pertanyaan->where('id', $editPertanyaanId)->first(); @endphp
             @if($pertanyaanEdit)
-            <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-100 animate-fade-in-up">
+            <div class="mt-8 bg-white rounded-xl p-6 border border-blue-100 animate-fade-in-up max-w-5xl mx-auto">
                 <h3 class="font-semibold mb-3 text-blue-800 text-lg">Edit Pertanyaan</h3>
                 <form method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.add', $kuesioner->id) }}">
                     @csrf

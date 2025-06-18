@@ -17,6 +17,7 @@ use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\EventUserController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\Dashboard\WorkshopAdminController;
+use App\Http\Controllers\AlumniWorkshopController;
 
 // ===================== HOMEPAGE =====================
 Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
@@ -58,7 +59,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/', 'dashboard')->name('dashboard.dashboard');
     });
     Route::get('/alumni-career-status', [DashboardController::class, 'getAlumniCareerStatus'])->name('dashboard.alumni-career-status');
-  // Kuesioner (DASHBOARD BARU)
+    // Kuesioner (DASHBOARD BARU)
     Route::prefix('kuesioner')->name('dashboard.kuesioner.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'index'])->name('index');
         Route::get('/create', [\App\Http\Controllers\Dashboard\KuesionerController::class, 'create'])->name('create');
@@ -130,3 +131,7 @@ Route::get('/midtrans/error',    [MidtransNotificationController::class, 'error'
 Route::get('/pengisian-tracer-study', [\App\Http\Controllers\KuesionerPublicController::class, 'index'])->name('kuesioner.list');
 Route::get('/pengisian-tracer-study/{id}/form', [\App\Http\Controllers\KuesionerPublicController::class, 'form'])->name('kuesioner.form');
 Route::post('/pengisian-tracer-study/{id}/submit', [\App\Http\Controllers\KuesionerPublicController::class, 'submit'])->name('kuesioner.submit');
+
+// ===================== EVENT WORKSHOP (ALUMNI) =====================
+Route::get('/event-user', [AlumniWorkshopController::class, 'index'])->name('alumni.workshop.index');
+Route::get('/event-user/{id}', [AlumniWorkshopController::class, 'show'])->name('alumni.workshop.show');

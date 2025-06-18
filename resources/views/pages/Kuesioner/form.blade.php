@@ -6,7 +6,7 @@ $pertanyaan = $kuesioner->pertanyaan->sortBy('urutan')->values();
 $total = $pertanyaan->count();
 @endphp
 <div class="max-w-2xl mx-auto px-2 sm:px-4 py-8">
-    <a href="{{ url('/pengisian-tracer-study') }}" class="inline-block mb-4 text-[#2563EB] hover:text-[#1D4ED8] font-semibold text-base sm:text-lg transition">
+    <a href="{{ url('/pengisian-tracer-study') }}" class="inline-block mb-4 text-[#2563EB] hover:text-[#1D4ED8] font-semibold text-base sm:text-lg transition underline">
         &larr; Kembali
     </a>
     <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 text-[#1E40AF]">{{ $kuesioner->judul }}</h1>
