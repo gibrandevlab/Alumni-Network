@@ -17,6 +17,8 @@ class PendaftaranEvent extends Model
         'event_id',
         'user_id',
         'status',
+        'kode_pembayaran',
+        'metode_pembayaran',
     ];
 
     // Status pendaftaran event

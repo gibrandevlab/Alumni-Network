@@ -79,16 +79,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     });
 });
 
-// ===================== EVENTS =====================
-Route::controller(EventController::class)->group(function () {
-    Route::get('/events', 'index')->name('events.index');
-    Route::get('/events/create', 'create')->name('events.create');
-    Route::post('/events', 'store')->name('events.store');
-    Route::get('/events/{id}', 'show')->name('events.show');
-    Route::get('/events/{id}/edit', 'edit')->name('events.edit');
-    Route::put('/events/{id}', 'update')->name('events.update');
-    Route::delete('/events/{id}', 'destroy')->name('events.destroy');
-});
+
 
 // ===================== AUTH =====================
 // Login
@@ -135,3 +126,6 @@ Route::post('/pengisian-tracer-study/{id}/submit', [\App\Http\Controllers\Kuesio
 // ===================== EVENT WORKSHOP (ALUMNI) =====================
 Route::get('/event-user', [AlumniWorkshopController::class, 'index'])->name('alumni.workshop.index');
 Route::get('/event-user/{id}', [AlumniWorkshopController::class, 'show'])->name('alumni.workshop.show');
+Route::post('/event-user/{id}/daftar-ajax', [AlumniWorkshopController::class, 'daftarAjax'])->name('alumni.workshop.daftar.ajax');
+Route::get('/simulator-pembayaran', [AlumniWorkshopController::class, 'simulatorPembayaranForm'])->name('alumni.simulator.form');
+Route::post('/simulator-pembayaran', [AlumniWorkshopController::class, 'simulatorPembayaranProses'])->name('alumni.simulator.proses');
