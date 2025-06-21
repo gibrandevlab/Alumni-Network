@@ -10,7 +10,7 @@
             <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-4">{{ $workshop->judul_event }}</h1>
             <img src="{{ $workshop->foto ? asset('storage/'.$workshop->foto) : 'https://via.placeholder.com/600x300' }}" class="w-full h-64 object-cover rounded-xl mb-6" alt="Event Image">
             <div class="mb-6 border border-blue-100 rounded-xl p-6 bg-blue-50/40">
-                <h2 class="text-lg font-semibold text-blue-700 mb-2">Overview</h2>
+                <h2 class="text-lg font-semibold text-blue-700 mb-2">Deskripsi Event</h2>
                 <div class="text-gray-700 leading-relaxed">{!! nl2br(e($workshop->deskripsi_event)) !!}</div>
             </div>
         </div>
