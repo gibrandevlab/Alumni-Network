@@ -20,47 +20,47 @@
                 <div class="mb-2">
                     <span class="text-2xl font-bold text-blue-700 block">
                         @if($workshop->harga_daftar > 0)
-                            Rp{{ number_format($workshop->harga_daftar,0,',','.') }}
+                        Rp{{ number_format($workshop->harga_daftar,0,',','.') }}
                         @else
-                            Gratis
+                        Gratis
                         @endif
                     </span>
                     @if($workshop->harga_diskon && $workshop->harga_diskon > 0)
-                        <span class="text-gray-400 line-through text-lg">Rp{{ number_format($workshop->harga_diskon,0,',','.') }}</span>
+                    <span class="text-gray-400 line-through text-lg">Rp{{ number_format($workshop->harga_diskon,0,',','.') }}</span>
                     @endif
                 </div>
                 <div class="mb-4">
                     @php
-                        use Illuminate\Support\Facades\Auth;
-                        $user = Auth::user();
-                        $pendaftaran = null;
-                        $statusPembayaran = null;
-                        if ($user && $user->role === 'alumni') {
-                            $pendaftaran = \App\Models\PendaftaranEvent::where('event_id', $workshop->id)->where('user_id', $user->id)->first();
-                            if ($pendaftaran && $pendaftaran->pembayaran) {
-                                $statusPembayaran = $pendaftaran->pembayaran->status_pembayaran;
-                            }
-                        }
+                    use Illuminate\Support\Facades\Auth;
+                    $user = Auth::user();
+                    $pendaftaran = null;
+                    $statusPembayaran = null;
+                    if ($user && $user->role === 'alumni') {
+                    $pendaftaran = \App\Models\PendaftaranEvent::where('event_id', $workshop->id)->where('user_id', $user->id)->first();
+                    if ($pendaftaran && $pendaftaran->pembayaran) {
+                    $statusPembayaran = $pendaftaran->pembayaran->status_pembayaran;
+                    }
+                    }
                     @endphp
                     @if(!$pendaftaran && $user && $user->role === 'alumni')
-                        <button id="btnDaftarEvent" class="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition mb-2">Daftar Event</button>
+                    <button id="btnDaftarEvent" class="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition mb-2">Daftar Event</button>
                     @elseif($pendaftaran && $pendaftaran->status === 'menunggu' && $statusPembayaran !== 'settlement')
-                        <button id="btnLihatPembayaran" class="w-full px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-semibold transition mb-2">Lihat Pembayaran</button>
-                        <div id="infoPembayaran" class="mt-4 hidden">
-                            <div class="font-semibold mb-1">Kode Pembayaran:</div>
-                            <div class="text-lg font-mono text-green-700 mb-2">{{ $pendaftaran->kode_pembayaran }}</div>
-                            <div class="font-semibold mb-1">Metode Pembayaran:</div>
-                            <div class="text-lg text-gray-700 mb-2">{{ strtoupper($pendaftaran->metode_pembayaran) }}</div>
-                            <div class="font-semibold mb-1">Nominal:</div>
-                            <div class="text-lg text-blue-700 mb-2">Rp{{ number_format($workshop->harga_daftar,0,',','.') }}</div>
-                        </div>
-                        <script>
-                            document.getElementById('btnLihatPembayaran')?.addEventListener('click', function() {
-                                document.getElementById('infoPembayaran').classList.toggle('hidden');
-                            });
-                        </script>
+                    <button id="btnLihatPembayaran" class="w-full px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-semibold transition mb-2">Lihat Pembayaran</button>
+                    <div id="infoPembayaran" class="mt-4 hidden">
+                        <div class="font-semibold mb-1">Kode Pembayaran:</div>
+                        <div class="text-lg font-mono text-green-700 mb-2">{{ $pendaftaran->kode_pembayaran }}</div>
+                        <div class="font-semibold mb-1">Metode Pembayaran:</div>
+                        <div class="text-lg text-gray-700 mb-2">{{ strtoupper($pendaftaran->metode_pembayaran) }}</div>
+                        <div class="font-semibold mb-1">Nominal:</div>
+                        <div class="text-lg text-blue-700 mb-2">Rp{{ number_format($workshop->harga_daftar,0,',','.') }}</div>
+                    </div>
+                    <script>
+                        document.getElementById('btnLihatPembayaran')?.addEventListener('click', function() {
+                            document.getElementById('infoPembayaran').classList.toggle('hidden');
+                        });
+                    </script>
                     @elseif($pendaftaran && $pendaftaran->status === 'berhasil' && $statusPembayaran === 'settlement')
-                        <span class="inline-block w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold transition cursor-not-allowed opacity-80 text-center mb-2">Sudah Bayar</span>
+                    <span class="inline-block w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold transition cursor-not-allowed opacity-80 text-center mb-2">Sudah Bayar</span>
                     @endif
                 </div>
                 <div class="flex items-center gap-3 mb-4">
@@ -74,7 +74,9 @@
                 </div>
                 <div class="border-t border-blue-100 pt-4">
                     <div class="mb-2 text-gray-700 font-semibold flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                         Tanggal:
                     </div>
                     <div class="ml-7 text-gray-600 mb-2">
@@ -82,19 +84,25 @@
                         s/d {{ $workshop->tanggal_akhir_pendaftaran ? \Carbon\Carbon::parse($workshop->tanggal_akhir_pendaftaran)->format('d M Y') : '-' }}
                     </div>
                     <div class="mb-2 text-gray-700 font-semibold flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17v1a3 3 0 003 3h2a3 3 0 003-3v-1"/></svg>
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17v1a3 3 0 003 3h2a3 3 0 003-3v-1" />
+                        </svg>
                         Waktu:
                     </div>
                     <div class="ml-7 text-gray-600 mb-2">
                         {{ $workshop->waktu_mulai ? \Carbon\Carbon::parse($workshop->waktu_mulai)->format('H:i') : '-' }} - {{ $workshop->waktu_selesai ? \Carbon\Carbon::parse($workshop->waktu_selesai)->format('H:i') : 'Selesai' }}
                     </div>
                     <div class="mb-2 text-gray-700 font-semibold flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243"/></svg>
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
+                        </svg>
                         Lokasi:
                     </div>
                     <div class="ml-7 text-gray-600 mb-2">{{ $workshop->lokasi ?: '-' }}</div>
                     <div class="mb-2 text-gray-700 font-semibold flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 21m6-4l.75 4M9 21h6"/></svg>
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 21m6-4l.75 4M9 21h6" />
+                        </svg>
                         Tools:
                     </div>
                     <div class="ml-7 text-gray-600 mb-2">{{ $workshop->tools ?: '-' }}</div>
@@ -125,7 +133,9 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': this._token.value
             },
-            body: JSON.stringify({ metode_pembayaran: metode })
+            body: JSON.stringify({
+                metode_pembayaran: metode
+            })
         });
         const data = await res.json();
         if (data.success) {
