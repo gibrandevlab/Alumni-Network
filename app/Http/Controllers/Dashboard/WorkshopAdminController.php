@@ -22,36 +22,27 @@ class WorkshopAdminController extends Controller
     {
         try {
             $tipe = $request->input('tipe_event', 'event');
-            $rules = [
-                'judul_event' => 'required|string|max:255',
-                'dilaksanakan_oleh' => 'required|string|max:100',
-                'foto' => 'nullable|image|max:2048',
-                'link' => 'nullable|string',
-                'status' => 'required|in:aktif,nonaktif',
-            ];
-            if ($tipe === 'event') {
-                $rules = array_merge($rules, [
-                    'deskripsi_event' => 'required|string',
-                    'tanggal_mulai' => 'required|date',
-                    'tanggal_akhir_pendaftaran' => 'required|date|after_or_equal:tanggal_mulai',
-                    'harga_daftar' => 'nullable|integer',
-                    'maksimal_peserta' => 'nullable|integer',
-                ]);
-            } else {
-                $rules['deskripsi_event'] = 'nullable|string';
-                $rules['tanggal_mulai'] = 'nullable|date';
-                $rules['tanggal_akhir_pendaftaran'] = 'nullable|date';
-                $rules['harga_daftar'] = 'nullable|integer';
-                $rules['maksimal_peserta'] = 'nullable|integer';
-            }
+            $rules = EventPengembanganKarir::rules($tipe);
             $validated = $request->validate($rules);
             $data = $validated;
             $data['tipe_event'] = $tipe;
+            // Pastikan harga_diskon tetap null jika tidak diisi
+            if (!array_key_exists('harga_diskon', $data)) {
+                $data['harga_diskon'] = null;
+            }
+            // Gabungkan tanggal_mulai + waktu_mulai dan tanggal_mulai + waktu_selesai jika ada
+            if (!empty($data['waktu_mulai']) && !empty($data['tanggal_mulai'])) {
+                $data['waktu_mulai'] = $data['tanggal_mulai'] . ' ' . $data['waktu_mulai'] . ':00';
+            }
+            if (!empty($data['waktu_selesai']) && !empty($data['tanggal_mulai'])) {
+                $data['waktu_selesai'] = $data['tanggal_mulai'] . ' ' . $data['waktu_selesai'] . ':00';
+            }
+            // Handle upload foto ke storage/app/public/event-foto
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('images/events'), $fileName);
-                $data['foto'] = 'images/events/' . $fileName;
+                $path = $file->storeAs('public/event-foto', $fileName);
+                $data['foto'] = str_replace('public/', '', $path); // simpan tanpa public/
             }
             EventPengembanganKarir::create($data);
             return redirect()->back()->with('success', 'Event berhasil disimpan.');
@@ -65,24 +56,26 @@ class WorkshopAdminController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $validated = $request->validate([
-                'judul_event' => 'required|string|max:255',
-                'deskripsi_event' => 'required|string',
-                'tanggal_mulai' => 'required|date',
-                'tanggal_akhir_pendaftaran' => 'required|date|after_or_equal:tanggal_mulai',
-                'dilaksanakan_oleh' => 'required|string|max:100',
-                'foto' => 'nullable|image|max:2048',
-                'link' => 'nullable|string',
-                'harga_daftar' => 'nullable|integer',
-                'maksimal_peserta' => 'nullable|integer',
-            ]);
             $workshop = EventPengembanganKarir::findOrFail($id);
+            $tipe = $request->input('tipe_event', $workshop->tipe_event ?? 'event');
+            $rules = EventPengembanganKarir::rules($tipe);
+            $validated = $request->validate($rules);
             $data = $validated;
+            $data['tipe_event'] = $tipe;
+            if (!array_key_exists('harga_diskon', $data)) {
+                $data['harga_diskon'] = null;
+            }
+            if (!empty($data['waktu_mulai']) && !empty($data['tanggal_mulai'])) {
+                $data['waktu_mulai'] = $data['tanggal_mulai'] . ' ' . $data['waktu_mulai'] . ':00';
+            }
+            if (!empty($data['waktu_selesai']) && !empty($data['tanggal_mulai'])) {
+                $data['waktu_selesai'] = $data['tanggal_mulai'] . ' ' . $data['waktu_selesai'] . ':00';
+            }
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('images/events'), $fileName);
-                $data['foto'] = 'images/events/' . $fileName;
+                $path = $file->storeAs('public/event-foto', $fileName);
+                $data['foto'] = str_replace('public/', '', $path);
             }
             $workshop->update($data);
             return redirect()->back()->with('success', 'Workshop berhasil diupdate.');

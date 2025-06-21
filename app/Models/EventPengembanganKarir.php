@@ -19,16 +19,23 @@ class EventPengembanganKarir extends Model
         'deskripsi_event',
         'tanggal_mulai',
         'tanggal_akhir_pendaftaran',
+        "waktu_mulai",
+        'waktu_selesai',
+        'lokasi',
+        'tools',
         'dilaksanakan_oleh',
         'foto',
         'link',
         'harga_daftar',
+        'harga_diskon',
         'maksimal_peserta',
     ];
 
     protected $dates = [
         'tanggal_mulai',
         'tanggal_akhir_pendaftaran',
+        'waktu_mulai',
+        'waktu_selesai',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -38,7 +45,8 @@ class EventPengembanganKarir extends Model
         'tipe_event' => 'event',
     ];
 
-    public static function rules($tipe = 'event') {
+    public static function rules($tipe = 'event')
+    {
         $base = [
             'judul_event' => 'required|string|max:255',
             'dilaksanakan_oleh' => 'required|string|max:100',
@@ -49,9 +57,14 @@ class EventPengembanganKarir extends Model
         if ($tipe === 'event') {
             $base = array_merge($base, [
                 'deskripsi_event' => 'required|string',
+                'lokasi' => 'required|string|max:255',
+                'tools' => 'nullable|string|max:255',
+                'waktu_mulai' => 'required|date_format:H:i',
+                'waktu_selesai' => 'nullable|date_format:H:i',
                 'tanggal_mulai' => 'required|date',
                 'tanggal_akhir_pendaftaran' => 'required|date|after_or_equal:tanggal_mulai',
                 'harga_daftar' => 'required|integer',
+                'harga_diskon' => 'nullable|integer',
                 'maksimal_peserta' => 'required|integer',
             ]);
         } else {
@@ -86,8 +99,8 @@ class EventPengembanganKarir extends Model
         return $query->where('tipe_event', 'event');
     }
 
-    public function pendaftarans() {
+    public function pendaftarans()
+    {
         return $this->hasMany(PendaftaranEvent::class, 'event_id');
     }
 }
-
