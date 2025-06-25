@@ -44,4 +44,20 @@ class ProfilAlumni extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Relasi ke tabel relasi_alumni sebagai alumni utama
+     */
+    public function relasiUtama()
+    {
+        return $this->hasMany(RelasiAlumni::class, 'alumni_utama_id', 'user_id');
+    }
+
+    /**
+     * Relasi ke tabel relasi_alumni sebagai alumni teman
+     */
+    public function relasiTeman()
+    {
+        return $this->hasMany(RelasiAlumni::class, 'alumni_teman_id', 'user_id');
+    }
 }
