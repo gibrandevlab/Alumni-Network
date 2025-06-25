@@ -122,7 +122,7 @@
                                 <form action="{{ route('dashboard.kuesioner.destroy', $kuesioner->id) }}" method="POST" onsubmit="return confirm('Yakin hapus kuesioner ini?')">
                                     @csrf @method('DELETE')
                                     <button class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-semibold">Hapus</button>
-                                </form>                                
+                                </form>
                             </td>
                         </tr>
                         @empty

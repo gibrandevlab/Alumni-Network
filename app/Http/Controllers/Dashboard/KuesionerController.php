@@ -85,14 +85,19 @@ class KuesionerController extends Controller
             'pertanyaan' => 'required|string',
             'tipe' => 'required|in:likert,esai,pilihan',
             'skala' => 'nullable|string',
-            'urutan' => 'required|integer|min:1',
         ]);
         $validated['kuesioner_id'] = $kuesioner_id;
         if ($request->filled('edit_id')) {
             $pertanyaan = PertanyaanKuesioner::where('kuesioner_id', $kuesioner_id)->findOrFail($request->edit_id);
-            $pertanyaan->update($validated);
+            // Untuk edit, tetap gunakan urutan dari request
+            $pertanyaan->update(array_merge($validated, [
+                'urutan' => $request->input('urutan', $pertanyaan->urutan)
+            ]));
             return redirect()->route('dashboard.kuesioner.edit', $kuesioner_id)->with('success', 'Pertanyaan berhasil diupdate.');
         } else {
+            // Untuk tambah, urutan otomatis
+            $lastUrutan = PertanyaanKuesioner::where('kuesioner_id', $kuesioner_id)->max('urutan');
+            $validated['urutan'] = $lastUrutan ? $lastUrutan + 1 : 1;
             PertanyaanKuesioner::create($validated);
             return back()->with('success', 'Pertanyaan berhasil ditambahkan.');
         }
@@ -105,4 +110,4 @@ class KuesionerController extends Controller
         $pertanyaan->delete();
         return back()->with('success', 'Pertanyaan berhasil dihapus.');
     }
-} 
+}

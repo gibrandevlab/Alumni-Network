@@ -7,7 +7,11 @@
     <h1 class="text-3xl font-bold text-blue-700 mb-6">Daftar Event & Workshop</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @forelse($workshops as $workshop)
+        @if($workshop->tipe_event === 'loker' && $workshop->link)
+        <a href="{{ $workshop->link }}" target="_blank" class="block bg-white rounded-xl shadow-lg flex flex-col overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-200">
+        @else
         <a href="{{ route('alumni.workshop.show', $workshop->id) }}" class="block bg-white rounded-xl shadow-lg flex flex-col overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-200">
+        @endif
             <img src="{{ ($workshop->foto && file_exists(public_path('images/events/' . $workshop->foto))) ? asset('images/events/' . $workshop->foto) : 'https://via.placeholder.com/400x200' }}" class="w-full h-48 object-cover" alt="Event Image">
             <div class="p-5 flex-1 flex flex-col">
                 <div class="flex-1">
@@ -20,7 +24,9 @@
                     <span class="text-base font-bold {{ $workshop->harga_daftar > 0 ? 'text-green-600' : 'text-blue-600' }}">
                         {{ $workshop->harga_daftar > 0 ? 'Rp'.number_format($workshop->harga_daftar,0,',','.') : 'Gratis' }}
                     </span>
-                    @if($workshop->link)
+                    @if($workshop->tipe_event === 'loker' && $workshop->link)
+                    <span class="px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-semibold">Lihat Loker</span>
+                    @elseif($workshop->link)
                     <span class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Daftar</span>
                     @endif
                 </div>

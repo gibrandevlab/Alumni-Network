@@ -83,7 +83,7 @@
                             <span class="ml-2 text-sm tracking-wide truncate">Manage Workshop</span>
                         </a>
                     </li>
-                    
+
                     <!-- Manage Kuesioner -->
                     <li>
                         <a href="{{ route('dashboard.kuesioner.index') }}"

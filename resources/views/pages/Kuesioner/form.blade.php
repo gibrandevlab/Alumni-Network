@@ -31,7 +31,7 @@ $total = $pertanyaan->count();
                 <div class="flex gap-3 flex-wrap">
                     @foreach($opsi as $opt)
                     <label class="inline-flex items-center gap-2 text-[#2563EB] text-base">
-                        <input type="radio" name="jawaban[{{ $p->id }}]" value="{{ is_array($opt) ? $opt[0] : trim($opt) }}" required class="accent-[#2563EB] w-5 h-5">
+                        <input type="radio" name="jawaban[{{ $p->id }}]" value="{{ is_array($opt) ? $opt[0] : trim($opt) }}" class="accent-[#2563EB] w-5 h-5">
                         <span>{{ is_array($opt) ? $opt[0] : trim($opt) }}</span>
                     </label>
                     @endforeach
@@ -41,13 +41,13 @@ $total = $pertanyaan->count();
                 <div class="flex gap-3 flex-wrap">
                     @foreach($opsi as $opt)
                     <label class="inline-flex items-center gap-2 text-[#2563EB] text-base">
-                        <input type="radio" name="jawaban[{{ $p->id }}]" value="{{ trim($opt) }}" required class="accent-[#2563EB] w-5 h-5">
+                        <input type="radio" name="jawaban[{{ $p->id }}]" value="{{ trim($opt) }}" class="accent-[#2563EB] w-5 h-5">
                         <span>{{ trim($opt) }}</span>
                     </label>
                     @endforeach
                 </div>
                 @else
-                <textarea name="jawaban[{{ $p->id }}]" rows="2" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB] text-base"></textarea>
+                <textarea name="jawaban[{{ $p->id }}]" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB] text-base"></textarea>
                 @endif
             </div>
         </div>
