@@ -71,16 +71,7 @@
                     </form>
                 </div>
             </div>
-        </div>
-        <form method="GET" class="flex flex-col md:flex-row gap-3 mb-6">
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari kuesioner..." class="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500">
-            <select name="status" class="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500">
-                <option value="">Semua Status</option>
-                <option value="aktif" @if(request('status')=='aktif' ) selected @endif>Aktif</option>
-                <option value="nonaktif" @if(request('status')=='nonaktif' ) selected @endif>Nonaktif</option>
-            </select>
-            <button class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Filter</button>
-        </form>
+        </div>        
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
             <div class="bg-blue-600 text-white p-6">
                 <h2 class="text-2xl font-bold flex items-center space-x-3">

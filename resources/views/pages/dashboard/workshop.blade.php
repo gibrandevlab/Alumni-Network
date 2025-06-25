@@ -232,8 +232,7 @@
                         <tr class="hover:bg-blue-50 transition-colors duration-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <img src="{{ $workshop->foto ? asset('images/events/' . $workshop->foto) : 'https://via.placeholder.com/60x40' }}" alt="Event Image" class="w-16 h-10 object-cover rounded">
-                                <div style="font-size:10px;color:red">{{ $workshop->foto }}</div> <!-- debug -->
+                                <img src="{{ $workshop->foto ? asset('images/events/' . $workshop->foto) : 'https://via.placeholder.com/60x40' }}" alt="Event Image" class="w-16 h-10 object-cover rounded">                                
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-semibold text-gray-900">{{ $workshop->judul_event }}</div>
