@@ -40,9 +40,9 @@ class WorkshopAdminController extends Controller
             // Handle upload foto ke storage/app/public/event-foto
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('public/event-foto', $fileName);
-                $data['foto'] = str_replace('public/', '', $path); // simpan tanpa public/
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('images/events'), $filename);
+                $data['foto'] = $filename;
             }
             EventPengembanganKarir::create($data);
             return redirect()->back()->with('success', 'Event berhasil disimpan.');
@@ -73,9 +73,9 @@ class WorkshopAdminController extends Controller
             }
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('public/event-foto', $fileName);
-                $data['foto'] = str_replace('public/', '', $path);
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('images/events'), $filename);
+                $data['foto'] = $filename;
             }
             $workshop->update($data);
             return redirect()->back()->with('success', 'Workshop berhasil diupdate.');

@@ -216,6 +216,7 @@
                     <thead class="bg-blue-50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">#</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Gambar</th> <!-- Tambah kolom gambar -->
                             <th class="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Judul</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Tanggal Mulai</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Akhir Pendaftaran</th>
@@ -230,6 +231,10 @@
                         @forelse($workshops as $workshop)
                         <tr class="hover:bg-blue-50 transition-colors duration-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="{{ $workshop->foto ? asset('images/events/' . $workshop->foto) : 'https://via.placeholder.com/60x40' }}" alt="Event Image" class="w-16 h-10 object-cover rounded">
+                                <div style="font-size:10px;color:red">{{ $workshop->foto }}</div> <!-- debug -->
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-semibold text-gray-900">{{ $workshop->judul_event }}</div>
                                 <div class="text-sm text-gray-500">{{ Str::limit($workshop->deskripsi_event, 50) }}</div>
