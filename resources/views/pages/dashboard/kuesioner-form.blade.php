@@ -99,19 +99,16 @@
                     <table class="min-w-full divide-y divide-blue-100">
                         <thead class="bg-blue-50">
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-blue-700">Pertanyaan</th>
-                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Tipe</th>
-                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Skala/Opsi</th>
                                 <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Urutan</th>
+                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Tipe</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-blue-700">Pertanyaan</th>
+                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Skala/Opsi</th>
                                 <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-blue-50">
                             @forelse($kuesioner->pertanyaan as $p)
                             <tr>
-                                <td class="px-4 py-2 text-gray-900">{{ $p->pertanyaan }}</td>
-                                <td class="px-4 py-2 text-center">{{ ucfirst($p->tipe) }}</td>
-                                <td class="px-4 py-2 text-center text-xs text-gray-600">{{ $p->skala }}</td>
                                 <td class="px-4 py-2 text-center">{{ $p->urutan }}</td>
                                 <td class="px-4 py-2 text-center">
                                     <div class="flex gap-2 justify-center">
