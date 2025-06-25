@@ -50,9 +50,9 @@
                 <h2 class="text-2xl font-bold text-blue-700 mb-6">Kelola Pertanyaan</h2>
                 <form method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.add', $kuesioner->id) }}" class="bg-blue-50 rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-end border border-blue-100 max-w-5xl mx-auto">
                     @csrf
-                    <div class="flex-1">
-                        <label class="block text-xs font-semibold text-blue-700 mb-1">Pertanyaan</label>
-                        <input type="text" name="pertanyaan" required class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-700 mb-1">Urutan</label>
+                        <input type="number" name="urutan" min="1" required class="w-20 px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-blue-700 mb-1">Tipe</label>
@@ -62,34 +62,36 @@
                             <option value="pilihan">Pilihan Ganda</option>
                         </select>
                     </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-blue-700 mb-1">Pertanyaan</label>
+                        <input type="text" name="pertanyaan" required class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
+                    </div>
+                    
                     <div>
                         <label class="block text-xs font-semibold text-blue-700 mb-1">Skala/Opsi</label>
                         <input type="text" name="skala" placeholder="1-5 / Opsi1,Opsi2" class="px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-700 mb-1">Urutan</label>
-                        <input type="number" name="urutan" min="1" required class="w-20 px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
-                    </div>
+                    
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">Tambah</button>
                 </form>
                 <div class="overflow-x-auto bg-white rounded-2xl shadow border border-blue-100 max-w-5xl mx-auto">
                     <table class="min-w-full divide-y divide-blue-100">
                         <thead class="bg-blue-50">
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-blue-700">Pertanyaan</th>
-                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Tipe</th>
-                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Skala/Opsi</th>
                                 <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Urutan</th>
+                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Tipe</th>                                
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-blue-700">Pertanyaan</th>                                
+                                <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Skala/Opsi</th>                                
                                 <th class="px-4 py-2 text-center text-xs font-semibold text-blue-700">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-blue-50">
                             @forelse($kuesioner->pertanyaan as $p)
                             <tr>
-                                <td class="px-4 py-2 text-gray-900">{{ $p->pertanyaan }}</td>
-                                <td class="px-4 py-2 text-center">{{ ucfirst($p->tipe) }}</td>
-                                <td class="px-4 py-2 text-center text-xs text-gray-600">{{ $p->skala }}</td>
                                 <td class="px-4 py-2 text-center">{{ $p->urutan }}</td>
+                                <td class="px-4 py-2 text-center">{{ ucfirst($p->tipe) }}</td>                                
+                                <td class="px-4 py-2 text-gray-900">{{ $p->pertanyaan }}</td>                                
+                                <td class="px-4 py-2 text-center text-xs text-gray-600">{{ $p->skala }}</td>                                
                                 <td class="px-4 py-2 text-center flex gap-2 justify-center">
                                     <form action="{{ route('dashboard.kuesioner.pertanyaan.delete', [$kuesioner->id, $p->id]) }}" method="POST" onsubmit="return confirm('Hapus pertanyaan ini?')">
                                         @csrf @method('DELETE')
