@@ -112,39 +112,71 @@
     </div>
 </div>
 
-<!-- Modal & Script tetap -->
+<!-- Modal Pembayaran -->
+<div id="modalPembayaran" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-8 w-full max-w-md relative">
+        <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl">&times;</button>
+        <h2 class="text-xl font-bold mb-4">Pilih Metode Pembayaran</h2>
+        <form id="formPembayaran">
+            @csrf
+            <div class="mb-4">
+                <select name="metode_pembayaran" class="w-full border rounded-lg px-3 py-2" required>
+                    <option value="">-- Pilih Metode --</option>
+                    <option value="gopay">Gopay</option>
+                    <option value="bca">BCA Virtual Account</option>
+                    <option value="bri">BRI Virtual Account</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition">Daftar & Dapatkan Kode Pembayaran</button>
+        </form>
+        <div id="hasilPembayaran" class="hidden mt-6">
+            <div class="font-semibold mb-1">Kode Pembayaran:</div>
+            <div id="kodePembayaran" class="text-lg font-mono text-green-700 mb-2"></div>
+            <div class="font-semibold mb-1">Metode Pembayaran:</div>
+            <div id="metodePembayaran" class="text-lg text-gray-700 mb-2"></div>
+            <div class="font-semibold mb-1">Nominal:</div>
+            <div id="nominalPembayaran" class="text-lg text-blue-700 mb-2"></div>
+            <div class="mt-4 text-sm text-gray-500">Gunakan kode pembayaran ini untuk simulasi pembayaran.</div>
+        </div>
+    </div>
+</div>
+
+<!-- Script tetap -->
+@stack('scripts')
 @push('scripts')
 <script>
-    document.getElementById('btnDaftarEvent')?.addEventListener('click', function() {
-        document.getElementById('modalPembayaran').classList.remove('hidden');
-    });
-    document.getElementById('closeModal').addEventListener('click', function() {
-        document.getElementById('modalPembayaran').classList.add('hidden');
-        document.getElementById('hasilPembayaran').classList.add('hidden');
-        document.getElementById('formPembayaran').classList.remove('hidden');
-    });
-    document.getElementById('formPembayaran').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const metode = this.metode_pembayaran.value;
-        if (!metode) return;
-        const res = await fetch(`{{ route('alumni.workshop.daftar.ajax', $workshop->id) }}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': this._token.value
-            },
-            body: JSON.stringify({
-                metode_pembayaran: metode
-            })
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('btnDaftarEvent')?.addEventListener('click', function() {
+            document.getElementById('modalPembayaran').classList.remove('hidden');
         });
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById('kodePembayaran').textContent = data.kode_pembayaran;
-            document.getElementById('nominalPembayaran').textContent = 'Rp' + Number(data.nominal).toLocaleString('id-ID');
-            document.getElementById('metodePembayaran').textContent = data.metode_pembayaran.toUpperCase();
-            document.getElementById('hasilPembayaran').classList.remove('hidden');
-            document.getElementById('formPembayaran').classList.add('hidden');
-        }
+        document.getElementById('closeModal')?.addEventListener('click', function() {
+            document.getElementById('modalPembayaran').classList.add('hidden');
+            document.getElementById('hasilPembayaran').classList.add('hidden');
+            document.getElementById('formPembayaran').classList.remove('hidden');
+        });
+        document.getElementById('formPembayaran')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const metode = this.metode_pembayaran.value;
+            if (!metode) return;
+            const res = await fetch(`{{ route('alumni.workshop.daftar.ajax', $workshop->id) }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this._token.value
+                },
+                body: JSON.stringify({
+                    metode_pembayaran: metode
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('kodePembayaran').textContent = data.kode_pembayaran;
+                document.getElementById('nominalPembayaran').textContent = 'Rp' + Number(data.nominal).toLocaleString('id-ID');
+                document.getElementById('metodePembayaran').textContent = data.metode_pembayaran.toUpperCase();
+                document.getElementById('hasilPembayaran').classList.remove('hidden');
+                document.getElementById('formPembayaran').classList.add('hidden');
+            }
+        });
     });
 </script>
 @endpush

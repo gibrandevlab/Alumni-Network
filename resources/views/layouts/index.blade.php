@@ -1089,52 +1089,7 @@
     </script>
 
     @yield('additional_scripts')
-    @push('script')
-    <script>
-        (function() {
-            const btn = document.getElementById('profileButton');
-            const dropdown = document.getElementById('profileDropdown');
-            let hideTimeout;
-            if (!btn || !dropdown) return;
-
-            function showDropdown() {
-                clearTimeout(hideTimeout);
-                dropdown.classList.add('active', 'fade-in');
-                btn.setAttribute('aria-expanded', 'true');
-            }
-
-            function hideDropdown() {
-                hideTimeout = setTimeout(() => {
-                    dropdown.classList.remove('active', 'fade-in');
-                    btn.setAttribute('aria-expanded', 'false');
-                }, 180); // delay supaya tidak langsung hilang
-            }
-            btn.addEventListener('mouseenter', showDropdown);
-            btn.addEventListener('focus', showDropdown);
-            btn.addEventListener('mouseleave', hideDropdown);
-            btn.addEventListener('blur', hideDropdown);
-            dropdown.addEventListener('mouseenter', showDropdown);
-            dropdown.addEventListener('mouseleave', hideDropdown);
-            // Untuk klik di luar dropdown
-            document.addEventListener('mousedown', function(e) {
-                if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('active', 'fade-in');
-                    btn.setAttribute('aria-expanded', 'false');
-                }
-            });
-            // Untuk mobile: toggle dengan klik
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (dropdown.classList.contains('active')) {
-                    dropdown.classList.remove('active', 'fade-in');
-                    btn.setAttribute('aria-expanded', 'false');
-                } else {
-                    showDropdown();
-                }
-            });
-        })();
-    </script>
-    @endpush
+    @stack('scripts')
 </body>
 
 </html>
