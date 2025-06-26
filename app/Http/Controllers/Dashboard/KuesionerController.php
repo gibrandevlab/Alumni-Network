@@ -28,10 +28,14 @@ class KuesionerController extends Controller
         return view('pages.dashboard.kuesioner', compact('kuesioners'));
     }
 
-    // Tampilkan form tambah kuesioner
-    public function create()
+    // Tampilkan form tambah/edit kuesioner (satu view)
+    public function form($id = null)
     {
-        return view('pages.dashboard.kuesioner-form');
+        $kuesioner = null;
+        if ($id) {
+            $kuesioner = Kuesioner::with('pertanyaan')->findOrFail($id);
+        }
+        return view('pages.dashboard.kuesioner-form', compact('kuesioner'));
     }
 
     // Simpan kuesioner baru
@@ -48,11 +52,15 @@ class KuesionerController extends Controller
         return redirect()->route('dashboard.kuesioner.edit', $kuesioner->id)->with('success', 'Kuesioner berhasil dibuat.');
     }
 
-    // Tampilkan form edit kuesioner
+    // Ubah create dan edit agar redirect ke method form
+    public function create()
+    {
+        return $this->form();
+    }
+
     public function edit($id)
     {
-        $kuesioner = Kuesioner::with('pertanyaan')->findOrFail($id);
-        return view('pages.dashboard.kuesioner-form', compact('kuesioner'));
+        return $this->form($id);
     }
 
     // Update kuesioner
@@ -85,19 +93,14 @@ class KuesionerController extends Controller
             'pertanyaan' => 'required|string',
             'tipe' => 'required|in:likert,esai,pilihan',
             'skala' => 'nullable|string',
+            'urutan' => 'required|integer|min:1',
         ]);
         $validated['kuesioner_id'] = $kuesioner_id;
         if ($request->filled('edit_id')) {
             $pertanyaan = PertanyaanKuesioner::where('kuesioner_id', $kuesioner_id)->findOrFail($request->edit_id);
-            // Untuk edit, tetap gunakan urutan dari request
-            $pertanyaan->update(array_merge($validated, [
-                'urutan' => $request->input('urutan', $pertanyaan->urutan)
-            ]));
+            $pertanyaan->update($validated);
             return redirect()->route('dashboard.kuesioner.edit', $kuesioner_id)->with('success', 'Pertanyaan berhasil diupdate.');
         } else {
-            // Untuk tambah, urutan otomatis
-            $lastUrutan = PertanyaanKuesioner::where('kuesioner_id', $kuesioner_id)->max('urutan');
-            $validated['urutan'] = $lastUrutan ? $lastUrutan + 1 : 1;
             PertanyaanKuesioner::create($validated);
             return back()->with('success', 'Pertanyaan berhasil ditambahkan.');
         }

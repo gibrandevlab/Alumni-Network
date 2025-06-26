@@ -25,7 +25,7 @@ class AlumniSettingController extends Controller
 
         $query = User::with('profilAlumni')->where('role', 'alumni');
 
-        // Ambil daftar jurusan unik dari tabel profil_alumni
+        // Ambil daftar jurusan unik dari seluruh tabel profil_alumni (tanpa filter)
         $jurusanList = ProfilAlumni::select('jurusan')->distinct()->pluck('jurusan')->filter()->values();
 
         if ($search = $request->query('search')) {
@@ -43,7 +43,14 @@ class AlumniSettingController extends Controller
 
         $alumni = $query->paginate(10)->appends($request->query());
 
-        return view('pages.dashboard.AlumniSetting', compact('alumni', 'jurusanList'));
+        // Untuk statistik, ambil seluruh alumni tanpa filter pencarian/jurusan
+        $allAlumni = User::where('role', 'alumni')->get();
+        $totalAlumni = $allAlumni->count();
+        $pendingCount = $allAlumni->where('status', 'pending')->count();
+        $approvedCount = $allAlumni->where('status', 'approved')->count();
+        $rejectedCount = $allAlumni->where('status', 'rejected')->count();
+
+        return view('pages.dashboard.AlumniSetting', compact('alumni', 'jurusanList', 'totalAlumni', 'pendingCount', 'approvedCount', 'rejectedCount'));
     }
 
     public function show($id)

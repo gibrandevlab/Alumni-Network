@@ -1,4 +1,4 @@
-<?php
+
 @extends('layouts.Dashboard.dashboard')
 
 @section('title', 'Detail Kuesioner - ALUMNET')

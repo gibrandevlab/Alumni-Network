@@ -9,12 +9,8 @@
 
         <div class="flex-1 flex flex-col min-w-0 p-4 md:p-6 lg:p-8 overflow-x-auto ml-14 md:ml-64" id="mainContentainer">
             @php
-                $totalAlumni = $alumni ? $alumni->total() : 0;
-                $alumniItems = $alumni ? $alumni->getCollection() : collect();
-                $pendingCount = $alumniItems->where('status', 'pending')->count();
-                $approvedCount = $alumniItems->where('status', 'approved')->count();
-                $rejectedCount = $alumniItems->where('status', 'rejected')->count();
-                $responseRate = $totalAlumni > 0 ? round(($approvedCount / $totalAlumni) * 100, 2) : 0;
+                // Gunakan variabel statistik dari controller, bukan dari paginasi
+                // $totalAlumni, $pendingCount, $approvedCount, $rejectedCount sudah dikirim dari controller
             @endphp
 
             <header class="mb-6">
@@ -64,26 +60,6 @@
                     </div>
                 </div>
 
-                <!-- Response Rate Card -->
-                <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 md:w-6 md:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-3 md:ml-4">
-                            <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $responseRate }}%</p>
-                            <p class="text-xs md:text-sm text-gray-500">Response Rate</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 md:mt-4 h-1 bg-blue-200 rounded-full">
-                        <div class="h-1 bg-blue-500 rounded-full" style="width: {{ $responseRate }}%"></div>
-                    </div>
-                </div>
-
                 <!-- Approved Alumni Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
                     <div class="flex items-center">
@@ -101,6 +77,26 @@
                     </div>
                     <div class="mt-3 md:mt-4 h-1 bg-green-200 rounded-full">
                         <div class="h-1 bg-green-500 rounded-full" style="width: {{ $totalAlumni > 0 ? ($approvedCount / $totalAlumni) * 100 : 0 }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Rejected Alumni Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-4 md:p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3 md:ml-4">
+                            <p class="text-xl md:text-2xl font-bold text-gray-900">{{ $rejectedCount }}</p>
+                            <p class="text-xs md:text-sm text-gray-500">Rejected Alumni</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 md:mt-4 h-1 bg-red-200 rounded-full">
+                        <div class="h-1 bg-red-500 rounded-full" style="width: {{ $totalAlumni > 0 ? ($rejectedCount / $totalAlumni) * 100 : 0 }}%"></div>
                     </div>
                 </div>
             </div>
@@ -278,8 +274,6 @@
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-semibold text-blue-900">Status Overview</h3>
                         </div>
-
-                        <!-- Status Distribution -->
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
@@ -288,7 +282,6 @@
                                 </div>
                                 <span class="text-sm font-medium text-gray-900">{{ $approvedCount }}</span>
                             </div>
-
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
                                     <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
@@ -296,23 +289,12 @@
                                 </div>
                                 <span class="text-sm font-medium text-gray-900">{{ $pendingCount }}</span>
                             </div>
-
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
                                     <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
                                     <span class="text-sm text-gray-600">Rejected</span>
                                 </div>
                                 <span class="text-sm font-medium text-gray-900">{{ $rejectedCount }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="mt-8 pt-6 border-t border-blue-200">
-                            <h4 class="text-sm font-medium text-blue-900 mb-4">Quick Actions</h4>
-                            <div class="space-y-2">
-                                <button type="button" onclick="exportAllData()" class="w-full text-left px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-md transition-colors duration-150">
-                                    Export All Alumni Data
-                                </button>
                             </div>
                         </div>
                     </div>

@@ -5,12 +5,13 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Kuesioner;
 use App\Models\PertanyaanKuesioner;
+use App\Models\ResponKuesioner;
 
 class KuesionerAlumniSeeder extends Seeder
 {
     public function run(): void
     {
-        // Kuesioner untuk alumni yang bekerja
+        // Membuat kuesioner untuk alumni yang bekerja
         $bekerja = Kuesioner::create([
             'judul' => 'Tracer Study Alumni - Bekerja',
             'deskripsi' => 'Kuesioner untuk alumni yang bekerja setelah lulus',
@@ -19,19 +20,18 @@ class KuesionerAlumniSeeder extends Seeder
             'status' => 'aktif',
         ]);
 
+        // Tambahkan pertanyaan kuesioner "Bekerja"
         $pertanyaanBekerja = [
-            // Tambahkan minimal 15 pertanyaan terkait bekerja
-            [
-                'pertanyaan' => 'Di bidang apa Anda bekerja?',
-                'tipe' => 'esai',
-                'skala' => null,
-            ],
-            [
-                'pertanyaan' => 'Seberapa relevan pendidikan di kampus dengan pekerjaan Anda?',
-                'tipe' => 'likert',
-                'skala' => '1-5',
-            ],
-            // Tambahkan 13 pertanyaan lainnya
+            ['pertanyaan' => 'Di bidang apa Anda bekerja?', 'tipe' => 'esai', 'skala' => null],
+            ['pertanyaan' => 'Seberapa relevan pendidikan di kampus dengan pekerjaan Anda?', 'tipe' => 'likert', 'skala' => '1-5'],
+            ['pertanyaan' => 'Apakah pekerjaan Anda sesuai dengan jurusan Anda?', 'tipe' => 'likert', 'skala' => '1-5'],
+            ['pertanyaan' => 'Berapa lama waktu yang dibutuhkan untuk mendapatkan pekerjaan pertama?', 'tipe' => 'esai', 'skala' => null],
+            ['pertanyaan' => 'Apakah Anda puas dengan pekerjaan Anda saat ini?', 'tipe' => 'likert', 'skala' => '1-5'],
+            ['pertanyaan' => 'Berapa penghasilan rata-rata Anda per bulan?', 'tipe' => 'esai', 'skala' => null],
+            ['pertanyaan' => 'Apakah pekerjaan ini sesuai dengan ekspektasi Anda?', 'tipe' => 'likert', 'skala' => '1-5'],
+            ['pertanyaan' => 'Seberapa sulit Anda mendapatkan pekerjaan ini?', 'tipe' => 'likert', 'skala' => '1-5'],
+            ['pertanyaan' => 'Apakah Anda bekerja di dalam atau luar negeri?', 'tipe' => 'pilihan', 'skala' => 'Dalam negeri,Luar negeri'],
+            ['pertanyaan' => 'Adakah keterampilan baru yang Anda pelajari di pekerjaan ini?', 'tipe' => 'esai', 'skala' => null],
         ];
 
         foreach ($pertanyaanBekerja as $i => $p) {
@@ -44,74 +44,28 @@ class KuesionerAlumniSeeder extends Seeder
             ]);
         }
 
-        // Kuesioner untuk alumni yang melanjutkan pendidikan
-        $pendidikan = Kuesioner::create([
-            'judul' => 'Tracer Study Alumni - Melanjutkan Pendidikan',
-            'deskripsi' => 'Kuesioner untuk alumni yang melanjutkan pendidikan setelah lulus',
-            'tahun_mulai' => 2025,
-            'tahun_akhir' => 2025,
-            'status' => 'aktif',
-        ]);
+        // Membuat respons kuesioner untuk "Bekerja" dengan user_id 2-101
+        for ($userId = 2; $userId <= 101; $userId++) {
+            $jawaban = [
+                'Di bidang apa Anda bekerja?' => 'Teknologi Informasi',
+                'Seberapa relevan pendidikan di kampus dengan pekerjaan Anda?' => rand(3, 5),
+                'Apakah pekerjaan Anda sesuai dengan jurusan Anda?' => rand(3, 5),
+                'Berapa lama waktu yang dibutuhkan untuk mendapatkan pekerjaan pertama?' => '6 bulan',
+                'Apakah Anda puas dengan pekerjaan Anda saat ini?' => rand(4, 5),
+                'Berapa penghasilan rata-rata Anda per bulan?' => 'Rp10.000.000',
+                'Apakah pekerjaan ini sesuai dengan ekspektasi Anda?' => rand(3, 5),
+                'Seberapa sulit Anda mendapatkan pekerjaan ini?' => rand(2, 4),
+                'Apakah Anda bekerja di dalam atau luar negeri?' => rand(0, 1) ? 'Dalam negeri' : 'Luar negeri',
+                'Adakah keterampilan baru yang Anda pelajari di pekerjaan ini?' => 'Manajemen waktu',
+            ];
 
-        $pertanyaanPendidikan = [
-            // Tambahkan minimal 15 pertanyaan terkait pendidikan
-            [
-                'pertanyaan' => 'Jenjang pendidikan yang Anda ambil saat ini?',
-                'tipe' => 'pilihan',
-                'skala' => 'S2,S3,Doktor,Lainnya',
-            ],
-            [
-                'pertanyaan' => 'Apakah pendidikan lanjutan ini sesuai dengan minat Anda sebelumnya?',
-                'tipe' => 'likert',
-                'skala' => '1-5',
-            ],
-            // Tambahkan 13 pertanyaan lainnya
-        ];
-
-        foreach ($pertanyaanPendidikan as $i => $p) {
-            PertanyaanKuesioner::create([
-                'kuesioner_id' => $pendidikan->id,
-                'pertanyaan' => $p['pertanyaan'],
-                'tipe' => $p['tipe'],
-                'skala' => $p['skala'],
-                'urutan' => $i + 1,
+            ResponKuesioner::create([
+                'kuesioner_id' => $bekerja->id,
+                'user_id' => $userId,
+                'jawaban' => json_encode($jawaban),
             ]);
         }
 
-        // Kuesioner untuk alumni dengan aktivitas lainnya
-        $lainnya = Kuesioner::create([
-            'judul' => 'Tracer Study Alumni - Aktivitas Lainnya',
-            'deskripsi' => 'Kuesioner untuk alumni dengan aktivitas lain setelah lulus',
-            'tahun_mulai' => 2025,
-            'tahun_akhir' => 2025,
-            'status' => 'aktif',
-        ]);
-
-        $pertanyaanLainnya = [
-            // Tambahkan pertanyaan terkait aktivitas lainnya
-            [
-                'pertanyaan' => 'Sebutkan aktivitas utama Anda saat ini.',
-                'tipe' => 'esai',
-                'skala' => null,
-            ],
-            [
-                'pertanyaan' => 'Apakah Anda merasa puas dengan aktivitas ini?',
-                'tipe' => 'likert',
-                'skala' => '1-5',
-            ],
-            // Tambahkan pertanyaan tambahan lainnya
-        ];
-
-        foreach ($pertanyaanLainnya as $i => $p) {
-            PertanyaanKuesioner::create([
-                'kuesioner_id' => $lainnya->id,
-                'pertanyaan' => $p['pertanyaan'],
-                'tipe' => $p['tipe'],
-                'skala' => $p['skala'],
-                'urutan' => $i + 1,
-            ]);
-        }
-
-        $this->command->info('Seeder kuesioner alumni berhasil dijalankan!');
+        $this->command->info('Seeder kuesioner alumni dan respons untuk user_id 2-101 berhasil dijalankan!');
     }
 }

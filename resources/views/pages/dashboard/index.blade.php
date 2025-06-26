@@ -21,34 +21,34 @@
                     ])
                 </div>
 
-                <form method="GET" action="{{ route('dashboard.dashboard') }}" >
+                <form method="GET" action="{{ route('dashboard.dashboard') }}">
                     <div class="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
                         <div class="card shadow-md p-4" id="respon-by-years">
                             @include('components.dashboard.responbyyears', [
                                 'persentasePerTahun' => $persentasePerTahun,
-                                'jurusandefault' => $jurusandefault
+                                'jurusandefault' => $jurusandefault,
                             ])
                         </div>
                         <div class="card shadow-md p-4" id="status-tahun">
                             @include('components.dashboard.status', [
                                 'jawabanKuesioner1' => $jawabanKuesioner1,
-                                'jurusan1' => $jurusan1
+                                'jurusan1' => $jurusan1,
                             ])
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 p-4 gap-4">
+                    {{-- <div class="grid grid-cols-1 p-4 gap-4">
                         <div class="card shadow-md p-4" id="status-all-year">
                             @include('components.dashboard.statusallyear', [
                                 'jawabanKuesioner2' => $jawabanKuesioner2,
-                                'jurusan2' => $jurusan2
+                                'jurusan2' => $jurusan2,
                             ])
                         </div>
-                    </div>
-                    <div class="grid grid-cols-1 p-4 gap-4">
+                    </div> --}}
+                    {{-- <div class="grid grid-cols-1 p-4 gap-4">
                         <div class="card shadow-md p-4" id="table-pendidikan">
                             @include('components.dashboard.tablependidikan')
                         </div>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
     @endif

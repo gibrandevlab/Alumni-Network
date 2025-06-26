@@ -36,26 +36,50 @@
 </div>
 
 <script>
-    var dataAlumni = @json($jawabanKuesioner1);
+    // Dummy data per jurusan dan tahun
+    var dummyPerJurusan = {
+        'Sistem Informasi (S1)': {
+            '2025': { status_1: 10, status_2: 5, status_3: 2 },
+            '2024': { status_1: 8, status_2: 4, status_3: 1 },
+            '2023': { status_1: 7, status_2: 3, status_3: 2 },
+            '2022': { status_1: 6, status_2: 2, status_3: 1 },
+            '2021': { status_1: 5, status_2: 1, status_3: 0 }
+        },
+        'Teknologi Informasi (S1)': {
+            '2025': { status_1: 12, status_2: 6, status_3: 3 },
+            '2024': { status_1: 9, status_2: 5, status_3: 2 },
+            '2023': { status_1: 8, status_2: 4, status_3: 1 },
+            '2022': { status_1: 7, status_2: 3, status_3: 2 },
+            '2021': { status_1: 6, status_2: 2, status_3: 1 }
+        },
+        'Ilmu Komunikasi (S1)': {
+            '2025': { status_1: 5, status_2: 7, status_3: 2 },
+            '2024': { status_1: 4, status_2: 6, status_3: 1 },
+            '2023': { status_1: 3, status_2: 5, status_3: 2 },
+            '2022': { status_1: 2, status_2: 4, status_3: 1 },
+            '2021': { status_1: 1, status_2: 3, status_3: 0 }
+        },
+        // Tambahkan jurusan lain jika perlu
+    };
+    var jurusanSelected = "{{ request('jurusan1') }}";
+    if (!jurusanSelected || !dummyPerJurusan[jurusanSelected]) {
+        jurusanSelected = 'Sistem Informasi (S1)'; // default
+    }
+    var dataAlumni = dummyPerJurusan[jurusanSelected];
     var currentYear = new Date().getFullYear();
     var years = [];
-    // Buat array untuk 5 tahun terakhir (misalnya: 2025, 2024, ... 2021)
     for (var y = currentYear; y > currentYear - 5; y--) {
         years.push(y.toString());
     }
-
     var bekerjaData = 0;
     var melanjutkanPendidikanData = 0;
     var tidakBekerjaData = 0;
-
     years.forEach(function(year) {
-        // Jika data untuk tahun tersebut tidak ada, gunakan nilai default
         var yearData = dataAlumni[year] || { status_1: 0, status_2: 0, status_3: 0 };
         bekerjaData += yearData.status_1;
         melanjutkanPendidikanData += yearData.status_2;
         tidakBekerjaData += yearData.status_3;
     });
-
     var options = {
         series: [bekerjaData, melanjutkanPendidikanData, tidakBekerjaData],
         chart: {
@@ -108,7 +132,6 @@
             colors: ['#fff']
         },
     };
-
     var chart = new ApexCharts(document.querySelector("#statuskarir"), options);
     chart.render();
 </script>

@@ -9,16 +9,9 @@
                     <select name="jurusandefault" class="bg-gray-700 text-white rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                         <option value="" {{ request('jurusandefault') == '' ? 'selected' : '' }}>Semua Jurusan</option>
                         @foreach([
-                            'Ilmu Komunikasi (S1)', 'Sastra Inggris (S1)', 'Public Relations (D3)',
-                            'Broadcasting (D3)', 'Advertising (D3)', 'Bahasa Inggris (D3)',
-                            'Sistem Informasi (S1)', 'Teknologi Informasi (S1)', 'Software Engineering (S1)',
-                            'Informatika (S1)', 'Teknik Industri (S1)', 'Teknik Elektro (S1)',
-                            'Sistem Informasi (D3)', 'Sistem Informasi Akuntansi (D3)', 'Teknologi Komputer (D3)',
-                            'Manajemen (S1)', 'Akuntansi (S1)', 'Pariwisata (S1)', 'Hukum Bisnis (S1)',
-                            'Administrasi Perkantoran (D3)', 'Akuntansi (D3)', 'Administrasi Bisnis (D3)',
-                            'Manajemen Pajak (D3)', 'Perhotelan (D3)', 'Hukum Bisnis (S1)', 'Ilmu Hukum (S1)',
-                            'Hukum Internasional (S1)', 'Ilmu Keperawatan (S1)', 'Psikologi (S1)',
-                            'Ilmu Keperawatan (D3)', 'Profesi NERS'
+                             'Teknik Informatika', 'Sistem Informasi', 'Manajemen', 'Akuntansi',
+            'Teknik Elektro', 'Psikologi', 'Hukum', 'Kedokteran',
+            'Arsitektur', 'Pendidikan Bahasa Inggris'
                         ] as $option)
                             <option value="{{ $option }}" {{ request('jurusandefault') == $option ? 'selected' : '' }}>{{ $option }}</option>
                         @endforeach
