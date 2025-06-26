@@ -238,11 +238,13 @@
                 <div class="text-center text-white/80 text-sm">
                     or continue with
                 </div>
+                <!--
                 <div class="flex justify-center gap-4">
                     <a href="{{ route('google.redirect') }}" class="social-button">
                         <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
                     </a>
                 </div>
+                -->
                 <div class="text-center text-white/80 text-sm">
                     Already have an account?
                     <a href="/login" class="text-white hover:underline">Login</a>

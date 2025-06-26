@@ -237,6 +237,7 @@
                     or continue with
                 </div>
 
+                <!--
                 <div class="flex justify-center gap-4">
                     <a href="{{ route('login.google') }}" class="social-button">
                         <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
@@ -248,6 +249,7 @@
                         <img src="https://facebook.com/favicon.ico" alt="Facebook" class="w-5 h-5">
                     </a>
                 </div>
+                -->
 
                 <div class="text-center text-white/80 text-sm">
                     Don't have an account yet?

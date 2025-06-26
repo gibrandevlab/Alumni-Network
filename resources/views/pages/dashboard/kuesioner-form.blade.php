@@ -69,10 +69,10 @@
                     <h3 class="font-semibold mb-4 text-blue-800">Tambah Pertanyaan Baru</h3>
                     <form method="POST" action="{{ route('dashboard.kuesioner.pertanyaan.add', $kuesioner->id) }}">
                         @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                             <div>
-                                <label class="block text-xs font-semibold text-blue-700 mb-1">Pertanyaan</label>
-                                <input type="text" name="pertanyaan" required class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                <label class="block text-xs font-semibold text-blue-700 mb-1">Urutan</label>
+                                <input type="number" name="urutan" min="1" required class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-blue-700 mb-1">Tipe</label>
@@ -83,9 +83,15 @@
                                 </select>
                             </div>
                             <div>
+                                <label class="block text-xs font-semibold text-blue-700 mb-1">Pertanyaan</label>
+                                <input type="text" name="pertanyaan" required class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            </div>                            
+                            
+                            <div>
                                 <label class="block text-xs font-semibold text-blue-700 mb-1">Skala/Opsi</label>
                                 <input type="text" name="skala" placeholder="1-5 / Opsi1,Opsi2" class="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white">
                             </div>
+                            
                         </div>
                         <div class="flex gap-3">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">Tambah</button>
@@ -110,10 +116,13 @@
                             @forelse($kuesioner->pertanyaan as $p)
                             <tr>
                                 <td class="px-4 py-2 text-center">{{ $p->urutan }}</td>
+                                <td class="px-4 py-2 text-center">{{ ucfirst($p->tipe) }}</td>
+                                <td class="px-4 py-2">{{ $p->pertanyaan }}</td>
+                                <td class="px-4 py-2 text-center">{{ $p->skala }}</td>
                                 <td class="px-4 py-2 text-center">
                                     <div class="flex gap-2 justify-center">
                                         <button onclick="openEditModal({{ $p->id }}, '{{ $p->pertanyaan }}', '{{ $p->tipe }}', '{{ $p->skala }}', {{ $p->urutan }})"
-                                                class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-semibold transition">
+                                            class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-semibold transition">
                                             Edit
                                         </button>
                                         <form action="{{ route('dashboard.kuesioner.pertanyaan.delete', [$kuesioner->id, $p->id]) }}" method="POST" onsubmit="return confirm('Hapus pertanyaan ini?')" class="inline">
@@ -178,56 +187,56 @@
 </div>
 
 <script>
-// Toggle form tambah pertanyaan
-function toggleAddForm() {
-    const form = document.getElementById('addQuestionForm');
-    const btn = document.getElementById('toggleAddBtn');
-    const text = document.getElementById('toggleAddText');
+    // Toggle form tambah pertanyaan
+    function toggleAddForm() {
+        const form = document.getElementById('addQuestionForm');
+        const btn = document.getElementById('toggleAddBtn');
+        const text = document.getElementById('toggleAddText');
 
-    if (form.classList.contains('hidden')) {
-        form.classList.remove('hidden');
-        text.textContent = '- Tutup Form';
-        btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-        btn.classList.add('bg-red-600', 'hover:bg-red-700');
-    } else {
-        form.classList.add('hidden');
-        text.textContent = '+ Tambah Pertanyaan';
-        btn.classList.remove('bg-red-600', 'hover:bg-red-700');
-        btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-        // Reset form
-        form.querySelector('form').reset();
+        if (form.classList.contains('hidden')) {
+            form.classList.remove('hidden');
+            text.textContent = '- Tutup Form';
+            btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            btn.classList.add('bg-red-600', 'hover:bg-red-700');
+        } else {
+            form.classList.add('hidden');
+            text.textContent = '+ Tambah Pertanyaan';
+            btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+            btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            // Reset form
+            form.querySelector('form').reset();
+        }
     }
-}
 
-// Modal edit functions
-function openEditModal(id, pertanyaan, tipe, skala, urutan) {
-    document.getElementById('editId').value = id;
-    document.getElementById('editPertanyaan').value = pertanyaan;
-    document.getElementById('editTipe').value = tipe;
-    document.getElementById('editSkala').value = skala;
-    document.getElementById('editUrutan').value = urutan;
-    document.getElementById('editModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-// Close modal when clicking outside
-document.getElementById('editModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeEditModal();
+    // Modal edit functions
+    function openEditModal(id, pertanyaan, tipe, skala, urutan) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editPertanyaan').value = pertanyaan;
+        document.getElementById('editTipe').value = tipe;
+        document.getElementById('editSkala').value = skala;
+        document.getElementById('editUrutan').value = urutan;
+        document.getElementById('editModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
-});
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeEditModal();
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
     }
-});
+
+    // Close modal when clicking outside
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeEditModal();
+        }
+    });
 </script>
 
 <style>
@@ -236,6 +245,7 @@ document.addEventListener('keydown', function(e) {
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -247,6 +257,7 @@ document.addEventListener('keydown', function(e) {
             opacity: 0;
             transform: translateY(30px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
